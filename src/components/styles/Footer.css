@@ -1,0 +1,17 @@
+.footer {
+  text-align: center;
+  background-color: #003049;
+  color: white;
+  padding: 20px;
+}
+
+.bank-logos {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px; /* Memberi jarak antara logo-logo */
+}
+
+.bank-logos img {
+  max-height: 40px; /* Mengatur tinggi maksimum logo */
+}
