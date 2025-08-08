@@ -1,0 +1,235 @@
+/* src/components/styles/travel.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --color-primary-500: #3b82f6; /* Biru */
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-accent-orange: #f97316;
+    --color-light-gray: #f8fafc;
+    --color-gray-500: #64748b;
+    --color-gray-700: #334155;
+    --color-white: #ffffff;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-normal: all 0.25s ease-in-out;
+    --border-radius-lg: 0.75rem;
+}
+
+.travel-page {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-gray-700);
+    margin-top: 80px; /* Offset for fixed header */
+    padding-bottom: 60px; /* Tambahan padding di bawah agar tidak menempel footer */
+}
+
+/* --- Travel News Header --- */
+.travel-news-header {
+    background-image: url('../../assets/images/services-bg.jpg'); /* JALUR YANG DIPERBAIKI */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.travel-news-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: -1;
+}
+
+.travel-news-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.travel-news-header p {
+    font-size: 1rem;
+    max-width: 600px;
+    margin-top: 10px;
+}
+
+/* --- News List Section --- */
+.news-list-section {
+    padding: 60px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.news-item {
+    display: flex;
+    gap: 30px;
+    background-color: var(--color-white);
+    padding: 20px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    transition: var(--transition-normal);
+}
+
+.news-item:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-3px);
+}
+
+.news-item img {
+    width: 250px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: var(--border-radius-md);
+}
+
+.news-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.news-content h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--color-gray-700);
+}
+
+.news-meta {
+    font-size: 0.8rem;
+    color: var(--color-gray-500);
+    margin-bottom: 15px;
+}
+
+.news-meta span {
+    margin-right: 10px;
+}
+
+.news-content p {
+    font-size: 1rem;
+    color: var(--color-gray-700);
+    line-height: 1.6;
+}
+
+.news-content p a {
+    color: var(--color-primary-500);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.news-content p a:hover {
+    text-decoration: underline;
+}
+
+/* --- Custom CTA Section --- */
+.custom-cta {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.cta-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.cta-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-text {
+    z-index: 3;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.cta-text h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cta-text p {
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.cta-button {
+    background-color: var(--color-accent-orange);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: var(--transition-normal);
+    display: inline-block;
+}
+
+.cta-button:hover {
+    background-color: #e76f00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .travel-page {
+        margin-top: 60px;
+    }
+    .travel-news-header {
+        height: 200px;
+    }
+    .travel-news-header h1 {
+        font-size: 2rem;
+    }
+    .news-list-section {
+        padding: 40px 16px;
+    }
+    .news-item {
+        flex-direction: column;
+        align-items: center;
+    }
+    .news-item img {
+        width: 100%;
+        height: auto;
+    }
+    .cta-text h2 {
+        font-size: 24px;
+    }
+    .cta-text p {
+        font-size: 14px;
+    }
+}

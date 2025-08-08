@@ -1,39 +1,96 @@
 .hero {
-  height: 90vh;
+  position: relative;
   background-size: cover;
   background-position: center;
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  padding: 80px 20px;
+}
+
+.overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 60px 20px;
 }
 
 .hero-content {
-  background-color: rgba(0, 0, 0, 0.5);
-  padding: 40px;
-  border-radius: 10px;
+  text-align: center;
+  margin-bottom: 50px;
 }
 
-.hero h1 {
+.hero-content h1 {
   font-size: 48px;
   margin-bottom: 20px;
 }
 
-.hero p {
-  font-size: 24px;
+.hero-content p {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.hero-content button {
+  padding: 12px 24px;
+  background-color: #00c6fb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.hero-content button:hover {
+  background-color: #005aa7;
+}
+
+/* TOUR PACKAGES */
+.tour-packages {
+  text-align: center;
+  color: white;
+}
+
+.tour-packages h2 {
+  font-size: 36px;
   margin-bottom: 30px;
 }
 
-.hero button {
-  padding: 10px 30px;
-  background-color: orange;
-  color: white;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  padding: 0 20px;
 }
 
-.hero button:hover {
-  background-color: darkorange;
+.package-card {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  color: #333;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.package-card:hover {
+  transform: translateY(-8px);
+}
+
+.package-card img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.package-card h3 {
+  font-size: 20px;
+  margin: 16px 0 8px;
+}
+
+.package-card p {
+  font-size: 16px;
+  padding: 0 16px;
+}
+
+.package-card span {
+  display: block;
+  font-weight: bold;
+  color: #005aa7;
+  margin: 16px;
 }

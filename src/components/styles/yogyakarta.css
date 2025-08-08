@@ -1,0 +1,255 @@
+/* src/components/styles/yogyakarta.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --color-primary-500: #3b82f6;
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-accent-orange: #f97316;
+    --color-light-gray: #f8fafc;
+    --color-gray-500: #64748b;
+    --color-gray-700: #334155;
+    --color-white: #ffffff;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-normal: all 0.25s ease-in-out;
+    --border-radius-lg: 0.75rem;
+    --border-radius-md: 0.5rem;
+}
+
+.yogyakarta-page {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-gray-700);
+    margin-top: 80px; /* Offset for fixed header */
+}
+
+/* --- Hero Section & Slideshow --- */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    color: var(--color-white);
+}
+
+.header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.header-overlay h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-white);
+    margin-bottom: 5px;
+}
+
+.header-overlay h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    text-align: center;
+    color: var(--color-white);
+    margin: 0;
+}
+
+/* --- Tour Cards Section --- */
+.tour-cards-section {
+    padding: 60px 24px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.tour-section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-gray-700);
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.scroll-container {
+    display: flex;
+    overflow-x: auto;
+    gap: 20px;
+    padding-bottom: 20px;
+}
+
+.tour-card {
+    min-width: 280px;
+    flex-shrink: 0;
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: var(--transition-normal);
+    text-decoration: none;
+}
+
+.tour-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.tour-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.tour-card h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray-700);
+    padding: 15px;
+}
+
+.price-label {
+    font-size: 12px;
+    color: var(--color-gray-500);
+    padding: 0 15px;
+}
+
+.price-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-primary-500);
+    padding: 5px 15px 15px;
+    display: block;
+}
+
+.detail-button {
+    display: block;
+    width: calc(100% - 30px);
+    margin: 0 15px 15px;
+    padding: 10px;
+    text-align: center;
+    background-color: var(--color-primary-500);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    transition: var(--transition-normal);
+}
+
+.detail-button:hover {
+    background-color: var(--color-primary-600);
+}
+
+/* --- Custom CTA Section --- */
+.custom-cta {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.cta-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.cta-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-text {
+    z-index: 3;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.cta-text h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cta-text p {
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.cta-button {
+    background-color: var(--color-accent-orange);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: var(--transition-normal);
+    display: inline-block;
+}
+
+.cta-button:hover {
+    background-color: #e76f00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .yogyakarta-page {
+        margin-top: 60px;
+    }
+    .hero-section {
+        height: 30vh;
+    }
+    .header-overlay h1 {
+        font-size: 2rem;
+    }
+    .header-overlay h2 {
+        font-size: 1.5rem;
+    }
+    .tour-cards-section {
+        padding: 40px 16px;
+    }
+    .tour-section-title {
+        font-size: 1.5rem;
+    }
+    .scroll-container {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .tour-card {
+        min-width: 100%;
+    }
+    .cta-text h2 {
+        font-size: 24px;
+    }
+    .cta-text p {
+        font-size: 14px;
+    }
+}

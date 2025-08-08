@@ -1,0 +1,309 @@
+/* src/components/styles/tentang.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --color-primary-500: #3b82f6; /* Biru */
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-accent-orange: #f97316;
+    --color-light-gray: #f8fafc;
+    --color-gray-500: #64748b;
+    --color-gray-700: #334155;
+    --color-white: #ffffff;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-normal: all 0.25s ease-in-out;
+    --border-radius-lg: 0.75rem;
+}
+
+.tentang-page {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-gray-700);
+    margin-top: 80px; /* Offset for fixed header */
+}
+
+/* --- Hero Section & Slideshow --- */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 40vh; /* Tinggi yang lebih pendek untuk halaman "Tentang Kami" */
+    overflow: hidden;
+    color: var(--color-white);
+}
+
+.header-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slider img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.slider img.active {
+    opacity: 1;
+}
+
+.header-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.header-overlay h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-align: center;
+    color: var(--color-white);
+}
+
+/* --- About Us Content --- */
+.about-us-content {
+    padding: 60px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.about-container p {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--color-gray-700);
+}
+
+.legalitas-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.legalitas-list li {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: var(--color-gray-700);
+}
+
+.legalitas-list li span {
+    font-weight: 600;
+    color: var(--color-primary-500);
+    min-width: 150px;
+    display: inline-block;
+}
+
+/* --- Offices Section --- */
+.offices-section {
+    padding: 60px 24px;
+    background-color: var(--color-light-gray);
+    text-align: center;
+}
+
+.offices-section h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-primary-700);
+    margin-bottom: 30px;
+}
+
+.cabang-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cabang-item {
+    background-color: var(--color-white);
+    padding: 25px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+    transition: var(--transition-normal);
+}
+
+.cabang-item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.cabang-item h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary-500);
+    margin-bottom: 10px;
+}
+
+.cabang-item p {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--color-gray-500);
+}
+
+.cabang-item a {
+    color: var(--color-primary-500);
+    text-decoration: none;
+}
+
+.cabang-item a:hover {
+    text-decoration: underline;
+}
+
+/* --- Why Us Section --- */
+.why-us-section-event {
+    padding: 60px 24px;
+    text-align: center;
+}
+
+.why-us-section-event h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-gray-700);
+    margin-bottom: 30px;
+}
+
+.why-us-cards-event {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.why-us-card-event {
+    max-width: 300px;
+    background-color: var(--color-white);
+    padding: 30px 20px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    transition: var(--transition-normal);
+}
+
+.why-us-card-event:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.why-us-card-event img {
+    height: 60px;
+    margin-bottom: 15px;
+}
+
+.why-us-card-event h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary-500);
+    margin-bottom: 10px;
+}
+
+.why-us-card-event p {
+    font-size: 14px;
+    color: var(--color-gray-500);
+}
+
+/* --- Custom CTA Section --- */
+.custom-cta {
+    position: relative;
+    height: 400px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+}
+
+.cta-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.cta-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cta-text {
+    z-index: 3;
+    max-width: 600px;
+    padding: 20px;
+}
+
+.cta-text h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.cta-text p {
+    font-size: 16px;
+    margin-bottom: 25px;
+}
+
+.cta-button {
+    background-color: var(--color-accent-orange);
+    color: white;
+    text-decoration: none;
+    padding: 12px 25px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    transition: var(--transition-normal);
+}
+
+.cta-button:hover {
+    background-color: #e76f00;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .legalitas-list li span {
+        display: block;
+        min-width: unset;
+    }
+    .offices-section {
+        padding: 40px 16px;
+    }
+    .cabang-list {
+        gap: 20px;
+    }
+    .why-us-cards-event {
+        flex-direction: column;
+        align-items: center;
+    }
+    .cta-text h2 {
+        font-size: 24px;
+    }
+    .cta-text p {
+        font-size: 14px;
+    }
+}
