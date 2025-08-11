@@ -19,7 +19,6 @@
 
 /* --- Main Content Styling --- */
 .beranda-content {
-    /* Tambahkan margin-top agar konten tidak tertutup navbar */
     margin-top: 80px; 
     overflow-x: hidden;
 }
@@ -370,23 +369,28 @@
 /* --- Custom CTA Section --- */
 .custom-cta {
     position: relative;
-    height: auto; /* PERBAIKAN: Menggunakan auto */
-    min-height: 400px; /* PERBAIKAN: Menambahkan min-height */
+    /* PERBAIKAN: Menggunakan padding-top dan padding-bottom yang besar */
+    height: auto; 
+    min-height: 400px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: white;
-    padding: 60px 24px; /* PERBAIKAN: Menambahkan padding */
+    padding: 80px 24px; /* Menambahkan padding agar konten tidak menempel */
 }
 
 .cta-video {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    /* PERBAIKAN: Transformasi untuk memusatkan video */
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: cover;
     z-index: 1;
 }

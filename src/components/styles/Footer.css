@@ -1,17 +1,185 @@
-.footer {
-  text-align: center;
-  background-color: #003049;
-  color: white;
-  padding: 20px;
+/* src/components/styles/footer.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* Import Font Awesome CSS */
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+
+:root {
+    --color-primary-500: #3b82f6; /* Biru */
+    --color-primary-600: #2563eb;
+    --color-primary-700: #1d4ed8;
+    --color-accent-orange: #f97316;
+    --color-light-gray: #f8fafc;
+    --color-gray-500: #64748b;
+    --color-gray-700: #334155;
+    --color-white: #ffffff;
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --transition-normal: all 0.25s ease-in-out;
+    --border-radius-lg: 0.75rem;
+    --border-radius-md: 0.5rem;
 }
 
-.bank-logos {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-  gap: 20px; /* Memberi jarak antara logo-logo */
+footer {
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-white);
+    background-color: var(--color-gray-900);
 }
 
-.bank-logos img {
-  max-height: 40px; /* Mengatur tinggi maksimum logo */
+/* --- Main Footer Section --- */
+.main-footer {
+    padding: 60px 24px;
+    background-color: #1e293b;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-col h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-primary-500);
+    margin-bottom: 20px;
+}
+
+.footer-col p,
+.footer-col li {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--color-gray-300);
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col li {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.footer-col li a {
+    color: var(--color-gray-300);
+    text-decoration: none;
+    transition: var(--transition-normal);
+}
+
+.footer-col li a:hover {
+    color: var(--color-white);
+    text-decoration: underline;
+}
+
+.footer-col li i {
+    margin-right: 10px;
+    margin-top: 4px;
+    color: var(--color-primary-500);
+}
+
+/* --- Lokasi Section --- */
+.lokasi h3 {
+    color: var(--color-primary-500);
+}
+
+.map-container {
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Footer Bar Bawah --- */
+.footer-bar {
+    background-color: var(--color-primary-700);
+    padding: 20px 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-content-bar {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.footer-logos {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.footer-logos img {
+    height: 30px;
+    width: auto;
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+    transition: var(--transition-normal);
+}
+
+.footer-logos img:hover {
+    opacity: 1;
+}
+
+.footer-text {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.footer-text p {
+    font-size: 14px;
+    color: var(--color-white);
+}
+
+.social-icons {
+    display: flex;
+    gap: 15px;
+}
+
+.social-icons a {
+    color: var(--color-white);
+    font-size: 1.2rem;
+    transition: var(--transition-normal);
+}
+
+.social-icons a:hover {
+    color: var(--color-primary-500);
+    transform: translateY(-2px);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .main-footer {
+        padding: 40px 16px;
+    }
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+    .footer-bar {
+        padding: 15px 16px;
+    }
+    .footer-content-bar {
+        flex-direction: column;
+        text-align: center;
+    }
+    .footer-text {
+        flex-direction: column;
+    }
+    .social-icons {
+        margin-top: 10px;
+    }
 }
