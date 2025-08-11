@@ -129,7 +129,7 @@ const Beranda = () => {
                                 <p className="price-label">Mulai dari</p>
                                 <strong className="price-value">IDR 790.000</strong>
                             </div>
-                            <Link to="/sukabumi" className="detail-button">Lihat Detail</Link>
+                            <Link to="/YOGYAKARTA" className="detail-button">Lihat Detail</Link>
                         </div>
                     </div>
                     <div className="tour-card">
@@ -151,7 +151,7 @@ const Beranda = () => {
                                 <p className="price-label">Mulai dari</p>
                                 <strong className="price-value">IDR 1.891.000</strong>
                             </div>
-                            <Link to="/sukabumi" className="detail-button">Lihat Detail</Link>
+                            <Link to="/SURABAYA" className="detail-button">Lihat Detail</Link>
                         </div>
                     </div>
                     <div className="tour-card">
