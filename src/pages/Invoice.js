@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Invoice = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  
   const [selectedPayment, setSelectedPayment] = useState('');
   const [showPaymentMethods, setShowPaymentMethods] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Mock data - in real app this would come from props/state
-  const invoiceData = {
-    namaPaket: "Paket Wisata Bali Premium",
-    harga: 2500000,
-    peserta: [
-      { nama: "John Doe", telepon: "08123456789" },
-      { nama: "Jane Smith", telepon: "08987654321" }
-    ],
-    emailKontak: "contact@wisata.com",
-    totalHarga: 5000000
+  // Mengambil data dari DetailPembayaran.js melalui location.state
+  const invoiceData = location.state || {
+    namaPaket: "Paket tidak ditemukan",
+    harga: 0,
+    peserta: [{ nama: "Data tidak tersedia", telepon: "Data tidak tersedia" }],
+    emailKontak: "Data tidak tersedia",
+    totalHarga: 0
   };
 
   const paymentMethods = [
@@ -56,20 +57,32 @@ const Invoice = () => {
     }
   ];
 
+  // Fungsi untuk format Rupiah (sama seperti di DetailPembayaran.js)
+  const formatRupiah = (angka) =>
+    new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(angka);
+
   const handlePaymentSelect = (methodId) => {
     setSelectedPayment(methodId);
   };
 
   const handlePayment = async () => {
     if (!selectedPayment) return;
-    
+   
     setIsProcessing(true);
-    
+   
     // Simulate payment processing
     await new Promise(resolve => setTimeout(resolve, 2000));
-    
+   
     setIsProcessing(false);
     alert(`Pembayaran melalui ${paymentMethods.flatMap(cat => cat.methods).find(m => m.id === selectedPayment)?.name} sedang diproses!`);
+  };
+
+  const handleBackButton = () => {
+    navigate(-1); // Kembali ke halaman sebelumnya (DetailPembayaran)
   };
 
   return (
@@ -78,7 +91,7 @@ const Invoice = () => {
         {/* Decorative Background Elements */}
         <div style={styles.backgroundDecoration}></div>
         <div style={styles.backgroundDecoration2}></div>
-        
+       
         {/* Header */}
         <div style={styles.invoiceHeader}>
           <h1 style={styles.invoiceTitle}>Invoice Pembayaran</h1>
@@ -101,11 +114,7 @@ const Invoice = () => {
               </div>
               <div style={styles.detailRow}>
                 <span>Harga per Orang:</span>
-                <strong>{invoiceData.harga.toLocaleString("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                  minimumFractionDigits: 0,
-                })}</strong>
+                <strong>{formatRupiah(invoiceData.harga)}</strong>
               </div>
             </div>
           </div>
@@ -144,11 +153,7 @@ const Invoice = () => {
             <div style={styles.totalContent}>
               <span style={styles.totalLabel}>Total Pembayaran</span>
               <span style={styles.totalAmount}>
-                {invoiceData.totalHarga.toLocaleString("id-ID", {
-                  style: "currency",
-                  currency: "IDR",
-                  minimumFractionDigits: 0,
-                })}
+                {formatRupiah(invoiceData.totalHarga)}
               </span>
             </div>
           </div>
@@ -159,7 +164,7 @@ const Invoice = () => {
               <span style={styles.sectionIcon}>💳</span>
               Pilih Metode Pembayaran
             </h3>
-            
+           
             <div style={styles.paymentMethods}>
               {paymentMethods.map((category, categoryIndex) => (
                 <div key={categoryIndex} style={styles.paymentCategory}>
@@ -192,14 +197,14 @@ const Invoice = () => {
 
           {/* Action Buttons */}
           <div style={styles.actionButtons}>
-            <button 
+            <button
               style={styles.backButton}
-              onClick={() => window.history.back()}
+              onClick={handleBackButton}
             >
               <span style={styles.buttonIcon}>←</span>
               Kembali
             </button>
-            
+           
             <button
               style={{
                 ...styles.payButton,
@@ -237,7 +242,7 @@ const styles = {
     background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
     fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
-  
+ 
   invoiceContainer: {
     maxWidth: '900px',
     width: '100%',
@@ -560,21 +565,21 @@ styleSheet.innerText = `
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
   }
-  
+ 
   @media (max-width: 768px) {
     .invoice-container {
       padding: 24px !important;
       margin: 0 10px !important;
     }
-    
+   
     .methodsGrid {
       grid-template-columns: 1fr !important;
     }
-    
+   
     .actionButtons {
       flex-direction: column !important;
     }
-    
+   
     .actionButtons > * {
       width: 100% !important;
     }
