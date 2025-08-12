@@ -1,0 +1,666 @@
+/* VirtualAccount.css */
+
+.virtual-account-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  padding: 20px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.va-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Header Styles */
+.va-header {
+  text-align: center;
+  margin-bottom: 40px;
+  padding-bottom: 30px;
+  border-bottom: 2px solid #f1f5f9;
+  position: relative;
+}
+
+.va-header::before {
+  content: '';
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 2px;
+}
+
+.bank-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+  margin: 0 auto 20px;
+  color: white;
+  box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.2);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.va-title {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bank-name {
+  font-size: 18px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* Summary Card */
+.summary-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 24px;
+  color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  filter: blur(40px);
+}
+
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.summary-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.timer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0.7; }
+}
+
+.timer-icon {
+  font-size: 16px;
+}
+
+.timer-text {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.summary-content {
+  position: relative;
+  z-index: 1;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.total-amount {
+  font-size: 20px;
+  font-weight: 800;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Virtual Account Card */
+.va-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.va-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shine 3s infinite;
+}
+
+@keyframes shine {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+.va-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.va-number-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.va-number {
+  font-size: 24px;
+  font-weight: 800;
+  color: #059669;
+  font-family: 'Courier New', monospace;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  border: 2px solid #059669;
+  letter-spacing: 2px;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.2);
+  transition: all 0.3s ease;
+}
+
+.va-number:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
+}
+
+.copy-button {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+}
+
+.copy-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+}
+
+.copy-button:active {
+  transform: translateY(0);
+}
+
+.va-note {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+/* Instructions Card */
+.instructions-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+}
+
+.instructions-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.instructions-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.tab-content {
+  background: white;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.tab-content:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.tab-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1e293b;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.instructions-list {
+  padding-left: 20px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.instruction-item {
+  margin-bottom: 8px;
+  font-size: 14px;
+  position: relative;
+}
+
+.instruction-item::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: 8px;
+  width: 4px;
+  height: 4px;
+  background: #667eea;
+  border-radius: 50%;
+}
+
+/* Notes Card */
+.notes-card {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #fbbf24;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+.notes-card::before {
+  content: '⚠️';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 60px;
+  opacity: 0.1;
+  transform: rotate(15deg);
+}
+
+.notes-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.notes-list {
+  padding-left: 20px;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+}
+
+.notes-list li {
+  margin-bottom: 4px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.back-button {
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  border: 2px solid #cbd5e1;
+  color: #475569;
+  padding: 16px 24px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.check-button {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  color: white;
+  padding: 16px 24px;
+  border-radius: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.check-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.check-button::before,
+.back-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.check-button:active::before,
+.back-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Footer */
+.va-footer {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.footer-text {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.footer-text strong {
+  color: #1e293b;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .va-container {
+    padding: 24px;
+    margin: 0 10px;
+  }
+
+  .va-title {
+    font-size: 24px;
+  }
+
+  .summary-header {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+  }
+
+  .summary-row {
+    flex-direction: column;
+    gap: 4px;
+    text-align: center;
+  }
+
+  .va-number-container {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .va-number {
+    font-size: 18px;
+    padding: 10px 16px;
+  }
+
+  .instructions-tabs {
+    grid-template-columns: 1fr;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .virtual-account-page {
+    padding: 10px;
+  }
+
+  .va-container {
+    padding: 20px;
+  }
+
+  .bank-logo {
+    width: 60px;
+    height: 60px;
+    font-size: 30px;
+  }
+
+  .va-title {
+    font-size: 20px;
+  }
+
+  .summary-card {
+    padding: 20px;
+  }
+
+  .va-card {
+    padding: 20px;
+  }
+
+  .va-number {
+    font-size: 16px;
+    padding: 8px 12px;
+    letter-spacing: 1px;
+  }
+
+  .instructions-card {
+    padding: 20px;
+  }
+
+  .tab-content {
+    padding: 16px;
+  }
+
+  .instruction-item {
+    font-size: 13px;
+  }
+}
+
+/* Animation for successful copy */
+.copy-success {
+  animation: copySuccess 0.3s ease;
+}
+
+@keyframes copySuccess {
+  0% { transform: scale(1); background: #059669; }
+  50% { transform: scale(1.1); background: #10b981; }
+  100% { transform: scale(1); background: #059669; }
+}
+
+/* Expired timer styling */
+.timer.expired {
+  background: rgba(239, 68, 68, 0.2);
+  color: #dc2626;
+}
+
+.timer.expired .timer-text {
+  animation: none;
+  font-weight: 700;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #e2e8f0;
+  border-top: 2px solid #3b82f6;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Custom scrollbar for instruction lists */
+.instructions-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.instructions-list::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.instructions-list::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.instructions-list::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Hover effects for interactive elements */
+.va-number:hover {
+  cursor: pointer;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
+}
+
+.instructions-card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Focus states for accessibility */
+.copy-button:focus,
+.back-button:focus,
+.check-button:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .virtual-account-page {
+    background: white;
+  }
+  
+  .va-container {
+    box-shadow: none;
+    border: 1px solid #000;
+  }
+  
+  .action-buttons,
+  .timer {
+    display: none;
+  }
+  
+  .summary-card {
+    background: white;
+    border: 1px solid #000;
+    color: black;
+  }
+  
+  .va-card {
+    border: 2px solid #000;
+  }
+}

@@ -32,11 +32,64 @@ const Invoice = () => {
     {
       category: "E-Wallet",
       methods: [
-        { id: "gopay", name: "GoPay", icon: "💚", color: "#00aa13" },
-        { id: "ovo", name: "OVO", icon: "💙", color: "#4c3494" },
-        { id: "dana", name: "DANA", icon: "💛", color: "#118ee9" },
-        { id: "shopeepay", name: "ShopeePay", icon: "🧡", color: "#ee4d2d" },
-        { id: "linkaja", name: "LinkAja", icon: "❤️", color: "#e61e2b" }
+      {
+        id: "gopay",
+        name: "GoPay",
+        icon: (
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="24" height="24" rx="6" fill="#00AA13"/>
+            <path d="M6 12c0-3.313 2.687-6 6-6 1.657 0 3.157.633 4.243 1.757L15.5 9.5C14.8 8.8 13.47 8 12 8c-2.761 0-5 2.239-5 5 0 1.47.8 2.8 1.5 3.5L7.757 17.757A5.962 5.962 0 016 12z" fill="white"/>
+          </svg>
+        ),
+        color: "#00aa13"
+      },
+       {
+        id: "ovo",
+        name: "OVO",
+        icon: (
+          <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="24" height="24" rx="6" fill="#4c3494"/>
+            <circle cx="12" cy="9.5" r="2.2" fill="white"/>
+            <path d="M7 16c1.2-1.8 3.3-3 5-3s3.8 1.2 5 3" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" fill="none"/>
+          </svg>
+        ),
+        color: "#4c3494"
+      },
+        {
+        id: "dana",
+        name: "DANA",
+        icon: (
+          <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="24" height="24" rx="6" fill="#118EE9"/>
+            <path d="M4 8h16v8H4z" fill="white" opacity="0.12"/>
+            <path d="M6 10h12v4H6z" fill="white"/>
+          </svg>
+        ),
+        color: "#118ee9"
+      },
+         {
+        id: "shopeepay",
+        name: "ShopeePay",
+        icon: (
+          <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="24" height="24" rx="6" fill="#EE4D2D"/>
+            <path d="M8 8h8v2H8zM8 11h8v2H8zM8 14h5v2H8z" fill="white"/>
+          </svg>
+        ),
+        color: "#ee4d2d"
+      },
+          {
+        id: "linkaja",
+        name: "LinkAja",
+        icon: (
+          <svg width="28" height="28" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <rect width="24" height="24" rx="6" fill="#E61E2B"/>
+            <path d="M7.5 8.5h9v7h-9z" fill="white" />
+            <circle cx="12" cy="12" r="2.2" fill="#E61E2B" />
+          </svg>
+        ),
+        color: "#e61e2b"
+      },
       ]
     },
     {
@@ -69,6 +122,24 @@ const Invoice = () => {
     setSelectedPayment(methodId);
   };
 
+  // Generate Virtual Account Number berdasarkan bank
+  const generateVirtualAccount = (bankId) => {
+    const bankCodes = {
+      'bca': '014',
+      'mandiri': '008',
+      'bri': '002',
+      'bni': '009',
+      'cimb': '022',
+      'va_bca': '014',
+      'va_mandiri': '008',
+      'va_bni': '009'
+    };
+
+    const bankCode = bankCodes[bankId] || '000';
+    const randomNumber = Math.floor(Math.random() * 10000000000).toString().padStart(10, '0');
+    return bankCode + randomNumber;
+  };
+
   const handlePayment = async () => {
     if (!selectedPayment) return;
    
@@ -78,7 +149,36 @@ const Invoice = () => {
     await new Promise(resolve => setTimeout(resolve, 2000));
    
     setIsProcessing(false);
-    alert(`Pembayaran melalui ${paymentMethods.flatMap(cat => cat.methods).find(m => m.id === selectedPayment)?.name} sedang diproses!`);
+    
+    // Get selected payment method details
+    const selectedMethod = paymentMethods
+      .flatMap(cat => cat.methods)
+      .find(m => m.id === selectedPayment);
+
+    // Check if it's a bank transfer or virtual account
+    const isBankPayment = selectedPayment.includes('bca') || 
+                         selectedPayment.includes('mandiri') || 
+                         selectedPayment.includes('bri') || 
+                         selectedPayment.includes('bni') || 
+                         selectedPayment.includes('cimb') ||
+                         selectedPayment.includes('va_');
+
+    if (isBankPayment) {
+      // Generate Virtual Account and redirect to Virtual Account page
+      const virtualAccountNumber = generateVirtualAccount(selectedPayment);
+      
+      navigate('/virtual-account', {
+        state: {
+          ...invoiceData,
+          paymentMethod: selectedMethod,
+          virtualAccountNumber: virtualAccountNumber,
+          expiryTime: new Date(Date.now() + 24 * 60 * 60 * 1000) // 24 hours from now
+        }
+      });
+    } else {
+      // For other payment methods (E-wallet, Credit Card)
+      alert(`Pembayaran melalui ${selectedMethod?.name} sedang diproses!`);
+    }
   };
 
   const handleBackButton = () => {
@@ -239,14 +339,14 @@ const styles = {
     justifyContent: 'center',
     padding: '40px 20px',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+    background: '#FAF9EE',
     fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
  
   invoiceContainer: {
     maxWidth: '900px',
     width: '100%',
-    background: 'rgba(255, 255, 255, 0.95)',
+    background: 'white',
     backdropFilter: 'blur(20px)',
     border: '1px solid rgba(255, 255, 255, 0.2)',
     padding: '40px',

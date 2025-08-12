@@ -53,7 +53,7 @@ const DetailPembayaran = () => {
     }
 
     // Navigasi ke halaman Invoice dengan membawa data
-    navigate("/tiket", {
+    navigate("/Invoice", {
       state: {
         namaPaket,
         harga,
