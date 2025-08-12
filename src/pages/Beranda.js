@@ -81,7 +81,7 @@ const Beranda = () => {
                         <div className="icon-circle">
                             <img src={jeram} alt="Paket Wisata" className="icon-image" />
                         </div>
-                        <h3 className="icon-title">Paket Wisata</h3>
+                        <h3 className="icon-title">Paket Ulin</h3>
                     </a>
                     <a href="" className="tour-icon-item">
                         <div className="icon-circle">
