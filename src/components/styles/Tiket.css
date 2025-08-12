@@ -1,0 +1,100 @@
+/* src/components/Tiket.css */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&display=swap');
+
+.tiket-gelang {
+  /* PERUBAHAN: Menggunakan gradient yang lebih gelap dan sesuai tema */
+  background: linear-gradient(45deg, #0d204a, #1a3a7a);
+  color: white;
+  font-family: 'Roboto Condensed', sans-serif;
+  display: flex;
+  align-items: stretch;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 450px;
+  height: 90px;
+  margin: 15px auto;
+  /* PERUBAHAN: Shadow yang lebih halus */
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.1); /* PERUBAHAN: Menambah border tipis */
+}
+
+.tiket-gelang:hover {
+  transform: translateY(-3px) scale(1.02); /* PERUBAHAN: Efek hover yang lebih menarik */
+}
+
+.tiket-kiri {
+  flex-grow: 1;
+  padding: 10px 18px; /* PERUBAHAN: Sedikit menambah padding */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-atas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.kategori-tiket {
+  background-color: rgba(255, 255, 255, 0.1); /* PERUBAHAN: Kontras yang lebih baik */
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.nama-paket {
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-bawah .nama-peserta {
+  font-size: 1.5rem; /* PERUBAHAN: Nama lebih besar dan jelas */
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.tiket-kanan {
+  background-color: #ffffff;
+  min-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  position: relative;
+  border-left: 2px dashed rgba(0, 0, 0, 0.2);
+}
+
+/* PERUBAHAN: Mengubah warna lubang agar sesuai background gelap */
+.tiket-kanan::before, .tiket-kanan::after {
+  content: '';
+  position: absolute;
+  left: -11px;
+  width: 20px;
+  height: 20px;
+  /* PERUBAHAN: Warna disesuaikan dengan background gelap situs Anda */
+  background-color: #0d1a2f; 
+  border-radius: 50%;
+}
+
+.tiket-kanan::before {
+  top: -10px;
+}
+
+.tiket-kanan::after {
+  bottom: -10px;
+}
+
+.scan-me {
+  font-size: 0.7rem; /* PERUBAHAN: Sedikit lebih besar */
+  font-weight: 700;
+  color: #333;
+  margin-top: 4px;
+  letter-spacing: 0.5px;
+}

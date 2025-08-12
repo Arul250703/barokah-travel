@@ -17,6 +17,7 @@ import Surabaya from "./pages/Surabaya";
 
 import DetailPembayaran from "./pages/DetailPembayaran";
 import Invoice from "./pages/Invoice";
+import Tiket from "./pages/Tiket"
 
 function AppLayout() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function AppLayout() {
 
         <Route path="/pembayaran" element={<DetailPembayaran />} />
         <Route path="/invoice" element={<Invoice />} />
+        <Route path="/tiket" element={<Tiket />} />
       </Routes>
       {!isNoLayout && <Footer />}
     </>
