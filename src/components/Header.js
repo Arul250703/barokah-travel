@@ -8,7 +8,11 @@ const Header = () => {
         <nav className="navbar">
             <div className="container flex-nav">
                 <Link to="/" className="site-brand">
-                    <img src={Logo} alt="Barokah Tour Logo" />
+                    <img src={Logo} alt="Barokah Tour Logo"
+                     style={{ 
+                        width: "100px", 
+                        height: "50px", 
+                        marginRight: "100px" }} />
                 </Link>
                 <ul className="navbar-nav">
                     <li><Link to="/" className="nav-link">Beranda</Link></li>

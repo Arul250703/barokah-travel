@@ -111,14 +111,6 @@ body {
     display: none; 
 }
 
-/* Dropdown Menu (optional) */
-.dropdown-menu {
-    /* Gaya untuk dropdown jika Anda menambahkannya */
-}
-.dropdown-link {
-    /* Gaya untuk link dropdown */
-}
-
 
 /* Hamburger Menu (Responsive) */
 .nav-toggle {
