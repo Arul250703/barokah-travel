@@ -11,6 +11,7 @@ import Travel from "./pages/Travel";
 import Cabang from "./pages/Cabang";
 
 import Sukabumi from "./pages/Sukabumi";
+import Pelabuan from "./pages/Pelabuan";
 import Yogyakarta from "./pages/Yogyakarta";
 import Semarang from "./pages/Semarang";
 import Surabaya from "./pages/Surabaya";
@@ -18,6 +19,7 @@ import Surabaya from "./pages/Surabaya";
 import DetailPembayaran from "./pages/DetailPembayaran";
 import Invoice from "./pages/Invoice";
 import VirtualAccountPage from "./pages/VirtualAccountPage" 
+import PaymentStatus from "./pages/PaymentStatus";
 import Tiket from "./pages/Tiket"
 
 function AppLayout() {
@@ -38,6 +40,7 @@ function AppLayout() {
         <Route path="/cabang" element={<Cabang />} />
 
         <Route path="/sukabumi" element={<Sukabumi />} />
+        <Route path="/Pelabuan" element={<Pelabuan />} />
         <Route path="/yogyakarta" element={<Yogyakarta />} />
         <Route path="/semarang" element={<Semarang />} />
         <Route path="/surabaya" element={<Surabaya />} />
@@ -45,6 +48,7 @@ function AppLayout() {
         <Route path="/pembayaran" element={<DetailPembayaran />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/virtual-account" element={<VirtualAccountPage />} />
+        <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
       </Routes>
       {!isNoLayout && <Footer />}

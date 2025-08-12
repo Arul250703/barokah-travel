@@ -81,7 +81,7 @@ const Beranda = () => {
                         <div className="icon-circle">
                             <img src={jeram} alt="Paket Wisata" className="icon-image" />
                         </div>
-                        <h3 className="icon-title">Paket Ulin</h3>
+                        <h3 className="icon-title">Paket Tour</h3>
                     </a>
                     <a href="" className="tour-icon-item">
                         <div className="icon-circle">
@@ -107,7 +107,7 @@ const Beranda = () => {
             <section className="tour-cards-section">
                 <h3 className="tour-section-title">
                     PAKET WISATA SUKABUMI
-                    <Link to="/sukabumi" className="lihat-semua-link">Lihat Semua</Link>
+                    <Link to="/Yogyakartta" className="lihat-semua-link">Lihat Semua</Link>
                 </h3>
                 <div className="scroll-container">
                     <div className="tour-card">
@@ -129,7 +129,7 @@ const Beranda = () => {
                                 <p className="price-label">Mulai dari</p>
                                 <strong className="price-value">IDR 790.000</strong>
                             </div>
-                            <Link to="/YOGYAKARTA" className="detail-button">Lihat Detail</Link>
+                            <Link to="/Pelabuan" className="detail-button">Lihat Detail</Link>
                         </div>
                     </div>
                     <div className="tour-card">

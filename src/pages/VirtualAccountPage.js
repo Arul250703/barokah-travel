@@ -164,9 +164,11 @@ const VirtualAccount = () => {
     navigate(-1);
   };
 
+  // Updated function - navigate to payment status page
   const handleCheckPaymentStatus = () => {
-    // Simulate payment check
-    alert('Pembayaran belum diterima. Silakan lakukan transfer sesuai instruksi.');
+    navigate('/payment-status', { 
+      state: paymentData 
+    });
   };
 
   return (
