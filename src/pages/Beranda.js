@@ -243,7 +243,7 @@ const Beranda = () => {
                     <div className="tour-card">
                         <img src={rj} alt="Yogyakarta 4H3M" />
                         <div className="card-body">
-                            <h4>WISATA YOGYAKARTA 4H3M</h4>
+                            <h4>WISATA YOGYAKART 4H3M</h4>
                             <div className="card-price">
                                 <p className="price-label">Mulai dari</p>
                                 <strong className="price-value">IDR 1.928.000</strong>
