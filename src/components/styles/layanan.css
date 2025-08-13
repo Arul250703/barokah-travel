@@ -1,35 +1,35 @@
-/* src/components/styles/layanan.css */
-
-/* --- Import Font & Variabel CSS --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --color-primary-500: #3b82f6; /* Biru */
-    --color-primary-600: #2563eb;
-    --color-primary-700: #1d4ed8;
+    --color-primary-500: #2563eb;
+    --color-primary-600: #1d4ed8;
     --color-accent-orange: #f97316;
-    --color-light-gray: #f8fafc;
+    --color-light-gray: #f3f6fa;
     --color-gray-500: #64748b;
     --color-gray-700: #334155;
     --color-white: #ffffff;
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --transition-normal: all 0.25s ease-in-out;
-    --border-radius-lg: 0.75rem;
+    --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+    --transition-normal: all 0.25s cubic-bezier(.4,0,.2,1);
+    --border-radius-lg: 1rem;
+    --border-radius-md: 0.5rem;
 }
 
 .layanan-page {
     font-family: 'Poppins', sans-serif;
     color: var(--color-gray-700);
-    margin-top: 80px; /* Offset for fixed header */
+    margin-top: 80px;
+    background: var(--color-light-gray);
+    min-height: 100vh;
 }
 
-/* --- Hero Section & Slideshow --- */
 .hero-section {
     position: relative;
     width: 100%;
-    height: 40vh; /* Tinggi yang lebih pendek untuk halaman layanan */
+    height: 40vh;
     overflow: hidden;
     color: var(--color-white);
+    background: linear-gradient(120deg, var(--color-primary-500) 60%, var(--color-primary-600) 100%);
+    box-shadow: var(--shadow-md);
 }
 
 .header-slider {
@@ -47,6 +47,7 @@
     left: 0;
     opacity: 0;
     transition: opacity 1s ease-in-out;
+    border-radius: var(--border-radius-lg);
 }
 
 .slider img.active {
@@ -59,83 +60,102 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(30, 41, 59, 0.55);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     z-index: 2;
+    border-radius: var(--border-radius-lg);
 }
 
 .header-overlay h1 {
-    font-size: 3rem;
+    font-size: 2.5rem;
     font-weight: 700;
     text-transform: uppercase;
     text-align: center;
     color: var(--color-white);
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .header-overlay h2 {
-    font-size: 2rem;
-    font-weight: 500;
+    font-size: 1.5rem;
+    font-weight: 400;
     text-align: center;
     color: var(--color-white);
     margin: 0;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.12);
 }
 
 /* --- About Us Content --- */
 .about-us-content {
-    padding: 60px 24px;
+    padding: 60px 24px 30px 24px;
     max-width: 900px;
     margin: 0 auto;
     line-height: 1.8;
+    background: var(--color-white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    margin-top: -60px;
+    position: relative;
+    z-index: 3;
 }
 
 .about-us-content h2 {
-    font-size: 24px;
+    font-size: 2rem;
     font-weight: 700;
-    color: var(--color-gray-700);
-    margin-bottom: 20px;
+    color: var(--color-primary-500);
+    margin-bottom: 24px;
     text-align: center;
+    letter-spacing: 0.5px;
 }
 
 .services-list {
     background-color: var(--color-light-gray);
-    padding: 30px;
+    padding: 32px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
 }
 
 .services-list p {
-    font-size: 16px;
+    font-size: 1rem;
     color: var(--color-gray-700);
     background-color: var(--color-white);
-    padding: 15px;
+    padding: 20px 18px;
     border-radius: var(--border-radius-md);
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     transition: var(--transition-normal);
     font-weight: 500;
+    border-left: 4px solid var(--color-primary-500);
+    margin: 0;
 }
 
 .services-list p:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(59,130,246,0.10);
+    border-left: 4px solid var(--color-accent-orange);
+    background: #fef9f5;
 }
 
-/* --- Custom CTA Section (dari file lain, disesuaikan) --- */
+/* --- Custom CTA Section --- */
 .custom-cta {
     position: relative;
-    height: 400px;
+    height: 380px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: white;
+    margin: 48px 0 0 0;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
 }
 
 .cta-video {
@@ -146,6 +166,7 @@
     height: 100%;
     object-fit: cover;
     z-index: 1;
+    filter: brightness(0.7) blur(1px);
 }
 
 .cta-overlay {
@@ -154,66 +175,98 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    background: rgba(30, 41, 59, 0.55);
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    border-radius: var(--border-radius-lg);
 }
 
 .cta-text {
     z-index: 3;
     max-width: 600px;
-    padding: 20px;
+    padding: 32px 24px;
 }
 
 .cta-text h2 {
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 700;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
+    letter-spacing: 0.5px;
 }
 
 .cta-text p {
-    font-size: 16px;
-    margin-bottom: 25px;
+    font-size: 1.1rem;
+    margin-bottom: 28px;
+    font-weight: 400;
 }
 
 .cta-button {
     background-color: var(--color-accent-orange);
     color: white;
     text-decoration: none;
-    padding: 12px 25px;
+    padding: 14px 32px;
     border-radius: var(--border-radius-md);
     font-weight: 600;
     text-transform: uppercase;
     transition: var(--transition-normal);
     display: inline-block;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba(249,115,22,0.10);
+    border: none;
+    cursor: pointer;
 }
 
 .cta-button:hover {
     background-color: #e76f00;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(249,115,22,0.18);
 }
 
 /* --- Responsive Design --- */
+@media (max-width: 900px) {
+    .about-us-content {
+        padding: 40px 12px 24px 12px;
+    }
+    .services-list {
+        padding: 20px;
+        gap: 16px;
+    }
+    .custom-cta {
+        height: 260px;
+    }
+}
+
 @media (max-width: 768px) {
     .layanan-page {
         margin-top: 60px;
     }
     .hero-section {
-        height: 30vh;
+        height: 28vh;
     }
     .header-overlay h1 {
-        font-size: 2rem;
-    }
-    .header-overlay h2 {
         font-size: 1.5rem;
     }
-    .about-us-content, .offices-section {
-        padding: 40px 16px;
+    .header-overlay h2 {
+        font-size: 1.1rem;
+    }
+    .about-us-content {
+        padding: 24px 6px 16px 6px;
+        margin-top: -30px;
     }
     .services-list {
         grid-template-columns: 1fr;
+        padding: 12px;
+    }
+    .custom-cta {
+        height: 180px;
+    }
+    .cta-text h2 {
+        font-size: 1.2rem;
+    }
+    .cta-text p {
+        font-size: 0.95rem;
     }
 }

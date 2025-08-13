@@ -19,6 +19,7 @@ import DetailPembayaran from "./pages/DetailPembayaran";
 import Invoice from "./pages/Invoice";
 import VirtualAccountPage from "./pages/VirtualAccountPage" 
 import Tiket from "./pages/Tiket"
+import DetailNews from './pages/DetailNews';
 
 function AppLayout() {
   const location = useLocation();
@@ -46,6 +47,7 @@ function AppLayout() {
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/virtual-account" element={<VirtualAccountPage />} />
         <Route path="/tiket" element={<Tiket />} />
+        <Route path="/travel/:id" element={<DetailNews />} />
       </Routes>
       {!isNoLayout && <Footer />}
     </>

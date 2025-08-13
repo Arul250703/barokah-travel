@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --color-primary-500: #3b82f6; /* Biru */
+    --color-primary-500: #3b82f6;
     --color-primary-600: #2563eb;
     --color-primary-700: #1d4ed8;
     --color-accent-orange: #f97316;
@@ -16,17 +16,17 @@
     --border-radius-md: 0.5rem;
 }
 
-/* --- Main Content Styling --- */
+/* ===== Main Content ===== */
 .beranda-content {
-    margin-top: 80px; 
+    margin-top: 80px;
     overflow-x: hidden;
 }
 
-/* --- Hero Section & Slideshow --- */
+/* ===== Hero Section & Slideshow ===== */
 .hero-section {
     position: relative;
     width: 100%;
-    height: 85vh; /* Atur tinggi hero section */
+    height: 85vh;
     overflow: hidden;
     color: var(--color-white);
 }
@@ -39,22 +39,18 @@
 
 .bg-slide {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     opacity: 0;
     visibility: hidden;
     transition: opacity 1s ease-in-out;
     z-index: 1;
     text-decoration: none;
 }
-
 .bg-slide.active {
     opacity: 1;
     visibility: visible;
 }
-
 .bg-slide video,
 .bg-slide img {
     width: 100%;
@@ -71,34 +67,30 @@
     gap: 10px;
     z-index: 2;
 }
-
 .dot {
-    width: 12px;
-    height: 12px;
-    background-color: rgba(255, 255, 255, 0.5);
+    width: 12px; height: 12px;
+    background: rgba(255,255,255,0.5);
     border-radius: 50%;
     cursor: pointer;
     transition: all 0.3s ease;
 }
-
 .dot.active,
 .dot:hover {
-    background-color: var(--color-white);
+    background: var(--color-white);
 }
 
-/* --- Tour Services Section --- */
+/* ===== Tour Services Section ===== */
 .tour-services-wrapper {
-    margin-top: -60px; /* Geser ke atas agar menumpuk dengan hero section */
+    margin-top: -60px;
     position: relative;
     z-index: 10;
     padding: 0 24px;
 }
-
 .tour-icons-container {
     display: flex;
     justify-content: center;
     gap: 30px;
-    background-color: var(--color-white);
+    background: var(--color-white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     padding: 30px 20px;
@@ -106,7 +98,6 @@
     max-width: 1000px;
     flex-wrap: wrap;
 }
-
 .tour-icon-item {
     display: flex;
     flex-direction: column;
@@ -116,17 +107,14 @@
     color: var(--color-gray-700);
     transition: var(--transition-normal);
 }
-
 .tour-icon-item:hover {
     transform: translateY(-5px);
     color: var(--color-primary-500);
 }
-
 .icon-circle {
-    width: 80px;
-    height: 80px;
+    width: 80px; height: 80px;
     border-radius: 50%;
-    background-color: var(--color-light-gray);
+    background: var(--color-light-gray);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -134,25 +122,21 @@
     overflow: hidden;
     border: 3px solid var(--color-gray-200);
 }
-
 .icon-image {
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
 }
-
 .icon-title {
     font-size: 14px;
     font-weight: 600;
 }
 
-/* --- Tour Cards Section --- */
+/* ===== Tour Cards Section ===== */
 .tour-cards-section {
     padding: 60px 24px;
     max-width: 1200px;
     margin: 0 auto;
 }
-
 .tour-section-title {
     font-size: 24px;
     font-weight: 700;
@@ -162,7 +146,6 @@
     justify-content: space-between;
     align-items: center;
 }
-
 .lihat-semua-link {
     font-size: 14px;
     color: var(--color-primary-500);
@@ -170,23 +153,19 @@
     font-weight: 500;
     transition: var(--transition-normal);
 }
-
 .lihat-semua-link:hover {
     text-decoration: underline;
 }
-
 .scroll-container {
     display: flex;
     overflow-x: auto;
     gap: 20px;
     padding-bottom: 20px;
 }
-
-/* Styling untuk Card */
 .tour-card {
     min-width: 280px;
     flex-shrink: 0;
-    background-color: var(--color-white);
+    background: var(--color-white);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
@@ -195,42 +174,35 @@
     display: flex;
     flex-direction: column;
 }
-
 .tour-card:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
 }
-
 .tour-card img {
     width: 100%;
     height: 180px;
     object-fit: cover;
 }
-
 .tour-card .card-body {
     padding: 15px;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Penting untuk menjaga tinggi card seragam */
+    flex-grow: 1;
 }
-
 .tour-card h4 {
     font-size: 16px;
     font-weight: 600;
     color: var(--color-gray-700);
     margin-bottom: 10px;
-    flex-grow: 1; /* Agar judul bisa mengambil ruang sisa */
+    flex-grow: 1;
 }
-
 .tour-card .card-price {
-    margin-top: auto; /* Memastikan harga berada di bawah */
+    margin-top: auto;
 }
-
 .price-label {
     font-size: 12px;
     color: var(--color-gray-500);
 }
-
 .price-value {
     font-size: 18px;
     font-weight: 700;
@@ -238,55 +210,49 @@
     padding-top: 5px;
     display: block;
 }
-
 .detail-button {
     display: block;
     width: 100%;
     margin-top: 15px;
     padding: 10px;
     text-align: center;
-    background-color: var(--color-primary-500);
+    background: var(--color-primary-500);
     color: white;
     text-decoration: none;
     border-radius: var(--border-radius-md);
     font-weight: 600;
     transition: var(--transition-normal);
 }
-
 .detail-button:hover {
-    background-color: var(--color-primary-600);
+    background: var(--color-primary-600);
     transform: translateY(-2px);
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
-/* --- Other Sections --- */
+/* ===== Other Sections ===== */
 .include-bar {
-    background-color: var(--color-primary-700);
+    background: var(--color-primary-700);
     color: white;
     padding: 20px 24px;
     text-align: center;
     font-size: 14px;
     line-height: 1.8;
 }
-
 .include-bar span {
     font-weight: 700;
     margin-right: 10px;
     color: var(--color-accent-yellow);
 }
-
 .event-organizer-section {
     padding: 60px 24px;
     text-align: center;
 }
-
 .section-title {
     font-size: 24px;
     font-weight: 700;
     color: var(--color-gray-700);
     margin-bottom: 25px;
 }
-
 .package-buttons {
     display: flex;
     justify-content: center;
@@ -294,10 +260,9 @@
     margin-top: 25px;
     flex-wrap: wrap;
 }
-
 .package-buttons .btn {
     padding: 12px 25px;
-    background-color: var(--color-primary-500);
+    background: var(--color-primary-500);
     color: white;
     border: none;
     border-radius: var(--border-radius-md);
@@ -306,69 +271,59 @@
     transition: var(--transition-normal);
     text-decoration: none;
 }
-
 .package-buttons .btn:hover {
-    background-color: var(--color-primary-600);
+    background: var(--color-primary-600);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
-
 .why-us-section-event {
-    background-color: var(--color-light-gray);
+    background: var(--color-light-gray);
     padding: 60px 24px;
     text-align: center;
 }
-
 .why-us-section-event h2 {
     font-size: 24px;
     font-weight: 700;
     color: var(--color-gray-700);
     margin-bottom: 30px;
 }
-
 .why-us-cards-event {
     display: flex;
     justify-content: center;
     gap: 30px;
     flex-wrap: wrap;
 }
-
 .why-us-card-event {
     max-width: 300px;
-    background-color: var(--color-white);
+    background: var(--color-white);
     padding: 30px 20px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
     text-align: center;
     transition: var(--transition-normal);
 }
-
 .why-us-card-event:hover {
     transform: translateY(-5px);
     box-shadow: var(--shadow-md);
 }
-
 .why-us-card-event img {
     height: 60px;
     margin-bottom: 15px;
 }
-
 .why-us-card-event h3 {
     font-size: 18px;
     font-weight: 600;
     color: var(--color-primary-500);
     margin-bottom: 10px;
 }
-
 .why-us-card-event p {
     font-size: 14px;
     color: var(--color-gray-500);
 }
 
-/* --- Custom CTA Section --- */
+/* ===== Custom CTA Section ===== */
 .custom-cta {
     position: relative;
-    height: auto; 
     min-height: 400px;
     overflow: hidden;
     display: flex;
@@ -378,54 +333,43 @@
     color: white;
     padding: 80px 24px;
 }
-
 .cta-video {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(0%, 0%); /* <-- Kunci untuk memusatkan video */
-    min-width: 100%;
-    min-height: 100%;
-    width: auto;
-    height: auto;
-    object-fit: cover; /* <-- Kunci untuk menutupi area & menjaga rasio */
+    top: 50%; left: 50%;
+    transform: translate(0%, 0%);
+    min-width: 100%; min-height: 100%;
+    width: auto; height: auto;
+    object-fit: cover;
     z-index: 1;
 }
-
 .cta-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6);
     z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
 }
-
 .cta-text {
     z-index: 3;
     max-width: 600px;
     padding: 20px;
 }
-
 .cta-text h2 {
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
 }
-
 .cta-text p {
     font-size: 16px;
     margin-bottom: 25px;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }
-
 .cta-button {
-    background-color: var(--color-accent-orange);
+    background: var(--color-accent-orange);
     color: white;
     text-decoration: none;
     padding: 12px 25px;
@@ -435,83 +379,37 @@
     transition: var(--transition-normal);
     display: inline-block;
 }
-
 .cta-button:hover {
-    background-color: #e76f00;
+    background: #e76f00;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
-/* --- Responsive Design --- */
+/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
-    .beranda-content {
-        margin-top: 60px;
-    }
-    .hero-section {
-        height: 40vh; /* Sesuaikan tinggi agar tidak terlalu besar */
-    }
-    .slideshow-dots {
-        bottom: 10px;
-    }
-    .tour-services-wrapper {
-        margin-top: -30px;
-        padding: 0 16px;
-    }
-    .tour-icons-container {
-        gap: 15px;
-        padding: 20px 15px;
-    }
-    .tour-icon-item {
-        width: 45%;
-    }
-    .icon-circle {
-        width: 60px;
-        height: 60px;
-    }
-    .tour-cards-section {
-        padding: 40px 16px;
-    }
+    .beranda-content { margin-top: 60px; }
+    .hero-section { height: 40vh; }
+    .slideshow-dots { bottom: 10px; }
+    .tour-services-wrapper { margin-top: -30px; padding: 0 16px; }
+    .tour-icons-container { gap: 15px; padding: 20px 15px; }
+    .tour-icon-item { width: 45%; }
+    .icon-circle { width: 60px; height: 60px; }
+    .tour-cards-section { padding: 40px 16px; }
     .tour-section-title {
         font-size: 20px;
         margin-bottom: 20px;
         flex-direction: column;
         align-items: flex-start;
     }
-    .lihat-semua-link {
-        margin-top: 5px;
-    }
-    .scroll-container {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-    }
-    .tour-card {
-        min-width: 250px;
-    }
-    .include-bar {
-        font-size: 12px;
-        padding: 15px 10px;
-    }
-    .event-organizer-section {
-        padding: 40px 16px;
-    }
-    .why-us-section-event {
-        padding: 40px 16px;
-    }
-    .why-us-cards-event {
-        flex-direction: column;
-        gap: 20px;
-    }
-    .why-us-card-event {
-        max-width: 100%;
-    }
-    .custom-cta {
-        min-height: 300px; /* Menyesuaikan tinggi minimal untuk mobile */
-        padding: 40px 16px;
-    }
-    .cta-text h2 {
-        font-size: 24px;
-    }
-    .cta-text p {
-        font-size: 14px;
-    }
+    .lihat-semua-link { margin-top: 5px; }
+    .scroll-container { flex-wrap: nowrap; overflow-x: auto; }
+    .tour-card { min-width: 250px; }
+    .include-bar { font-size: 12px; padding: 15px 10px; }
+    .event-organizer-section { padding: 40px 16px; }
+    .why-us-section-event { padding: 40px 16px; }
+    .why-us-cards-event { flex-direction: column; gap: 20px; }
+    .why-us-card-event { max-width: 100%; }
+    .custom-cta { min-height: 300px; padding: 40px 16px; }
+    .cta-text h2 { font-size: 24px; }
+    .cta-text p { font-size: 14px; }
 }

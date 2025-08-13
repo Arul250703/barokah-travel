@@ -65,11 +65,6 @@ const Footer = () => {
                     </div>
                     <div className="footer-text">
                         <p>Copyright © 2025 PT. Bina Barokah Sejahtera</p>
-                        <div className="social-icons">
-                            <a href="https://www.instagram.com/barokahtourindonesia_/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer"><i className="fab fa-instagram"></i></a>
-                            <a href="https://www.tiktok.com/@barokahtour_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer"><i className="fab fa-tiktok"></i></a>
-                            <a href="https://youtube.com/@barokahtoursmi?si=-yRfaFEfKaC-lelk" target="_blank" rel="noopener noreferrer"><i className="fab fa-youtube"></i></a>
-                        </div>
                     </div>
                 </div>
             </div>
