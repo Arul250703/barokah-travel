@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Link } from "react-router-dom"; // Pastikan Link di-import
-import "../components/styles/halaman-detail.css";
+import "../components/styles/Sukabumi.css";
 
 // Import aset gambar
 import situ from "../assets/images/situ.jpeg";

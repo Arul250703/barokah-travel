@@ -21,6 +21,7 @@ import Invoice from "./pages/Invoice";
 import VirtualAccountPage from "./pages/VirtualAccountPage" 
 import PaymentStatus from "./pages/PaymentStatus";
 import Tiket from "./pages/Tiket"
+import DetailNews from './pages/DetailNews';
 
 function AppLayout() {
   const location = useLocation();
@@ -50,6 +51,7 @@ function AppLayout() {
         <Route path="/virtual-account" element={<VirtualAccountPage />} />
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
+        <Route path="/travel/:id" element={<DetailNews />} />
       </Routes>
       {!isNoLayout && <Footer />}
     </>
