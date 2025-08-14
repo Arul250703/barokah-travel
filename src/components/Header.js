@@ -6,7 +6,7 @@ import '../components/styles/Header.css';
 // Import Font Awesome Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWhatsapp, faInstagram, faTiktok, faYoutube } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faPhoneVolume } from '@fortawesome/free-solid-svg-icons';
+import { faEnvelope, faPhoneVolume, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const Header = () => {
     const location = useLocation();
@@ -65,11 +65,10 @@ const Header = () => {
                         <li><Link to="/layanan" className={`nav-link ${isActive('/layanan') ? 'active' : ''}`}>Layanan</Link></li>
                         <li><Link to="/travel" className={`nav-link ${isActive('/travel') ? 'active' : ''}`}>Travel News</Link></li>
                         <li>
-                            {/* PERBAIKAN: Menambahkan ikon Font Awesome */}
-                            <a href="https://wa.me/6285930005544" className="btn btn-primary" target="_blank" rel="noopener noreferrer">
-                                <FontAwesomeIcon icon={faPhoneVolume} style={{ marginRight: '8px' }} />
-                                Pesan Sekarang
-                            </a>
+                            <Link to="/admin" className="btn btn-primary">
+                                <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px' }} />
+                                Login Admin
+                            </Link>
                         </li>
                     </ul>
                 </div>
