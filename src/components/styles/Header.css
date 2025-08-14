@@ -391,6 +391,11 @@ body {
     transform: translateY(-1px);
 }
 
+<<<<<<< HEAD
+=======
+/* <<<<<<< HEAD */
+/* ======= */
+>>>>>>> 4cd9a85
 .btn-pesan-sekarang i {
     font-size: 0.6875rem;
     transition: var(--transition-fast);
@@ -399,6 +404,10 @@ body {
 .btn-pesan-sekarang:hover i {
     transform: translateX(2px);
 }
+<<<<<<< HEAD
+=======
+/* >>>>>>> 579de74 (perubahan 16) */
+>>>>>>> 4cd9a85
 
 /* === MOBILE MENU TOGGLE === */
 .nav-toggle {

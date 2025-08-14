@@ -8,10 +8,10 @@
 }
 
 .va-container {
-  max-width: 800px;
+  max-width: 850px;
   margin: 0 auto;
   background: white;
-  border-radius: 24px;
+  border-radius: 45px;
   padding: 40px;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   position: relative;
@@ -23,7 +23,7 @@
   text-align: center;
   margin-bottom: 40px;
   padding-bottom: 30px;
-  border-bottom: 2px solid #f1f5f9;
+  border-bottom: 2px solid blue;
   position: relative;
 }
 

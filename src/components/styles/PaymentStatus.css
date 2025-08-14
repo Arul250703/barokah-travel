@@ -1,0 +1,423 @@
+/* PaymentStatus.css */
+.payment-status-page {
+  min-height: 100vh;
+  background: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.status-container {
+  max-width: 600px;
+  width: 100%;
+}
+
+/* Loading/Checking State */
+.checking-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  text-align: center;
+  animation: slideUp 0.5s ease-out;
+}
+
+.loading-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #667eea;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 30px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.checking-title {
+  color: #333;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+
+.checking-text {
+  color: #666;
+  font-size: 16px;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+.checking-details {
+  background: #f8f9ff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+/* Status Cards */
+.status-card {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  text-align: center;
+  animation: slideUp 0.5s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.status-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.status-card.success::before {
+  background: linear-gradient(90deg, #4caf50, #8bc34a);
+}
+
+.status-card.pending::before {
+  background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.status-card.expired::before {
+  background: linear-gradient(90deg, #f44336, #e91e63);
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Status Icons */
+.status-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+  display: inline-block;
+  animation: bounceIn 0.6s ease-out 0.3s both;
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.success-icon {
+  filter: drop-shadow(0 4px 8px rgba(76, 175, 80, 0.3));
+}
+
+.pending-icon {
+  filter: drop-shadow(0 4px 8px rgba(255, 152, 0, 0.3));
+}
+
+.expired-icon {
+  filter: drop-shadow(0 4px 8px rgba(244, 67, 54, 0.3));
+}
+
+/* Status Titles */
+.status-title {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.status-card.success .status-title {
+  color: #4caf50;
+}
+
+.status-card.pending .status-title {
+  color: #ff9800;
+}
+
+.status-card.expired .status-title {
+  color: #f44336;
+}
+
+/* Status Messages */
+.status-message {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Detail Sections */
+.transaction-details,
+.pending-details,
+.expired-details {
+  background: #f8f9ff;
+  border-radius: 15px;
+  padding: 25px;
+  margin: 30px 0;
+  text-align: left;
+}
+
+.details-title {
+  color: #333;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.details-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.detail-row:last-child {
+  border-bottom: none;
+}
+
+.detail-row span {
+  color: #666;
+  font-size: 14px;
+}
+
+.detail-row strong {
+  color: #333;
+  font-weight: 600;
+  text-align: right;
+}
+
+.amount-paid {
+  color: #4caf50 !important;
+  font-size: 18px !important;
+}
+
+.amount-due {
+  color: #ff9800 !important;
+  font-size: 18px !important;
+}
+
+.expired-va {
+  color: #f44336 !important;
+  text-decoration: line-through;
+}
+
+/* Info Sections */
+.pending-info,
+.expired-info {
+  background: #fff3cd;
+  border: 1px solid #ffeaa7;
+  border-radius: 12px;
+  padding: 20px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.pending-info h4 {
+  color: #856404;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.pending-info ul {
+  color: #856404;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.pending-info li {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.expired-info p {
+  color: #721c24;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Action Buttons */
+.success-actions,
+.pending-actions,
+.expired-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.success-actions button,
+.pending-actions button,
+.expired-actions button {
+  flex: 1;
+  min-width: 200px;
+  padding: 15px 25px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Success Buttons */
+.continue-btn {
+  background: linear-gradient(135deg, #4caf50, #8bc34a);
+  color: white;
+}
+
+.continue-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.download-btn {
+  background: linear-gradient(135deg, #2196f3, #21cbf3);
+  color: white;
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+}
+
+/* Pending Buttons */
+.retry-btn {
+  background: linear-gradient(135deg, #ff9800, #ffc107);
+  color: white;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 152, 0, 0.3);
+}
+
+.back-btn {
+  background: linear-gradient(135deg, #9e9e9e, #bdbdbd);
+  color: white;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(158, 158, 158, 0.3);
+}
+
+/* Expired Buttons */
+.new-payment-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+}
+
+.new-payment-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+/* Footer */
+.status-footer {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.status-footer p {
+  color: white;
+  margin: 0;
+  font-size: 14px;
+}
+
+.status-footer strong {
+  color: #ffd700;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .payment-status-page {
+    padding: 15px;
+  }
+  
+  .status-card {
+    padding: 30px 20px;
+  }
+  
+  .status-icon {
+    font-size: 60px;
+  }
+  
+  .status-title {
+    font-size: 24px;
+  }
+  
+  .success-actions,
+  .pending-actions,
+  .expired-actions {
+    flex-direction: column;
+  }
+  
+  .success-actions button,
+  .pending-actions button,
+  .expired-actions button {
+    min-width: auto;
+  }
+  
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+  
+  .detail-row strong {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-card {
+    padding: 25px 15px;
+  }
+  
+  .transaction-details,
+  .pending-details,
+  .expired-details {
+    padding: 20px 15px;
+  }
+}

@@ -164,9 +164,11 @@ const VirtualAccount = () => {
     navigate(-1);
   };
 
+  // Updated function - navigate to payment status page
   const handleCheckPaymentStatus = () => {
-    // Simulate payment check
-    alert('Pembayaran belum diterima. Silakan lakukan transfer sesuai instruksi.');
+    navigate('/payment-status', { 
+      state: paymentData 
+    });
   };
 
   return (
@@ -289,7 +291,7 @@ const VirtualAccount = () => {
           <p className="footer-text">
             Ada pertanyaan? Hubungi Customer Service kami di 
             <strong> 0804-1-500-000</strong> atau 
-            <strong> cs@wisatatravel.com</strong>
+            <strong> cs@barokahtour.com</strong>
           </p>
           <p className="footer-text" style={{marginTop: '10px', fontSize: '12px'}}>
             Pastikan Anda melakukan pembayaran sebelum batas waktu yang ditentukan
