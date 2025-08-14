@@ -1,6 +1,11 @@
 // src/App.js
 import React from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 
@@ -18,20 +23,26 @@ import Surabaya from "./pages/Surabaya";
 
 import DetailPembayaran from "./pages/DetailPembayaran";
 import Invoice from "./pages/Invoice";
-import VirtualAccountPage from "./pages/VirtualAccountPage" 
+import VirtualAccountPage from "./pages/VirtualAccountPage";
 import PaymentStatus from "./pages/PaymentStatus";
-import Tiket from "./pages/Tiket"
-import DetailNews from './pages/DetailNews';
+import Tiket from "./pages/Tiket";
+import DetailNews from "./pages/DetailNews";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
-
 
 function AppLayout() {
   const location = useLocation();
 
   // daftar path yang tidak mau pakai header & footer
-  const noLayoutPaths = ["/Invoice", "/virtual-account", "/payment-status", "/tiket", "/pembayaran"];
+  const noLayoutPaths = [
+    "/Invoice",
+    "/virtual-account",
+    "/payment-status",
+    "/tiket",
+    "/pembayaran",
+    "/dashboard",
+  ];
   const isNoLayout = noLayoutPaths.includes(location.pathname);
 
   return (
@@ -60,7 +71,6 @@ function AppLayout() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Register />} />
-
       </Routes>
       {!isNoLayout && <Footer />}
     </>
