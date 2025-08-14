@@ -24,6 +24,7 @@ import Tiket from "./pages/Tiket"
 import DetailNews from './pages/DetailNews';
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
+import Register from "./pages/Register";
 
 function AppLayout() {
   const location = useLocation();
@@ -56,6 +57,7 @@ function AppLayout() {
         <Route path="/travel/:id" element={<DetailNews />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
       {!isNoLayout && <Footer />}
     </>
