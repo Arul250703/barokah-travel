@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
-  FaCalendarAlt,
   FaClipboardList,
   FaFileInvoiceDollar,
   FaBook,
@@ -12,6 +11,7 @@ import {
   FaCog,
 } from "react-icons/fa";
 import "./styles/Sidebar.css";
+import { FaQrcode } from "react-icons/fa";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -29,8 +29,8 @@ const Sidebar = () => {
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const toggleSidebar = () => {
@@ -48,7 +48,9 @@ const Sidebar = () => {
   };
 
   const isActiveLink = (path) => {
-    return location.pathname === path;
+    // Perbaikan untuk matching path yang lebih fleksibel
+    return location.pathname === path || 
+           (path === "/keuangan" && location.pathname.toLowerCase().includes("keuangan"));
   };
 
   const menuItems = [
@@ -56,79 +58,86 @@ const Sidebar = () => {
       path: "/dashboard",
       icon: FaTachometerAlt,
       text: "Dashboard",
-      tooltip: "Dashboard"
+      tooltip: "Dashboard",
     },
     {
-      path: "/event",
-      icon: FaCalendarAlt,
-      text: "Event",
-      tooltip: "Event"
+      path: "/qr-page",
+      icon: FaQrcode,
+      text: "QR Page",
+      tooltip: "QR Page",
     },
     {
       path: "/bookings",
       icon: FaClipboardList,
       text: "Pemesanan",
-      tooltip: "Pemesanan"
+      tooltip: "Pemesanan",
     },
     {
-      path: "/invoice",
+      // Perbaikan: gunakan lowercase untuk konsistensi
+      path: "/keuangan",
       icon: FaFileInvoiceDollar,
       text: "Keuangan / Invoice",
-      tooltip: "Keuangan"
+      tooltip: "Keuangan",
     },
     {
       path: "/buku-tamu",
       icon: FaBook,
       text: "Buku Tamu",
-      tooltip: "Buku Tamu"
+      tooltip: "Buku Tamu",
     },
     {
       path: "/reports",
       icon: FaChartBar,
       text: "Laporan",
-      tooltip: "Laporan"
+      tooltip: "Laporan",
     },
     {
       path: "/users",
       icon: FaUsers,
       text: "Pengguna",
-      tooltip: "Pengguna"
+      tooltip: "Pengguna",
     },
     {
       path: "/settings",
       icon: FaCog,
       text: "Pengaturan",
-      tooltip: "Pengaturan"
-    }
+      tooltip: "Pengaturan",
+    },
   ];
 
   return (
     <>
       {/* Mobile Overlay */}
       {isMobile && (
-        <div 
-          className={`sidebar-overlay${isMobileOpen ? ' active' : ''}`}
+        <div
+          className={sidebar-overlay ${isMobileOpen ? "active" : ""}}
           onClick={closeMobileSidebar}
         />
       )}
 
       {/* Sidebar Toggle Button */}
-      <button className="sidebar-toggle" onClick={toggleSidebar} aria-label="Toggle sidebar">
+      {/* <button
+        className="sidebar-toggle"
+        onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
+      >
         <div className="hamburger">
           <span></span>
           <span></span>
           <span></span>
         </div>
-      </button>
+      </button> */}
 
       {/* Sidebar */}
-      <div className={`sidebar${isCollapsed ? ' collapsed' : ''}${isMobile && isMobileOpen ? ' mobile-open' : ''}`}>
+      <div
+        className={`sidebar ${isCollapsed ? "collapsed" : ""} ${
+          isMobile && isMobileOpen ? "mobile-open" : ""
+        }`}
+      >
         {/* Sidebar Header */}
         <div className="sidebar-header">
           <div className="sidebar-brand">
-            <div className="sidebar-logo">
-              BT
-            </div>
+            <div className="sidebar-logo">BT</div>
             <h2>Admin Panel</h2>
           </div>
         </div>
@@ -142,7 +151,7 @@ const Sidebar = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={isActiveLink(item.path) ? 'active' : ''}
+                  className={isActiveLink(item.path) ? "active" : ""}
                   data-tooltip={item.tooltip}
                   onClick={closeMobileSidebar}
                 >
@@ -160,7 +169,7 @@ const Sidebar = () => {
               <li key={item.path}>
                 <Link
                   to={item.path}
-                  className={isActiveLink(item.path) ? 'active' : ''}
+                  className={isActiveLink(item.path) ? "active" : ""}
                   data-tooltip={item.tooltip}
                   onClick={closeMobileSidebar}
                 >

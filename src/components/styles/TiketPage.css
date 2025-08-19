@@ -1,0 +1,446 @@
+/* TiketPage.css - Clean White Professional Theme */
+
+.tiket-page-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Subtle background elements */
+.tiket-page-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(148, 163, 184, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(203, 213, 225, 0.03) 0%, transparent 50%);
+  animation: float 25s ease-in-out infinite;
+  z-index: 0;
+}
+
+.tiket-page-content {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 48px 40px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.04),
+    0 10px 25px rgba(0, 0, 0, 0.02),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  animation: slideUp 0.8s ease-out;
+}
+
+/* Success state styles */
+.tiket-page-content::before {
+  content: '✓';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 8px 25px rgba(34, 197, 94, 0.15),
+    0 0 0 4px #ffffff,
+    0 0 0 6px rgba(34, 197, 94, 0.1);
+  animation: bounce 1s ease-out 0.5s;
+}
+
+.tiket-page-title {
+  color: #0f172a;
+  font-size: 2.25rem;
+  font-weight: 700;
+  margin: 24px 0 16px 0;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  animation: titleFadeIn 1s ease-out 0.3s both;
+}
+
+.tiket-page-subtitle {
+  color: #64748b;
+  font-size: 1.125rem;
+  margin-bottom: 32px;
+  line-height: 1.6;
+  font-weight: 400;
+  animation: subtitleFadeIn 1s ease-out 0.5s both;
+}
+
+.tiket-page-subtitle strong {
+  color: #1e293b;
+  font-weight: 600;
+}
+
+/* Tiket List Styles */
+.tiket-list {
+  margin: 48px 0;
+  display: grid;
+  gap: 24px;
+  animation: listFadeIn 1s ease-out 0.7s both;
+}
+
+/* Single ticket in list */
+.tiket-list > * {
+  animation: ticketSlideIn 0.6s ease-out both;
+  animation-delay: calc(0.1s * var(--ticket-index, 0));
+}
+
+/* Back to Home Link */
+.back-to-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: #0f172a;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.025em;
+  box-shadow: 
+    0 4px 14px rgba(15, 23, 42, 0.15),
+    0 2px 6px rgba(15, 23, 42, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  animation: buttonFadeIn 1s ease-out 0.9s both;
+}
+
+.back-to-home-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  transition: left 0.6s;
+}
+
+.back-to-home-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 8px 25px rgba(15, 23, 42, 0.25),
+    0 4px 12px rgba(15, 23, 42, 0.15);
+  background: #1e293b;
+}
+
+.back-to-home-link:hover::before {
+  left: 100%;
+}
+
+.back-to-home-link:active {
+  transform: translateY(-1px);
+}
+
+/* Add professional icon */
+.back-to-home-link::after {
+  content: '←';
+  font-size: 1rem;
+  font-weight: bold;
+  order: -1;
+}
+
+/* Error/Not Found State */
+.tiket-page-content:has(.back-to-home-link:only-child) {
+  background: #fefefe;
+  box-shadow: 
+    0 25px 50px rgba(239, 68, 68, 0.08),
+    0 10px 25px rgba(239, 68, 68, 0.04),
+    0 0 0 1px rgba(239, 68, 68, 0.1);
+}
+
+.tiket-page-content:has(.back-to-home-link:only-child)::before {
+  content: '!';
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-weight: bold;
+  box-shadow: 
+    0 8px 25px rgba(239, 68, 68, 0.15),
+    0 0 0 4px #ffffff,
+    0 0 0 6px rgba(239, 68, 68, 0.1);
+}
+
+.tiket-page-content:has(.back-to-home-link:only-child) .tiket-page-title {
+  color: #dc2626;
+}
+
+.tiket-page-content:has(.back-to-home-link:only-child) .back-to-home-link {
+  background: #dc2626;
+  box-shadow: 
+    0 4px 14px rgba(220, 38, 38, 0.15),
+    0 2px 6px rgba(220, 38, 38, 0.1);
+}
+
+.tiket-page-content:has(.back-to-home-link:only-child) .back-to-home-link:hover {
+  box-shadow: 
+    0 8px 25px rgba(220, 38, 38, 0.25),
+    0 4px 12px rgba(220, 38, 38, 0.15);
+  background: #b91c1c;
+}
+
+/* Animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes titleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes subtitleFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes listFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes ticketSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes buttonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-8px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-15px) rotate(0.5deg);
+  }
+  66% {
+    transform: translateY(8px) rotate(-0.5deg);
+  }
+}
+
+/* Clean decorative line */
+.tiket-list::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+  border-radius: 1px;
+  animation: slideUp 1s ease-out 0.8s both;
+}
+
+/* Minimal accent dot */
+.tiket-page-content::after {
+  content: '';
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  width: 6px;
+  height: 6px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: float 4s ease-in-out infinite;
+  animation-delay: 1.5s;
+  opacity: 0.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tiket-page-container {
+    padding: 16px;
+    background: linear-gradient(135deg, #fafafa 0%, #f4f4f5 50%, #f8fafc 100%);
+  }
+  
+  .tiket-page-content {
+    padding: 32px 24px;
+    margin: 8px;
+    border-radius: 12px;
+  }
+  
+  .tiket-page-title {
+    font-size: 1.875rem;
+    margin: 20px 0 12px 0;
+  }
+  
+  .tiket-page-subtitle {
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+  
+  .tiket-list {
+    margin: 32px 0;
+    gap: 20px;
+  }
+  
+  .back-to-home-link {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tiket-page-content {
+    padding: 24px 20px;
+    border-radius: 10px;
+  }
+  
+  .tiket-page-title {
+    font-size: 1.5rem;
+  }
+  
+  .tiket-page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .back-to-home-link {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+}
+
+/* Loading state for enhanced UX */
+.tiket-page-content:not(.loaded) {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.tiket-page-content.loaded {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.6s ease-out;
+}
+
+/* Clean status indicators */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background: rgba(34, 197, 94, 0.08);
+  color: #16a34a;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-top: 8px;
+  border: 1px solid rgba(34, 197, 94, 0.15);
+}
+
+.status-indicator::before {
+  content: '●';
+  font-size: 8px;
+}
+
+/* Clean divider line */
+.content-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 32px 0;
+  opacity: 0.8;
+}
+
+/* Subtle hover effects for the entire content */
+.tiket-page-content:hover {
+  box-shadow: 
+    0 32px 64px rgba(0, 0, 0, 0.06),
+    0 12px 32px rgba(0, 0, 0, 0.03),
+    0 0 0 1px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Clean focus states */
+.back-to-home-link:focus {
+  outline: 2px solid #0f172a;
+  outline-offset: 2px;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .tiket-page-content,
+  .tiket-page-title,
+  .tiket-page-subtitle,
+  .tiket-list,
+  .tiket-list > *,
+  .back-to-home-link,
+  .tiket-page-content::before,
+  .tiket-page-content::after {
+    animation: none;
+  }
+}
