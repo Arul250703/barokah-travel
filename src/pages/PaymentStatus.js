@@ -10,13 +10,15 @@ const PaymentStatus = () => {
   const [transactionDetails, setTransactionDetails] = useState(null);
 
   // Data pembayaran dari Virtual Account
-  const paymentData = location.state || {
-    namaPaket: "Data tidak tersedia",
-    totalHarga: 0,
-    paymentMethod: { name: "Bank", color: "#000" },
-    virtualAccountNumber: "0000000000000",
-    expiryTime: new Date()
-  };
+  const paymentData = React.useMemo(() => (
+    location.state || {
+      namaPaket: "Data tidak tersedia",
+      totalHarga: 0,
+      paymentMethod: { name: "Bank", color: "#000" },
+      virtualAccountNumber: "0000000000000",
+      expiryTime: new Date()
+    }
+  ), [location.state]);
 
   // Format Rupiah
   const formatRupiah = (angka) =>
@@ -82,7 +84,7 @@ const PaymentStatus = () => {
 
   const handleContinueBooking = () => {
     // Redirect ke halaman selanjutnya setelah pembayaran berhasil
-    navigate('/booking-confirmed', { 
+    navigate('/tiket-page', { 
       state: { 
         ...paymentData, 
         transactionDetails 
@@ -130,7 +132,7 @@ const PaymentStatus = () => {
     <div className="payment-status-page">
       <div className="status-container">
         
-        {/* Pembayaran Berhasil */}
+        /* Pembayaran Berhasil */
         {paymentStatus === 'success' && (
           <div className="status-card success">
             <div className="status-icon success-icon">✅</div>
@@ -172,7 +174,7 @@ const PaymentStatus = () => {
             <div className="success-actions">
               <button 
                 className="continue-btn"
-                onClick={handleContinueBooking}
+                onClick={() => navigate('/tiket-page', { state: { ...paymentData, transactionDetails } })}
               >
                 📄 Lihat Bukti Pemesanan
               </button>
@@ -184,9 +186,7 @@ const PaymentStatus = () => {
               </button>
             </div>
           </div>
-        )}
-
-        {/* Pembayaran Pending */}
+        )}}
         {paymentStatus === 'pending' && (
           <div className="status-card pending">
             <div className="status-icon pending-icon">⏳</div>

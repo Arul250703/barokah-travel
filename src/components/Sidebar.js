@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
   FaTachometerAlt,
-  FaCalendarAlt,
   FaClipboardList,
   FaFileInvoiceDollar,
   FaBook,
@@ -12,6 +11,7 @@ import {
   FaCog,
 } from "react-icons/fa";
 import "./styles/Sidebar.css";
+import { FaQrcode } from "react-icons/fa";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -59,10 +59,10 @@ const Sidebar = () => {
       tooltip: "Dashboard",
     },
     {
-      path: "/event",
-      icon: FaCalendarAlt,
-      text: "Event",
-      tooltip: "Event",
+      path: "/qr-page",
+      icon: FaQrcode,
+      text: "QR Page",
+      tooltip: "QR Page",
     },
     {
       path: "/bookings",

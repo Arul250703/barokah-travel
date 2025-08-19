@@ -30,6 +30,9 @@ import DetailNews from "./pages/DetailNews";
 import Admin from "./pages/Admin";
 import Dashboard from "./pages/Dashboard";
 import Register from "./pages/Register";
+import ScannerPage from "./pages/ScannerPage";
+import TiketPage from "./pages/TiketPage";
+import QrPage from "./pages/QrPage"; // Import QR Page
 
 function AppLayout() {
   const location = useLocation();
@@ -42,6 +45,8 @@ function AppLayout() {
     "/tiket",
     "/pembayaran",
     "/dashboard",
+    "/tiket-page",
+    "/QrPage", // Tambahkan path QR Page di sini
   ];
   const isNoLayout = noLayoutPaths.includes(location.pathname);
 
@@ -71,6 +76,11 @@ function AppLayout() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/scanner" element={<ScannerPage />} />
+        <Route path="/tiket-page" element={<TiketPage />} />
+        <Route path="/qr-page" element={<QrPage />} />
+        
+        {/* Route fallback untuk halaman tidak ditemukan */}
       </Routes>
       {!isNoLayout && <Footer />}
     </>
