@@ -1,15 +1,10 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Outlet, // Outlet digunakan untuk merender rute anak
-} from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import AdminLayout from './components/AdminLayout'; // Asumsi nama file ini benar
+import AdminLayout from './components/AdminLayout';
 
-// Impor semua halaman Anda
+// Pages
 import Beranda from './pages/Beranda';
 import Tentang from './pages/Tentang';
 import Layanan from './pages/Layanan';
@@ -30,8 +25,11 @@ import Admin from './pages/Admin';
 import Dashboard from './pages/Dashboard';
 import Keuangan from './pages/Keuangan';
 import Register from './pages/Register';
+import ScannerPage from './pages/ScannerPage';
+import TiketPage from './pages/TiketPage';
+import QrPage from './pages/QrPage';
 
-// Komponen untuk membungkus halaman yang memiliki Header & Footer
+// Layout untuk user (Header + Footer)
 const SiteLayout = () => {
   return (
     <>
@@ -44,7 +42,7 @@ const SiteLayout = () => {
   );
 };
 
-// Komponen untuk membungkus halaman admin dengan sidebar
+// Layout untuk Admin (Sidebar)
 const AdminLayoutWrapper = () => {
   return (
     <AdminLayout>
@@ -57,7 +55,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Grup 1: Rute yang menggunakan Header & Footer */}
+        {/* Grup 1: Halaman dengan Header & Footer */}
         <Route element={<SiteLayout />}>
           <Route path="/" element={<Beranda />} />
           <Route path="/tentang" element={<Tentang />} />
@@ -73,21 +71,22 @@ function App() {
           <Route path="/register" element={<Register />} />
         </Route>
 
-        {/* Grup 2: Rute yang TIDAK menggunakan Header & Footer (halaman pembayaran) */}
+        {/* Grup 2: Halaman tanpa Header & Footer (Pembayaran, Tiket, dsb.) */}
         <Route path="/pembayaran" element={<DetailPembayaran />} />
         <Route path="/invoice" element={<Invoice />} />
         <Route path="/virtual-account" element={<VirtualAccountPage />} />
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
-        
-        {/* Grup 3: Rute untuk area Admin/Dashboard DENGAN SIDEBAR */}
+        <Route path="/scanner" element={<ScannerPage />} />
+        <Route path="/tiket-page" element={<TiketPage />} />
+        <Route path="/qr-page" element={<QrPage />} />
+
+        {/* Grup 3: Halaman Admin (dengan Sidebar) */}
         <Route element={<AdminLayoutWrapper />}>
-          {/* === PERBAIKAN DI SINI === */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/keuangan" element={<Keuangan />} />
           <Route path="/admin" element={<Admin />} />
-          
-          {/* Tambahkan rute admin lainnya di sini */}
+          {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
           <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
           <Route path="/buku-tamu" element={<div>Buku Tamu Page (Coming Soon)</div>} />
@@ -96,21 +95,26 @@ function App() {
           <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
         </Route>
 
-        {/* Rute fallback jika halaman tidak ditemukan */}
-        <Route path="*" element={
-          <div style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '100vh',
-            flexDirection: 'column',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white'
-          }}>
-            <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>404</h1>
-            <p style={{ fontSize: '1.2rem' }}>Halaman Tidak Ditemukan</p>
-          </div>
-        } />
+        {/* Fallback 404 */}
+        <Route
+          path="*"
+          element={
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                flexDirection: 'column',
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+              }}
+            >
+              <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>404</h1>
+              <p style={{ fontSize: '1.2rem' }}>Halaman Tidak Ditemukan</p>
+            </div>
+          }
+        />
       </Routes>
     </Router>
   );

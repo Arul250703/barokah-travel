@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import '../components/styles/PaymentStatus.css';
 
@@ -9,21 +9,25 @@ const PaymentStatus = () => {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [transactionDetails, setTransactionDetails] = useState(null);
 
-  // Data pembayaran default jika tidak ada state yang dikirim
-  const paymentData = location.state || {
-    namaPaket: 'Data tidak tersedia',
-    totalHarga: 0,
-    paymentMethod: { name: 'Bank', color: '#000' },
-    virtualAccountNumber: '0000000000000',
-    expiryTime: new Date()
-  };
+  // Data pembayaran dari Virtual Account
+  const paymentData = useMemo(
+    () =>
+      location.state || {
+        namaPaket: 'Data tidak tersedia',
+        totalHarga: 0,
+        paymentMethod: { name: 'Bank', color: '#000' },
+        virtualAccountNumber: '0000000000000',
+        expiryTime: new Date(),
+      },
+    [location.state]
+  );
 
   // Format Rupiah
   const formatRupiah = (angka) =>
     new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
-      minimumFractionDigits: 0
+      minimumFractionDigits: 0,
     }).format(angka);
 
   // Format tanggal dan waktu
@@ -34,7 +38,7 @@ const PaymentStatus = () => {
       year: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
-      second: '2-digit'
+      second: '2-digit',
     }).format(date);
 
   // Mengecek status pembayaran
@@ -47,7 +51,9 @@ const PaymentStatus = () => {
         await new Promise((resolve) => setTimeout(resolve, 2000));
 
         const now = new Date();
-        const paymentTime = new Date(now.getTime() - Math.random() * 30 * 60 * 1000);
+        const paymentTime = new Date(
+          now.getTime() - Math.random() * 30 * 60 * 1000
+        );
         const isPaid = Math.random() > 0.3; // 70% kemungkinan sudah bayar (demo)
         const isExpired = now > new Date(paymentData.expiryTime);
 
@@ -57,7 +63,7 @@ const PaymentStatus = () => {
             paymentTime,
             amount: paymentData.totalHarga,
             bankName: paymentData.paymentMethod.name,
-            vaNumber: paymentData.virtualAccountNumber
+            vaNumber: paymentData.virtualAccountNumber,
           };
           setPaymentStatus('success');
           setTransactionDetails(transaction);
@@ -68,7 +74,7 @@ const PaymentStatus = () => {
             JSON.stringify({
               ...paymentData,
               ...transaction,
-              status: 'success'
+              status: 'success',
             })
           );
         } else {
@@ -79,7 +85,7 @@ const PaymentStatus = () => {
             'lastPayment',
             JSON.stringify({
               ...paymentData,
-              status: isExpired ? 'expired' : 'pending'
+              status: isExpired ? 'expired' : 'pending',
             })
           );
         }
@@ -92,16 +98,17 @@ const PaymentStatus = () => {
     };
 
     checkPaymentStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [paymentData]);
 
   const handleBackToVA = () => navigate(-1);
 
   const handleContinueBooking = () => {
-    navigate('/booking-confirmed', {
+    navigate('/tiket-page', {
       state: {
         ...paymentData,
-        transactionDetails
-      }
+        transactionDetails,
+      },
     });
   };
 
@@ -159,7 +166,9 @@ const PaymentStatus = () => {
                 </div>
                 <div className="detail-row">
                   <span>Waktu Pembayaran:</span>
-                  <strong>{formatDateTime(transactionDetails.paymentTime)}</strong>
+                  <strong>
+                    {formatDateTime(transactionDetails.paymentTime)}
+                  </strong>
                 </div>
                 <div className="detail-row">
                   <span>Paket Wisata:</span>
@@ -183,7 +192,10 @@ const PaymentStatus = () => {
             </div>
 
             <div className="success-actions">
-              <button className="continue-btn" onClick={handleContinueBooking}>
+              <button
+                className="continue-btn"
+                onClick={handleContinueBooking}
+              >
                 📄 Lihat Bukti Pemesanan
               </button>
               <button className="download-btn" onClick={() => window.print()}>
@@ -192,8 +204,6 @@ const PaymentStatus = () => {
             </div>
           </div>
         )}
-
-        {/* Pembayaran Pending */}
         {paymentStatus === 'pending' && (
           <div className="status-card pending">
             <div className="status-icon pending-icon">⏳</div>
@@ -223,7 +233,9 @@ const PaymentStatus = () => {
             <div className="pending-info">
               <h4>💡 Tips:</h4>
               <ul>
-                <li>Pastikan nominal transfer sesuai dengan jumlah yang tertera</li>
+                <li>
+                  Pastikan nominal transfer sesuai dengan jumlah yang tertera
+                </li>
                 <li>
                   Transfer dapat memakan waktu hingga 10 menit untuk diproses
                 </li>
@@ -260,7 +272,9 @@ const PaymentStatus = () => {
               </div>
               <div className="detail-row">
                 <span>Batas Waktu:</span>
-                <strong>{formatDateTime(new Date(paymentData.expiryTime))}</strong>
+                <strong>
+                  {formatDateTime(new Date(paymentData.expiryTime))}
+                </strong>
               </div>
             </div>
 
