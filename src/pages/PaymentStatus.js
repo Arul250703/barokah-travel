@@ -9,26 +9,26 @@ const PaymentStatus = () => {
   const [paymentStatus, setPaymentStatus] = useState(null);
   const [transactionDetails, setTransactionDetails] = useState(null);
 
-  // Data pembayaran dari Virtual Account
+  // Data pembayaran default jika tidak ada state yang dikirim
   const paymentData = location.state || {
-    namaPaket: "Data tidak tersedia",
+    namaPaket: 'Data tidak tersedia',
     totalHarga: 0,
-    paymentMethod: { name: "Bank", color: "#000" },
-    virtualAccountNumber: "0000000000000",
+    paymentMethod: { name: 'Bank', color: '#000' },
+    virtualAccountNumber: '0000000000000',
     expiryTime: new Date()
   };
 
   // Format Rupiah
   const formatRupiah = (angka) =>
-    new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
+    new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0
     }).format(angka);
 
   // Format tanggal dan waktu
-  const formatDateTime = (date) => {
-    return new Intl.DateTimeFormat("id-ID", {
+  const formatDateTime = (date) =>
+    new Intl.DateTimeFormat('id-ID', {
       day: '2-digit',
       month: 'long',
       year: 'numeric',
@@ -36,69 +36,79 @@ const PaymentStatus = () => {
       minute: '2-digit',
       second: '2-digit'
     }).format(date);
-  };
 
-  // Simulasi pengecekan status pembayaran
+  // Mengecek status pembayaran
   useEffect(() => {
     const checkPaymentStatus = async () => {
       setIsChecking(true);
-      
-      // Simulasi delay API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Simulasi logika pembayaran berdasarkan waktu atau kondisi tertentu
-      const now = new Date();
-      const vaNumber = paymentData.virtualAccountNumber;
-      const paymentTime = new Date(now.getTime() - Math.random() * 30 * 60 * 1000); // Random waktu dalam 30 menit terakhir
-      
-      // Logika sederhana untuk menentukan status pembayaran
-      // Dalam implementasi nyata, ini akan mengecek ke database atau API payment gateway
-      const isPaid = Math.random() > 0.3; // 70% kemungkinan sudah bayar (untuk demo)
-      
-      if (isPaid) {
-        setPaymentStatus('success');
-        setTransactionDetails({
-          transactionId: `TRX${Date.now().toString().slice(-8)}`,
-          paymentTime: paymentTime,
-          amount: paymentData.totalHarga,
-          bankName: paymentData.paymentMethod.name,
-          vaNumber: paymentData.virtualAccountNumber
-        });
-      } else {
-        // Cek apakah sudah expired
+
+      try {
+        // Simulasi delay API call (nanti ganti dengan API payment gateway nyata)
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+
+        const now = new Date();
+        const paymentTime = new Date(now.getTime() - Math.random() * 30 * 60 * 1000);
+        const isPaid = Math.random() > 0.3; // 70% kemungkinan sudah bayar (demo)
         const isExpired = now > new Date(paymentData.expiryTime);
-        setPaymentStatus(isExpired ? 'expired' : 'pending');
+
+        if (isPaid) {
+          const transaction = {
+            transactionId: `TRX${Date.now().toString().slice(-8)}`,
+            paymentTime,
+            amount: paymentData.totalHarga,
+            bankName: paymentData.paymentMethod.name,
+            vaNumber: paymentData.virtualAccountNumber
+          };
+          setPaymentStatus('success');
+          setTransactionDetails(transaction);
+
+          // Simpan ke localStorage supaya Laporan Keuangan bisa ambil
+          localStorage.setItem(
+            'lastPayment',
+            JSON.stringify({
+              ...paymentData,
+              ...transaction,
+              status: 'success'
+            })
+          );
+        } else {
+          setPaymentStatus(isExpired ? 'expired' : 'pending');
+
+          // Simpan status pending/expired juga
+          localStorage.setItem(
+            'lastPayment',
+            JSON.stringify({
+              ...paymentData,
+              status: isExpired ? 'expired' : 'pending'
+            })
+          );
+        }
+      } catch (error) {
+        console.error('Gagal mengecek status pembayaran:', error);
+        setPaymentStatus('pending');
       }
-      
+
       setIsChecking(false);
     };
 
     checkPaymentStatus();
   }, [paymentData]);
 
-  const handleBackToVA = () => {
-    navigate(-1);
-  };
+  const handleBackToVA = () => navigate(-1);
 
   const handleContinueBooking = () => {
-    // Redirect ke halaman selanjutnya setelah pembayaran berhasil
-    navigate('/booking-confirmed', { 
-      state: { 
-        ...paymentData, 
-        transactionDetails 
-      } 
+    navigate('/booking-confirmed', {
+      state: {
+        ...paymentData,
+        transactionDetails
+      }
     });
   };
 
-  const handleTryAgain = () => {
-    // Kembali ke Virtual Account untuk mencoba lagi
-    navigate(-1);
-  };
+  const handleTryAgain = () => navigate(-1);
 
-  const handleNewPayment = () => {
-    // Kembali ke halaman pemilihan metode pembayaran
+  const handleNewPayment = () =>
     navigate('/payment-method', { state: paymentData });
-  };
 
   // Render loading state
   if (isChecking) {
@@ -108,7 +118,9 @@ const PaymentStatus = () => {
           <div className="checking-card">
             <div className="loading-spinner"></div>
             <h2 className="checking-title">Mengecek Status Pembayaran</h2>
-            <p className="checking-text">Mohon tunggu, kami sedang memverifikasi pembayaran Anda...</p>
+            <p className="checking-text">
+              Mohon tunggu, kami sedang memverifikasi pembayaran Anda...
+            </p>
             <div className="checking-details">
               <div className="detail-row">
                 <span>Virtual Account:</span>
@@ -129,7 +141,6 @@ const PaymentStatus = () => {
   return (
     <div className="payment-status-page">
       <div className="status-container">
-        
         {/* Pembayaran Berhasil */}
         {paymentStatus === 'success' && (
           <div className="status-card success">
@@ -138,7 +149,7 @@ const PaymentStatus = () => {
             <p className="status-message">
               Terima kasih! Pembayaran Anda telah berhasil diproses.
             </p>
-            
+
             <div className="transaction-details">
               <h3 className="details-title">Detail Transaksi</h3>
               <div className="details-content">
@@ -156,7 +167,9 @@ const PaymentStatus = () => {
                 </div>
                 <div className="detail-row">
                   <span>Jumlah Dibayar:</span>
-                  <strong className="amount-paid">{formatRupiah(transactionDetails.amount)}</strong>
+                  <strong className="amount-paid">
+                    {formatRupiah(transactionDetails.amount)}
+                  </strong>
                 </div>
                 <div className="detail-row">
                   <span>Metode Pembayaran:</span>
@@ -170,16 +183,10 @@ const PaymentStatus = () => {
             </div>
 
             <div className="success-actions">
-              <button 
-                className="continue-btn"
-                onClick={handleContinueBooking}
-              >
+              <button className="continue-btn" onClick={handleContinueBooking}>
                 📄 Lihat Bukti Pemesanan
               </button>
-              <button 
-                className="download-btn"
-                onClick={() => window.print()}
-              >
+              <button className="download-btn" onClick={() => window.print()}>
                 💾 Simpan Bukti Transaksi
               </button>
             </div>
@@ -192,9 +199,10 @@ const PaymentStatus = () => {
             <div className="status-icon pending-icon">⏳</div>
             <h1 className="status-title">Menunggu Pembayaran</h1>
             <p className="status-message">
-              Pembayaran Anda belum diterima. Silakan lakukan transfer sesuai instruksi.
+              Pembayaran Anda belum diterima. Silakan lakukan transfer sesuai
+              instruksi.
             </p>
-            
+
             <div className="pending-details">
               <div className="detail-row">
                 <span>Virtual Account:</span>
@@ -202,7 +210,9 @@ const PaymentStatus = () => {
               </div>
               <div className="detail-row">
                 <span>Jumlah yang harus dibayar:</span>
-                <strong className="amount-due">{formatRupiah(paymentData.totalHarga)}</strong>
+                <strong className="amount-due">
+                  {formatRupiah(paymentData.totalHarga)}
+                </strong>
               </div>
               <div className="detail-row">
                 <span>Bank:</span>
@@ -214,22 +224,18 @@ const PaymentStatus = () => {
               <h4>💡 Tips:</h4>
               <ul>
                 <li>Pastikan nominal transfer sesuai dengan jumlah yang tertera</li>
-                <li>Transfer dapat memakan waktu hingga 10 menit untuk diproses</li>
+                <li>
+                  Transfer dapat memakan waktu hingga 10 menit untuk diproses
+                </li>
                 <li>Simpan bukti transfer untuk referensi</li>
               </ul>
             </div>
 
             <div className="pending-actions">
-              <button 
-                className="retry-btn"
-                onClick={handleTryAgain}
-              >
+              <button className="retry-btn" onClick={handleTryAgain}>
                 🔄 Cek Lagi
               </button>
-              <button 
-                className="back-btn"
-                onClick={handleBackToVA}
-              >
+              <button className="back-btn" onClick={handleBackToVA}>
                 ← Kembali ke Virtual Account
               </button>
             </div>
@@ -244,11 +250,13 @@ const PaymentStatus = () => {
             <p className="status-message">
               Maaf, waktu pembayaran telah habis. Silakan buat pembayaran baru.
             </p>
-            
+
             <div className="expired-details">
               <div className="detail-row">
                 <span>Virtual Account:</span>
-                <strong className="expired-va">{paymentData.virtualAccountNumber}</strong>
+                <strong className="expired-va">
+                  {paymentData.virtualAccountNumber}
+                </strong>
               </div>
               <div className="detail-row">
                 <span>Batas Waktu:</span>
@@ -258,22 +266,16 @@ const PaymentStatus = () => {
 
             <div className="expired-info">
               <p>
-                Untuk melanjutkan pemesanan, Anda perlu membuat Virtual Account baru 
-                dengan batas waktu pembayaran yang baru.
+                Untuk melanjutkan pemesanan, Anda perlu membuat Virtual Account
+                baru dengan batas waktu pembayaran yang baru.
               </p>
             </div>
 
             <div className="expired-actions">
-              <button 
-                className="new-payment-btn"
-                onClick={handleNewPayment}
-              >
+              <button className="new-payment-btn" onClick={handleNewPayment}>
                 💳 Buat Pembayaran Baru
               </button>
-              <button 
-                className="back-btn"
-                onClick={() => navigate('/')}
-              >
+              <button className="back-btn" onClick={() => navigate('/')}>
                 🏠 Kembali ke Beranda
               </button>
             </div>
@@ -283,7 +285,7 @@ const PaymentStatus = () => {
         {/* Footer */}
         <div className="status-footer">
           <p>
-            Butuh bantuan? Hubungi Customer Service: 
+            Butuh bantuan? Hubungi Customer Service:
             <strong> 0804-1-500-000</strong>
           </p>
         </div>

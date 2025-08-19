@@ -48,7 +48,9 @@ const Sidebar = () => {
   };
 
   const isActiveLink = (path) => {
-    return location.pathname === path;
+    // Perbaikan untuk matching path yang lebih fleksibel
+    return location.pathname === path || 
+           (path === "/keuangan" && location.pathname.toLowerCase().includes("keuangan"));
   };
 
   const menuItems = [
@@ -71,7 +73,8 @@ const Sidebar = () => {
       tooltip: "Pemesanan",
     },
     {
-      path: "/invoice",
+      // Perbaikan: gunakan lowercase untuk konsistensi
+      path: "/keuangan",
       icon: FaFileInvoiceDollar,
       text: "Keuangan / Invoice",
       tooltip: "Keuangan",
@@ -113,7 +116,7 @@ const Sidebar = () => {
       )}
 
       {/* Sidebar Toggle Button */}
-      <button
+      {/* <button
         className="sidebar-toggle"
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
@@ -123,7 +126,7 @@ const Sidebar = () => {
           <span></span>
           <span></span>
         </div>
-      </button>
+      </button> */}
 
       {/* Sidebar */}
       <div
