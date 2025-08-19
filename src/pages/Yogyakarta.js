@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../components/styles/Yogyakarta.css';
+import '../components/styles/yogyakarta.css';
 
 // Import Aset Gambar yang relevan untuk halaman ini
 import situ from '../assets/images/situ.jpeg';

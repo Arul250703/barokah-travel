@@ -4,20 +4,18 @@ import {
   FaSearch,
   FaCheckCircle,
   FaTicketAlt,
-  FaHistory,
   FaEye,
   FaUndo,
   FaBan,
   FaCamera,
   FaTimes,
   FaChevronDown,
-  FaBars,
 } from "react-icons/fa";
 import { QRCodeSVG } from "qrcode.react";
-import "../components/styles/QrPage.css"; // Pastikan path CSS ini benar
+import "../components/styles/QrPage.css";
 import "../components/styles/ScannerPage.css";
 
-// Simulasi data tiket
+// Simulasi data tiket awal
 const initialTickets = [
   {
     id: "TRX001",
@@ -63,23 +61,177 @@ const initialTickets = [
   },
 ];
 
-// Status Badge Component
+// Komponen Tiket dengan QR Code berisi JSON
+const Tiket = ({ ticketId, nama, namaPaket, telepon }) => {
+  const qrValue = JSON.stringify({ ticketId: ticketId, nama: nama });
+
+  return (
+    <div className="ticket-card">
+      <div className="ticket-left">
+        <div className="ticket-header">
+          <span className="ticket-category">WISATA</span>
+          <span className="ticket-package">{namaPaket}</span>
+        </div>
+        <div className="ticket-info">
+          <span className="participant-name">{nama}</span>
+          <span className="participant-phone">{telepon}</span>
+        </div>
+      </div>
+      <div className="ticket-right">
+        <QRCodeSVG
+          value={qrValue}
+          size={80}
+          bgColor="#ffffff"
+          fgColor="#000000"
+        />
+        <span className="scan-label">{ticketId}</span>
+      </div>
+    </div>
+  );
+};
+
+// Komponen Scanner Modal yang menerima callback
+const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
+  const [scanResult, setScanResult] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+
+  useEffect(() => {
+    let scannerInstance = null;
+    if (isOpen && isScanning) {
+      import("html5-qrcode").then(({ Html5QrcodeScanner }) => {
+        scannerInstance = new Html5QrcodeScanner(
+          "qr-reader-container-modal",
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          false
+        );
+
+        const onScanSuccess = (decodedText) => {
+          setIsScanning(false);
+          validateTicket(decodedText);
+        };
+
+        scannerInstance.render(onScanSuccess, () => {});
+      });
+    }
+
+    return () => {
+      if (scannerInstance && typeof scannerInstance.clear === "function") {
+        scannerInstance.clear().catch(() => {});
+      }
+    };
+  }, [isOpen, isScanning]);
+
+  useEffect(() => {
+    if (isOpen) {
+      setScanResult(null);
+      setIsScanning(true);
+    } else {
+      setIsScanning(false);
+      setScanResult(null);
+    }
+  }, [isOpen]);
+
+  const validateTicket = (decodedText) => {
+    setScanResult({
+      type: "loading",
+      message: "MEMPROSES...",
+      name: "Memvalidasi data tiket...",
+    });
+    try {
+      let ticketId;
+      try {
+        const ticketData = JSON.parse(decodedText);
+        ticketId = ticketData.ticketId || decodedText;
+      } catch {
+        ticketId = decodedText;
+      }
+      const result = onScanValidate(ticketId);
+      setScanResult(result);
+    } catch {
+      setScanResult({
+        type: "error",
+        message: "QR CODE TIDAK VALID",
+        name: "Format data tidak dikenali.",
+      });
+    }
+  };
+
+  const getResultCardClassName = () =>
+    `scan-result ${scanResult ? scanResult.type : ""}`;
+  const getIcon = () => {
+    if (!scanResult) return null;
+    switch (scanResult.type) {
+      case "success":
+        return "✅";
+      case "error":
+        return "❌";
+      case "warning":
+        return "⚠️";
+      default:
+        return null;
+    }
+  };
+  if (!isOpen) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal modal-scanner" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Pindai Tiket QR Code</h2>
+          <button className="modal-close" onClick={onClose}>
+            <FaTimes />
+          </button>
+        </div>
+        <div className="modal-body">
+          {isScanning && <div id="qr-reader-container-modal"></div>}
+          {!isScanning && (
+            <button
+              className="start-scan-btn"
+              onClick={() => {
+                setScanResult(null);
+                setIsScanning(true);
+              }}
+            >
+              {scanResult ? "Pindai Lagi" : "Mulai Memindai"}
+            </button>
+          )}
+          {scanResult && (
+            <div className={getResultCardClassName()}>
+              {scanResult.type === "loading" ? (
+                <>
+                  <div className="result-message">{scanResult.message}</div>
+                  <div className="result-details">{scanResult.name}</div>
+                </>
+              ) : (
+                <>
+                  <div className="result-icon">{getIcon()}</div>
+                  <div className="result-message">{scanResult.message}</div>
+                  <div className="result-details">{scanResult.name}</div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Komponen StatusBadge
 const StatusBadge = ({ status }) => {
   const statusConfig = {
     valid: { class: "status-valid", label: "Valid" },
     sudah_digunakan: { class: "status-used", label: "Used" },
     hangus: { class: "status-voided", label: "Voided" },
   };
-
   const config = statusConfig[status] || {
     class: "status-pending",
     label: "Pending",
   };
-
   return <span className={`status-badge ${config.class}`}>{config.label}</span>;
 };
 
-// Summary Card Component
+// Komponen SummaryCard
 const SummaryCard = ({ title, value, icon: Icon, color, onClick }) => (
   <div
     className={`summary-card summary-${color} ${
@@ -97,7 +249,7 @@ const SummaryCard = ({ title, value, icon: Icon, color, onClick }) => (
   </div>
 );
 
-// Modal Components
+// Komponen TicketDetailModal
 const TicketDetailModal = ({
   ticket,
   isOpen,
@@ -107,7 +259,6 @@ const TicketDetailModal = ({
   onViewTicket,
 }) => {
   if (!isOpen || !ticket) return null;
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-detail" onClick={(e) => e.stopPropagation()}>
@@ -167,37 +318,9 @@ const TicketDetailModal = ({
   );
 };
 
-const Tiket = ({ nama, namaPaket, telepon }) => {
-  const qrValue = `Nama: ${nama}\nTelepon: ${telepon}\nPaket: ${namaPaket}`;
-
-  return (
-    <div className="ticket-card">
-      <div className="ticket-left">
-        <div className="ticket-header">
-          <span className="ticket-category">WISATA</span>
-          <span className="ticket-package">{namaPaket}</span>
-        </div>
-        <div className="ticket-info">
-          <span className="participant-name">{nama}</span>
-          <span className="participant-phone">{telepon}</span>
-        </div>
-      </div>
-      <div className="ticket-right">
-        <QRCodeSVG
-          value={qrValue}
-          size={80}
-          bgColor="#ffffff"
-          fgColor="#000000"
-        />
-        <span className="scan-label">SCAN ME</span>
-      </div>
-    </div>
-  );
-};
-
+// Komponen TicketPreviewModal
 const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
   if (!isOpen || !ticket) return null;
-
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
@@ -215,6 +338,7 @@ const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
             {ticket.peserta.map((p, index) => (
               <Tiket
                 key={index}
+                ticketId={ticket.id}
                 nama={p.nama}
                 telepon={p.telepon}
                 namaPaket={ticket.paket}
@@ -227,146 +351,17 @@ const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
   );
 };
 
-// ScannerModal dengan integrasi html5-qrcode
-
-const ScannerModal = ({ isOpen, onClose }) => {
-    const [scanResult, setScanResult] = useState(null);
-    const [isScanning, setIsScanning] = useState(false);
-
-    useEffect(() => {
-        let scannerInstance = null;
-
-        if (isOpen && isScanning) {
-            import("html5-qrcode").then(({ Html5QrcodeScanner }) => {
-                scannerInstance = new Html5QrcodeScanner(
-                    "qr-reader-container-modal",
-                    {
-                        fps: 10,
-                        qrbox: { width: 250, height: 250 },
-                    },
-                    false
-                );
-
-                const onScanSuccess = (decodedText) => {
-                    setIsScanning(false);
-                    validateTicket(decodedText);
-                };
-
-                const onScanError = () => {};
-
-                scannerInstance.render(onScanSuccess, onScanError);
-            });
-        }
-
-        return () => {
-            if (scannerInstance && scannerInstance.clear) {
-                scannerInstance.clear().catch(() => {});
-            }
-        };
-        // eslint-disable-next-line
-    }, [isOpen, isScanning]);
-
-    useEffect(() => {
-        if (isOpen) {
-            setScanResult(null);
-            setIsScanning(true);
-        } else {
-            setIsScanning(false);
-            setScanResult(null);
-        }
-    }, [isOpen]);
-
-    const validateTicket = async (decodedText) => {
-        setScanResult({ type: "loading", message: "MEMPROSES...", name: "Menghubungi server..." });
-        try {
-            let ticketId;
-            try {
-                const ticketData = JSON.parse(decodedText);
-                ticketId = ticketData.ticketId || decodedText;
-            } catch {
-                ticketId = decodedText;
-            }
-
-            const response = await fetch("/api/validate-ticket", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ticketId }),
-            });
-            const result = await response.json();
-            if (response.ok) {
-                setScanResult({ type: "success", message: result.message, name: `Atas nama: ${result.nama}` });
-            } else if (response.status === 409) {
-                setScanResult({ type: "warning", message: result.message, name: `Atas nama: ${result.nama}` });
-            } else {
-                setScanResult({ type: "error", message: result.message, name: `ID Tiket: ${ticketId}` });
-            }
-        } catch {
-            setScanResult({ type: "error", message: "KONEKSI GAGAL", name: "Tidak dapat terhubung ke server." });
-        }
-    };
-
-    const getResultCardClassName = () => {
-        if (!scanResult) return "scan-result";
-        return `scan-result ${scanResult.type}`;
-    };
-
-    const getIcon = () => {
-        if (!scanResult) return null;
-        switch (scanResult.type) {
-            case "success":
-                return "✅";
-            case "error":
-                return "❌";
-            case "warning":
-                return "⚠️";
-            default:
-                return null;
-        }
-    };
-
-    if (!isOpen) return null;
-
-    return (
-        <div className="modal-overlay" onClick={onClose}>
-            <div className="modal modal-scanner" onClick={(e) => e.stopPropagation()}>
-                <div className="modal-header">
-                    <h2>Pindai Tiket QR Code</h2>
-                    <button className="modal-close" onClick={onClose}>
-                        <FaTimes />
-                    </button>
-                </div>
-                <div className="modal-body">
-                    {isScanning && <div id="qr-reader-container-modal"></div>}
-                    {!isScanning && (
-                        <button className="start-scan-btn" onClick={() => { setScanResult(null); setIsScanning(true); }}>
-                            {scanResult ? "Pindai Lagi" : "Mulai Memindai"}
-                        </button>
-                    )}
-                    {scanResult && (
-                        <div className={getResultCardClassName()}>
-                            {scanResult.type === "loading" ? (
-                                <>
-                                    <div className="result-message">{scanResult.message}</div>
-                                    <div className="result-details">{scanResult.name}</div>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="result-icon">{getIcon()}</div>
-                                    <div className="result-message">{scanResult.message}</div>
-                                    <div className="result-details">{scanResult.name}</div>
-                                </>
-                            )}
-                        </div>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// Main Component
+// Komponen Utama Halaman Admin
 function QrPage() {
-  const [tickets, setTickets] = useState(initialTickets);
+  const [tickets, setTickets] = useState(() => {
+    const savedTickets = localStorage.getItem("allTickets");
+    return savedTickets ? JSON.parse(savedTickets) : initialTickets;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("allTickets", JSON.stringify(tickets));
+  }, [tickets]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [selectedTicket, setSelectedTicket] = useState(null);
@@ -424,9 +419,55 @@ function QrPage() {
     }
   };
 
+  const handleScanValidation = (ticketId) => {
+    const targetTicket = tickets.find((t) => t.id === ticketId);
+
+    if (!targetTicket) {
+      return {
+        type: "error",
+        message: "TIKET TIDAK DITEMUKAN",
+        name: `ID Tiket: ${ticketId}`,
+      };
+    }
+
+    if (targetTicket.status === "sudah_digunakan") {
+      return {
+        type: "warning",
+        message: "TIKET SUDAH DIGUNAKAN",
+        name: `Atas nama: ${targetTicket.namaPelanggan}`,
+      };
+    }
+
+    if (targetTicket.status === "hangus") {
+      return {
+        type: "error",
+        message: "TIKET HANGUS/BATAL",
+        name: `Atas nama: ${targetTicket.namaPelanggan}`,
+      };
+    }
+
+    if (targetTicket.status === "valid") {
+      setTickets(
+        tickets.map((t) =>
+          t.id === ticketId ? { ...t, status: "sudah_digunakan" } : t
+        )
+      );
+      return {
+        type: "success",
+        message: "VALIDASI BERHASIL",
+        name: `Atas nama: ${targetTicket.namaPelanggan}`,
+      };
+    }
+
+    return {
+      type: "error",
+      message: "STATUS TIKET TIDAK DIKENALI",
+      name: `Atas nama: ${targetTicket.namaPelanggan}`,
+    };
+  };
+
   return (
     <div className="qr-page-container">
-      {/* Header */}
       <div className="content-header">
         <div className="header-left">
           <div className="page-title">
@@ -447,7 +488,6 @@ function QrPage() {
         </div>
       </div>
 
-      {/* Summary Cards */}
       <div className="summary-grid">
         <SummaryCard
           title="Total Tiket"
@@ -476,7 +516,6 @@ function QrPage() {
         />
       </div>
 
-      {/* Filters Section */}
       <div className="filters-section">
         <div className="search-container">
           <FaSearch className="search-icon" />
@@ -502,7 +541,6 @@ function QrPage() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="table-container">
         <div className="table-wrapper">
           <table className="data-table">
@@ -566,7 +604,6 @@ function QrPage() {
         </div>
       </div>
 
-      {/* Modals */}
       <TicketDetailModal
         ticket={selectedTicket}
         isOpen={isDetailModalOpen}
@@ -583,6 +620,7 @@ function QrPage() {
       <ScannerModal
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
+        onScanValidate={handleScanValidation}
       />
     </div>
   );

@@ -110,9 +110,9 @@ const Sidebar = () => {
       {/* Mobile Overlay */}
       {isMobile && (
         <div
-          className={sidebar-overlay ${isMobileOpen ? "active" : ""}}
+          className={`sidebar-overlay${isMobileOpen ? " active" : ""}`}
           onClick={closeMobileSidebar}
-        />
+        ></div>
       )}
 
       {/* Sidebar Toggle Button */}
