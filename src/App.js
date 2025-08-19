@@ -87,13 +87,26 @@ function App() {
                   <Route path="/qr-page" element={<QrPage />} />
 
           <Route path="/admin" element={<Admin />} />
+          <Route path="/qr-page" element={<QrPage />} />
           {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
-          <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
-          <Route path="/buku-tamu" element={<div>Buku Tamu Page (Coming Soon)</div>} />
-          <Route path="/reports" element={<div>Reports Page (Coming Soon)</div>} />
+          <Route
+            path="/bookings"
+            element={<div>Bookings Page (Coming Soon)</div>}
+          />
+          <Route
+            path="/buku-tamu"
+            element={<div>Buku Tamu Page (Coming Soon)</div>}
+          />
+          <Route
+            path="/reports"
+            element={<div>Reports Page (Coming Soon)</div>}
+          />
           <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
-          <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
+          <Route
+            path="/settings"
+            element={<div>Settings Page (Coming Soon)</div>}
+          />
         </Route>
 
         {/* Fallback 404 */}
@@ -102,17 +115,17 @@ function App() {
           element={
             <div
               style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                flexDirection: 'column',
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                color: 'white',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+                flexDirection: "column",
+                background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+                color: "white",
               }}
             >
-              <h1 style={{ fontSize: '3rem', marginBottom: '1rem' }}>404</h1>
-              <p style={{ fontSize: '1.2rem' }}>Halaman Tidak Ditemukan</p>
+              <h1 style={{ fontSize: "3rem", marginBottom: "1rem" }}>404</h1>
+              <p style={{ fontSize: "1.2rem" }}>Halaman Tidak Ditemukan</p>
             </div>
           }
         />
