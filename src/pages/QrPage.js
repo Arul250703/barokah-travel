@@ -15,52 +15,6 @@ import { QRCodeSVG } from "qrcode.react";
 import "../components/styles/QrPage.css";
 import "../components/styles/ScannerPage.css";
 
-// Simulasi data tiket awal
-const initialTickets = [
-  {
-    id: "TRX001",
-    namaPelanggan: "Budi Santoso",
-    email: "budi.s@example.com",
-    paket: "Sukabumi 2H1M",
-    status: "valid",
-    tanggal: "2025-08-15T09:00:00Z",
-    peserta: [{ nama: "Budi Santoso", telepon: "081234567890" }],
-  },
-  {
-    id: "TRX002",
-    namaPelanggan: "Ani Lestari",
-    email: "ani.l@example.com",
-    paket: "Yogyakarta 3H2M",
-    status: "sudah_digunakan",
-    tanggal: "2025-08-15T09:05:12Z",
-    peserta: [
-      { nama: "Ani Lestari", telepon: "081234567891" },
-      { nama: "Rudi Hartono", telepon: "081234567892" },
-    ],
-  },
-  {
-    id: "TRX003",
-    namaPelanggan: "Sari Indah",
-    email: "sari.i@example.com",
-    paket: "Bali 5H4M",
-    status: "hangus",
-    tanggal: "2025-08-10T14:30:00Z",
-    peserta: [{ nama: "Sari Indah", telepon: "081234567893" }],
-  },
-  {
-    id: "TRX004",
-    namaPelanggan: "Ahmad Rahman",
-    email: "ahmad.r@example.com",
-    paket: "Jakarta City Tour",
-    status: "valid",
-    tanggal: "2025-08-16T10:30:00Z",
-    peserta: [
-      { nama: "Ahmad Rahman", telepon: "081234567894" },
-      { nama: "Siti Nurhaliza", telepon: "081234567895" },
-    ],
-  },
-];
-
 // Komponen Tiket dengan QR Code berisi JSON
 const Tiket = ({ ticketId, nama, namaPaket, telepon }) => {
   const qrValue = JSON.stringify({ ticketId: ticketId, nama: nama });
@@ -104,16 +58,13 @@ const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
           { fps: 10, qrbox: { width: 250, height: 250 } },
           false
         );
-
         const onScanSuccess = (decodedText) => {
           setIsScanning(false);
           validateTicket(decodedText);
         };
-
         scannerInstance.render(onScanSuccess, () => {});
       });
     }
-
     return () => {
       if (scannerInstance && typeof scannerInstance.clear === "function") {
         scannerInstance.clear().catch(() => {});
@@ -131,7 +82,9 @@ const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
     }
   }, [isOpen]);
 
-  const validateTicket = (decodedText) => {
+  // Di dalam file src/pages/QrPage.js, di dalam komponen ScannerModal
+
+  const validateTicket = async (decodedText) => {
     setScanResult({
       type: "loading",
       message: "MEMPROSES...",
@@ -141,11 +94,13 @@ const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
       let ticketId;
       try {
         const ticketData = JSON.parse(decodedText);
-        ticketId = ticketData.ticketId || decodedText;
+        // --- PERBAIKAN DI SINI ---
+        // Cari 'booking_id' atau 'ticketId' agar lebih fleksibel
+        ticketId = ticketData.booking_id || ticketData.ticketId || decodedText;
       } catch {
         ticketId = decodedText;
       }
-      const result = onScanValidate(ticketId);
+      const result = await onScanValidate(ticketId);
       setScanResult(result);
     } catch {
       setScanResult({
@@ -171,6 +126,7 @@ const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
         return null;
     }
   };
+
   if (!isOpen) return null;
 
   return (
@@ -351,23 +307,66 @@ const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
   );
 };
 
-// Komponen Utama Halaman Admin
+// Main Component
 function QrPage() {
-  const [tickets, setTickets] = useState(() => {
-    const savedTickets = localStorage.getItem("allTickets");
-    return savedTickets ? JSON.parse(savedTickets) : initialTickets;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("allTickets", JSON.stringify(tickets));
-  }, [tickets]);
-
+  const [tickets, setTickets] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isTicketPreviewOpen, setIsTicketPreviewOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+
+  const fetchTickets = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/tickets");
+      const data = await response.json();
+      setTickets(data);
+    } catch (error) {
+      console.error("Gagal mengambil data tiket:", error);
+      alert("Gagal mengambil data dari server.");
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
+
+  const handleScanValidation = async (ticketId) => {
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/tickets/validate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ticketId: ticketId }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (response.ok) {
+        fetchTickets();
+        return { type: "success", message: result.message, name: result.name };
+      } else {
+        if (response.status === 409) {
+          return {
+            type: "warning",
+            message: result.message,
+            name: result.name,
+          };
+        }
+        return { type: "error", message: result.message, name: result.name };
+      }
+    } catch (error) {
+      console.error("Error validasi:", error);
+      return {
+        type: "error",
+        message: "KONEKSI GAGAL",
+        name: "Tidak dapat terhubung ke server.",
+      };
+    }
+  };
 
   const filteredTickets = useMemo(
     () =>
@@ -394,76 +393,16 @@ function QrPage() {
     setSelectedTicket(ticket);
     setIsDetailModalOpen(true);
   };
-
   const handleViewTicket = (ticket) => {
     setSelectedTicket(ticket);
     setIsDetailModalOpen(false);
     setIsTicketPreviewOpen(true);
   };
-
   const handleResetStatus = (ticketId) => {
-    if (window.confirm('Reset status tiket ini menjadi "valid"?')) {
-      setTickets(
-        tickets.map((t) => (t.id === ticketId ? { ...t, status: "valid" } : t))
-      );
-      setIsDetailModalOpen(false);
-    }
+    alert("Fungsi reset belum terhubung ke API");
   };
-
   const handleVoidTicket = (ticketId) => {
-    if (window.confirm("Batalkan (void) tiket ini?")) {
-      setTickets(
-        tickets.map((t) => (t.id === ticketId ? { ...t, status: "hangus" } : t))
-      );
-      setIsDetailModalOpen(false);
-    }
-  };
-
-  const handleScanValidation = (ticketId) => {
-    const targetTicket = tickets.find((t) => t.id === ticketId);
-
-    if (!targetTicket) {
-      return {
-        type: "error",
-        message: "TIKET TIDAK DITEMUKAN",
-        name: `ID Tiket: ${ticketId}`,
-      };
-    }
-
-    if (targetTicket.status === "sudah_digunakan") {
-      return {
-        type: "warning",
-        message: "TIKET SUDAH DIGUNAKAN",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    if (targetTicket.status === "hangus") {
-      return {
-        type: "error",
-        message: "TIKET HANGUS/BATAL",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    if (targetTicket.status === "valid") {
-      setTickets(
-        tickets.map((t) =>
-          t.id === ticketId ? { ...t, status: "sudah_digunakan" } : t
-        )
-      );
-      return {
-        type: "success",
-        message: "VALIDASI BERHASIL",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    return {
-      type: "error",
-      message: "STATUS TIKET TIDAK DIKENALI",
-      name: `Atas nama: ${targetTicket.namaPelanggan}`,
-    };
+    alert("Fungsi void belum terhubung ke API");
   };
 
   return (

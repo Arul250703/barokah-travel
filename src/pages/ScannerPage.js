@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import { Link } from "react-router-dom";
-import "../components/styles/QrPage.css"; // Pastikan path ini sesuai dengan struktur proyek Anda
-import "../components/styles/ScannerPage.css"; // Pastikan path ini sesuai
+import "../components/styles/QrPage.css";
+import "../components/styles/ScannerPage.css";
 
 const ScannerPage = () => {
   const [scanResult, setScanResult] = useState(null);
@@ -10,22 +10,18 @@ const ScannerPage = () => {
 
   useEffect(() => {
     let scannerInstance = null;
-
     if (isScanning) {
       scannerInstance = new Html5QrcodeScanner(
         "qr-reader-container",
         { fps: 10, qrbox: { width: 250, height: 250 } },
         false
       );
-
       const onScanSuccess = (decodedText) => {
         setIsScanning(false);
         validateTicket(decodedText);
       };
-
       scannerInstance.render(onScanSuccess, () => {});
     }
-
     return () => {
       if (scannerInstance && typeof scannerInstance.clear === "function") {
         scannerInstance.clear().catch(() => {});
@@ -33,63 +29,40 @@ const ScannerPage = () => {
     };
   }, [isScanning]);
 
-  // Fungsi validasi ini sekarang berinteraksi dengan localStorage
-  const validateTicket = (decodedText) => {
+  const validateTicket = async (decodedText) => {
+    displayResult("loading", "MEMPROSES...", "Menghubungi server...");
     try {
       let ticketId;
       try {
         const ticketData = JSON.parse(decodedText);
-        ticketId = ticketData.ticketId || decodedText;
+        ticketId = ticketData.booking_id || ticketData.ticketId || decodedText;
       } catch {
         ticketId = decodedText;
       }
 
-      // Ambil data tiket dari localStorage
-      const allTickets = JSON.parse(localStorage.getItem("allTickets")) || [];
-      const targetTicket = allTickets.find((t) => t.id === ticketId);
-
-      if (!targetTicket) {
-        displayResult(
-          "error",
-          "TIKET TIDAK DITEMUKAN",
-          `ID Tiket: ${ticketId}`
-        );
-        return;
-      }
-      if (targetTicket.status === "sudah_digunakan") {
-        displayResult(
-          "warning",
-          "TIKET SUDAH DIGUNAKAN",
-          `Atas nama: ${targetTicket.namaPelanggan}`
-        );
-        return;
-      }
-      if (targetTicket.status === "hangus") {
-        displayResult(
-          "error",
-          "TIKET HANGUS/BATAL",
-          `Atas nama: ${targetTicket.namaPelanggan}`
-        );
-        return;
-      }
-
-      // Jika valid, update datanya
-      const updatedTickets = allTickets.map((t) =>
-        t.id === ticketId ? { ...t, status: "sudah_digunakan" } : t
+      const response = await fetch(
+        "http://localhost:5000/api/tickets/validate",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ticketId: ticketId }),
+        }
       );
 
-      // Simpan kembali ke localStorage
-      localStorage.setItem("allTickets", JSON.stringify(updatedTickets));
-      displayResult(
-        "success",
-        "VALIDASI BERHASIL",
-        `Atas nama: ${targetTicket.namaPelanggan}`
-      );
+      const result = await response.json();
+
+      if (response.ok) {
+        displayResult("success", result.message, result.name);
+      } else if (response.status === 409) {
+        displayResult("warning", result.message, result.name);
+      } else {
+        displayResult("error", result.message, result.name);
+      }
     } catch (error) {
       displayResult(
         "error",
-        "QR CODE TIDAK VALID",
-        "Format data tidak dikenali."
+        "KONEKSI GAGAL",
+        "Tidak dapat terhubung ke server."
       );
     }
   };

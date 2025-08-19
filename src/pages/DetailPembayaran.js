@@ -73,7 +73,7 @@ const DetailPembayaran = () => {
       return;
     }
 
-<<<<<<< HEAD
+
     // Siapkan SEMUA data yang akan dikirim
     const paymentData = {
       // Data dari halaman ini
@@ -90,7 +90,6 @@ const DetailPembayaran = () => {
 
     // Navigasi ke halaman Virtual Account dengan membawa SEMUA data
     navigate("/virtual-account", { state: paymentData });
-=======
     // Navigasi ke halaman Invoice dengan membawa data
     navigate("/invoice  ", {
       state: {
@@ -101,7 +100,7 @@ const DetailPembayaran = () => {
         totalHarga,
       },
     });
->>>>>>> d4e991a1d61388a3738c638dcef36b0d0fef631f
+
   };
 
   return (

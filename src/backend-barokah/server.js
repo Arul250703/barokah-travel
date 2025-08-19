@@ -2,25 +2,27 @@
 
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors"); // <-- Tambahkan ini
 
-// Memuat variabel environment dari .env
+// Import routes
+const ticketRoutes = require("./src/routes/ticketRoutes"); // <-- Tambahkan ini
+
 dotenv.config();
-
-// Inisialisasi aplikasi Express
 const app = express();
 
-// Middleware untuk membaca JSON dari body request
+// Middleware
+app.use(cors()); // <-- Tambahkan ini agar frontend bisa akses
 app.use(express.json());
 
-// Ambil PORT dari .env, atau gunakan 3000 jika tidak ada
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
-// Route sederhana untuk pengetesan
 app.get("/", (req, res) => {
-  res.send("🎉 Server backend berhasil berjalan!");
+  res.send("🎉 Server backend Barokah Tour berhasil berjalan!");
 });
 
-// Jalankan server
+// Gunakan routes
+app.use("/api/tickets", ticketRoutes); // <-- Tambahkan ini
+
 app.listen(PORT, () => {
   console.log(`🖥️ Server berjalan di http://localhost:${PORT}`);
 });
