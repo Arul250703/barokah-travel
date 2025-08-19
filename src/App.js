@@ -31,7 +31,7 @@ function AppLayout() {
   const location = useLocation();
 
   // daftar path yang tidak mau pakai header & footer
-  const noLayoutPaths = ["/Invoice", "/virtual-account", "/payment-status", "/tiket", "/pembayaran"];
+  const noLayoutPaths = ["/Invoice", "/virtual-account", "/payment-status", "/tiket", "/pembayaran", "/dashboard"];
   const isNoLayout = noLayoutPaths.includes(location.pathname);
 
   return (

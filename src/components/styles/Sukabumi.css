@@ -1,173 +1,415 @@
 /* src/components/styles/Sukabumi.css */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --color-primary-500: #3b82f6; /* Biru */
+    /* Primary Colors - Enhanced Blue Palette */
+    --color-primary-50: #eff6ff;
+    --color-primary-100: #dbeafe;
+    --color-primary-200: #bfdbfe;
+    --color-primary-300: #93c5fd;
+    --color-primary-400: #60a5fa;
+    --color-primary-500: #3b82f6;
     --color-primary-600: #2563eb;
     --color-primary-700: #1d4ed8;
+    --color-primary-800: #1e40af;
+    --color-primary-900: #1e3a8a;
+
+    /* Accent Colors */
     --color-accent-orange: #f97316;
-    --color-light-gray: #f8fafc;
-    --color-gray-500: #64748b;
-    --color-gray-700: #334155;
+    --color-accent-orange-hover: #ea580c;
+    --color-accent-yellow: #fbbf24;
+    --color-accent-green: #10b981;
+    --color-accent-purple: #8b5cf6;
+    --color-accent-pink: #ec4899;
+
+    /* Gradient Colors */
+    --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-sunset: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+    --gradient-ocean: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --gradient-sky: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+    --gradient-hero: linear-gradient(135deg, rgba(59, 130, 246, 0.9) 0%, rgba(147, 51, 234, 0.8) 100%);
+
+    /* Neutral Colors */
     --color-white: #ffffff;
+    --color-gray-50: #f8fafc;
+    --color-gray-100: #f1f5f9;
+    --color-gray-200: #e2e8f0;
+    --color-gray-300: #cbd5e1;
+    --color-gray-400: #94a3b8;
+    --color-gray-500: #64748b;
+    --color-gray-600: #475569;
+    --color-gray-700: #334155;
+    --color-gray-800: #1e293b;
+    --color-gray-900: #0f172a;
+
+    /* Shadows - Enhanced */
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --transition-normal: all 0.25s ease-in-out;
-    --border-radius-lg: 0.75rem;
-    --border-radius-md: 0.5rem;
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+    --shadow-colored: 0 10px 25px -3px rgba(59, 130, 246, 0.3);
+
+    /* Transitions */
+    --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    /* Border Radius */
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
+    --radius-3xl: 2rem;
+    --radius-full: 9999px;
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    --spacing-2xl: 3rem;
+    --spacing-3xl: 4rem;
+    --spacing-4xl: 6rem;
+
+    /* Typography */
+    --font-primary: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --font-secondary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    
+    --text-xs: 0.75rem;
+    --text-sm: 0.875rem;
+    --text-base: 1rem;
+    --text-lg: 1.125rem;
+    --text-xl: 1.25rem;
+    --text-2xl: 1.5rem;
+    --text-3xl: 1.875rem;
+    --text-4xl: 2.25rem;
+    --text-5xl: 3rem;
+    --text-6xl: 3.75rem;
+
+    /* Layout */
+    --container-max-width: 1280px;
+    --navbar-height: 80px;
 }
 
-.detail-page-container {
-    font-family: 'Poppins', sans-serif;
+/* Base Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.6;
     color: var(--color-gray-700);
-    margin-top: 80px; /* Offset for fixed header */
-    padding-bottom: 60px;
+    background-color: var(--color-gray-50);
+    overflow-x: hidden;
 }
 
-/* --- Detail Hero Section --- */
+/* Page Wrapper for Cabang Details */
+.sukabumi-page {
+    margin-top: var(--navbar-height);
+    overflow-x: hidden;
+    min-height: 100vh;
+    background: var(--color-gray-50);
+}
+
+/* --- Hero Section - Cabang Detail --- */
 .detail-hero-section {
     position: relative;
     width: 100%;
-    height: 45vh;
+    height: 40vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
     color: var(--color-white);
-}
-
-.detail-hero-bg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: -1;
-}
-
-.detail-hero-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    text-align: center;
+}
+
+.detail-hero-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
 }
 
 .detail-hero-title {
-    font-size: 3rem;
+    font-size: var(--text-4xl);
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: var(--spacing-sm);
+    text-transform: uppercase;
 }
 
 .detail-hero-subtitle {
-    font-size: 1.2rem;
+    font-size: var(--text-xl);
     font-weight: 500;
+    font-family: var(--font-secondary);
 }
 
-/* --- Detail Content Section --- */
-.detail-content-section {
-    padding: 60px 24px;
-    max-width: 900px;
-    margin: 0 auto;
-    background-color: var(--color-light-gray);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    margin-top: -60px; /* Menumpuk dengan hero section */
+/* --- Destination Menu Section --- */
+.destination-menu-section {
+    padding: var(--spacing-4xl) var(--spacing-lg);
+    background-color: var(--color-white);
+    text-align: center;
+    margin-top: -60px;
     position: relative;
     z-index: 10;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.detail-section-title {
-    font-size: 2rem;
-    font-weight: 700;
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.filter-btn {
+    background: var(--color-gray-200);
     color: var(--color-gray-700);
-    margin-bottom: 25px;
-    text-align: center;
+    border: none;
+    padding: 0.5rem 1.5rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    font-weight: 500;
+    transition: var(--transition-normal);
 }
 
-.detail-container {
-    background-color: var(--color-white);
-    padding: 30px;
-    border-radius: var(--border-radius-lg);
+.filter-btn:hover {
+    background: var(--color-primary-500);
+    color: var(--color-white);
     box-shadow: var(--shadow-sm);
 }
 
-.detail-info-grid {
+.filter-btn.active {
+    background: var(--color-primary-600);
+    color: var(--color-white);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Main Content Section (Tour & Event Cards) --- */
+.destination-groups {
+    padding-top: var(--spacing-3xl);
+}
+
+.tour-cards-grid, .package-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    margin-bottom: 30px;
+    gap: var(--spacing-2xl);
 }
 
-.detail-info-item p {
-    font-size: 16px;
-    line-height: 1.8;
-    margin-bottom: 10px;
+/* Tour Card */
+.paket-card {
+    background: var(--color-white);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: var(--transition-normal);
+    text-decoration: none;
+    border: 1px solid var(--color-gray-200);
+    display: flex;
+    flex-direction: column;
 }
 
-.detail-info-item strong {
-    font-weight: 600;
+.paket-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-xl);
 }
 
-.detail-gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.detail-gallery img {
+.paket-card img {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    border-radius: var(--border-radius-md);
-    box-shadow: var(--shadow-sm);
+    object-position: center;
 }
 
-.detail-cta-button {
+.paket-info {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.paket-info h3 {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-gray-800);
+    margin-bottom: var(--spacing-sm);
+}
+
+.paket-info .subjudul {
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+    margin-bottom: var(--spacing-md);
+}
+
+.paket-info .harga {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-primary-600);
+    margin-top: auto;
+}
+
+.harga .min {
+    font-size: var(--text-xs);
+    font-weight: 400;
+    color: var(--color-gray-400);
+    margin-left: 0.5rem;
+}
+
+.detail-btn {
     display: block;
     width: 100%;
-    padding: 15px;
+    padding: var(--spacing-sm) var(--spacing-md);
     text-align: center;
-    background-color: var(--color-primary-500);
-    color: white;
+    background: var(--color-primary-500);
+    color: var(--color-white);
     text-decoration: none;
-    border-radius: var(--border-radius-md);
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    transition: var(--transition-normal);
+    margin-top: var(--spacing-lg);
+}
+
+.detail-btn:hover {
+    background: var(--color-primary-600);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+/* --- Event Package Cards --- */
+.section {
+    margin-bottom: var(--spacing-3xl);
+}
+
+.section-title {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-gray-700);
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    background-color: var(--color-accent-yellow);
+    color: var(--color-gray-800);
+    border-radius: var(--radius-md);
+}
+
+.package-box {
+    background: var(--color-primary-600);
+    color: var(--color-white);
+    padding: var(--spacing-xl);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: var(--transition-normal);
+}
+
+.package-box:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-xl);
+}
+
+.package-box h4 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    margin-bottom: var(--spacing-xs);
+    color: var(--color-white);
+}
+
+.package-box .price {
+    font-size: var(--text-xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-md);
+    color: var(--color-accent-yellow);
+}
+
+.package-box ul {
+    list-style-type: none;
+    padding: 0;
+    margin-bottom: var(--spacing-lg);
+}
+
+.package-box li {
+    font-size: var(--text-sm);
+    margin-bottom: 5px;
+}
+
+.package-box .detail-btn {
+    background: var(--color-accent-orange);
+    color: var(--color-white);
+    border: none;
+    padding: 10px;
+    border-radius: var(--radius-md);
     font-weight: 600;
     text-transform: uppercase;
     transition: var(--transition-normal);
 }
 
-.detail-cta-button:hover {
-    background-color: var(--color-primary-600);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.package-box .detail-btn:hover {
+    background: var(--color-accent-orange-hover);
 }
 
-/* --- Custom CTA Section (from other file, adjusted) --- */
+.note {
+    font-size: var(--text-sm);
+    color: var(--color-gray-500);
+    margin-top: var(--spacing-md);
+    text-align: left;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Custom CTA Section --- */
 .custom-cta {
     position: relative;
-    height: 400px;
+    height: auto;
+    min-height: 400px;
     overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
     text-align: center;
     color: white;
+    padding: 80px 24px;
+    margin: 60px auto;
+    max-width: 1200px;
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
 }
 
 .cta-video {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: cover;
     z-index: 1;
 }
@@ -185,21 +427,17 @@
     justify-content: center;
 }
 
-.cta-text {
-    z-index: 3;
-    max-width: 600px;
-    padding: 20px;
-}
-
 .cta-text h2 {
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .cta-text p {
     font-size: 16px;
     margin-bottom: 25px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .cta-button {
@@ -222,7 +460,7 @@
 
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
-    .detail-page-container {
+    .sukabumi-page {
         margin-top: 60px;
     }
     .detail-hero-section {
@@ -234,19 +472,42 @@
     .detail-hero-subtitle {
         font-size: 1rem;
     }
-    .detail-content-section {
+    .destination-menu-section {
         padding: 40px 16px;
         margin-top: -40px;
     }
-    .detail-section-title {
-        font-size: 1.5rem;
+    .filter-buttons {
+        gap: 10px;
     }
-    .detail-info-grid {
+    .filter-btn {
+        padding: 0.5rem 1rem;
+        font-size: 14px;
+    }
+    .destination-groups {
+        padding-top: 20px;
+    }
+    .tour-cards-grid, .package-grid {
         grid-template-columns: 1fr;
         gap: 20px;
     }
-    .detail-gallery {
-        grid-template-columns: 1fr;
+    .paket-card, .package-box {
+        max-width: 100%;
+    }
+    .paket-info {
+        padding: 15px;
+    }
+    .paket-info h3, .package-box h4 {
+        font-size: 1.2rem;
+    }
+    .paket-info .subtitle, .paket-info .harga, .package-box .price {
+        font-size: 1rem;
+    }
+    .paket-details, .package-box ul li {
+        font-size: 0.9rem;
+    }
+    .custom-cta {
+        padding: 40px 16px;
+        margin: 40px 0;
     }
     .cta-text h2 {
         font-size: 24px;

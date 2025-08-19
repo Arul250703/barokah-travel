@@ -1,255 +1,328 @@
-/* src/components/styles/semarang.css */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+/* semarang.css - Gaya khusus untuk halaman Semarang */
 
-:root {
-    --color-primary-500: #3b82f6; /* Biru */
-    --color-primary-600: #2563eb;
-    --color-primary-700: #1d4ed8;
-    --color-accent-orange: #f97316;
-    --color-light-gray: #f8fafc;
-    --color-gray-500: #64748b;
-    --color-gray-700: #334155;
-    --color-white: #ffffff;
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --transition-normal: all 0.25s ease-in-out;
-    --border-radius-lg: 0.75rem;
-    --border-radius-md: 0.5rem;
+/* --- Hero Section --- */
+.detail-hero-section {
+  position: relative;
+  width: 100%;
+  height: 60vh;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: white;
+  padding: 0 20px;
 }
 
-.semarang-page {
-    font-family: 'Poppins', sans-serif;
-    color: var(--color-gray-700);
-    margin-top: 80px; /* Offset for fixed header */
+.detail-hero-overlay {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-/* --- Hero Section & Slideshow --- */
-.hero-section {
-    position: relative;
-    width: 100%;
-    height: 40vh;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+.detail-hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.detail-hero-subtitle {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+/* --- Destination Menu & Filter --- */
+.destination-menu-section {
+    padding: 3rem 1rem;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 2rem;
+}
+
+.filter-btn {
+    background-color: #e9ecef;
+    color: #495057;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-btn:hover {
+    background-color: #ced4da;
+}
+
+.filter-btn.active {
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.destination-groups {
+    padding: 1rem 0;
+}
+
+.tour-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.paket-card {
+    background-color: white;
+    border-radius: 10px;
     overflow: hidden;
-    color: var(--color-white);
-}
-
-.header-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 2;
+    height: 100%;
 }
 
-.header-overlay h1 {
-    font-size: 3rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    text-align: center;
-    color: var(--color-white);
-    margin-bottom: 5px;
-}
-
-.header-overlay h2 {
-    font-size: 2rem;
-    font-weight: 500;
-    text-align: center;
-    color: var(--color-white);
-    margin: 0;
-}
-
-/* --- Tour Cards Section --- */
-.tour-cards-section {
-    padding: 60px 24px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.tour-section-title {
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--color-gray-700);
-    margin-bottom: 25px;
-    text-align: center;
-}
-
-.scroll-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 20px;
-    padding-bottom: 20px;
-}
-
-.tour-card {
-    min-width: 280px;
-    flex-shrink: 0;
-    background-color: var(--color-white);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-sm);
-    overflow: hidden;
-    transition: var(--transition-normal);
-    text-decoration: none;
-}
-
-.tour-card:hover {
+.paket-card:hover {
     transform: translateY(-5px);
-    box-shadow: var(--shadow-md);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-.tour-card img {
+.paket-card img {
     width: 100%;
-    height: 180px;
+    height: 200px;
     object-fit: cover;
 }
 
-.tour-card h4 {
-    font-size: 16px;
+.paket-info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.paket-info h3 {
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+    color: #004080;
     font-weight: 600;
-    color: var(--color-gray-700);
-    padding: 15px;
 }
 
-.price-label {
-    font-size: 12px;
-    color: var(--color-gray-500);
-    padding: 0 15px;
+.paket-info .subjudul {
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.4;
+    flex-grow: 1;
 }
 
-.price-value {
-    font-size: 18px;
+.paket-info .harga {
+    font-size: 1.3rem;
+    color: #1574AC;
     font-weight: 700;
-    color: var(--color-primary-500);
-    padding: 5px 15px 15px;
-    display: block;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
-.detail-button {
+.paket-info .min {
+    font-size: 0.8rem;
+    color: #888;
+    font-weight: 400;
+}
+
+.paket-info .detail-btn {
     display: block;
-    width: calc(100% - 30px);
-    margin: 0 15px 15px;
-    padding: 10px;
-    text-align: center;
-    background-color: var(--color-primary-500);
+    background-color: #1574AC;
     color: white;
+    text-align: center;
+    padding: 0.6rem;
+    border-radius: 5px;
     text-decoration: none;
-    border-radius: var(--border-radius-md);
     font-weight: 600;
-    transition: var(--transition-normal);
+    transition: background-color 0.3s ease;
 }
 
-.detail-button:hover {
-    background-color: var(--color-primary-600);
+.paket-info .detail-btn:hover {
+    background-color: #116294;
 }
 
-/* --- Custom CTA Section --- */
-.custom-cta {
-    position: relative;
-    height: 400px;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Event Packages Styling */
+.section-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    padding: 10px 20px;
     text-align: center;
     color: white;
+    background-color: #004080;
+    border-radius: 8px;
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
 }
 
-.cta-video {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    z-index: 1;
+.yellow-bg {
+    background-color: #ffc107;
+    color: #333;
 }
 
-.cta-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.package-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 1rem;
 }
 
-.cta-text {
-    z-index: 3;
-    max-width: 600px;
+.package-box {
+    background-color: white;
     padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-.cta-text h2 {
-    font-size: 32px;
-    font-weight: 700;
+.package-box:hover {
+    transform: translateY(-5px);
+}
+
+.package-box h4 {
+    color: #004080;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.package-box .price {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1574AC;
     margin-bottom: 15px;
 }
 
+.package-box ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+.package-box li {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.package-box .detail-btn {
+    margin-top: auto;
+}
+
+.note {
+    margin-top: 1.5rem;
+    text-align: left;
+    font-size: 0.85rem;
+    color: #6c757d;
+    line-height: 1.6;
+}
+
+/* Custom CTA Section */
+.custom-cta {
+  position: relative;
+  width: 100%;
+  height: 50vh;
+  overflow: hidden;
+}
+
+.cta-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;
+  height: auto;
+  z-index: -1;
+  object-fit: cover;
+}
+
+.cta-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.cta-text h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
 .cta-text p {
-    font-size: 16px;
-    margin-bottom: 25px;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
 }
 
 .cta-button {
-    background-color: var(--color-accent-orange);
-    color: white;
-    text-decoration: none;
-    padding: 12px 25px;
-    border-radius: var(--border-radius-md);
-    font-weight: 600;
-    text-transform: uppercase;
-    transition: var(--transition-normal);
-    display: inline-block;
+  background-color: white;
+  color: #1574AC;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 30px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
 }
 
 .cta-button:hover {
-    background-color: #e76f00;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #e0e0e0;
 }
 
 /* --- Responsive Design --- */
 @media (max-width: 768px) {
-    .semarang-page {
-        margin-top: 60px;
-    }
-    .hero-section {
-        height: 30vh;
-    }
-    .header-overlay h1 {
-        font-size: 2rem;
-    }
-    .header-overlay h2 {
-        font-size: 1.5rem;
-    }
-    .tour-cards-section {
-        padding: 40px 16px;
-    }
-    .tour-section-title {
-        font-size: 1.5rem;
-    }
-    .scroll-container {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    .tour-card {
-        min-width: 100%;
-    }
-    .cta-text h2 {
-        font-size: 24px;
-    }
-    .cta-text p {
-        font-size: 14px;
-    }
+  .detail-hero-title {
+    font-size: 2.5rem;
+  }
+  .detail-hero-subtitle {
+    font-size: 1.2rem;
+  }
+  .tour-cards-section {
+    padding: 2rem 1rem;
+  }
+  .tour-section-title {
+    font-size: 1.3rem;
+  }
+  .filter-buttons {
+    flex-direction: column;
+  }
+  .cta-text h2 {
+    font-size: 1.8rem;
+  }
+  .cta-text p {
+    font-size: 1rem;
+  }
 }

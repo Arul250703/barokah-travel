@@ -1,5 +1,3 @@
-// src/pages/Sukabumi.js
-
 import React from "react";
 import { Link } from "react-router-dom"; // Pastikan Link di-import
 import "../components/styles/halaman-detail.css";
