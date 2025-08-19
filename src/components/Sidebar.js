@@ -80,7 +80,7 @@ const Sidebar = () => {
       tooltip: "Keuangan",
     },
     {
-      path: "/buku-tamu",
+      path: "/bukutamu",
       icon: FaBook,
       text: "Buku Tamu",
       tooltip: "Buku Tamu",

@@ -65,6 +65,7 @@
                             </li>
                             <li><Link to="/layanan" className={`nav-link ${isActive('/layanan') ? 'active' : ''}`}>Layanan</Link></li>
                             <li><Link to="/travel" className={`nav-link ${isActive('/travel') ? 'active' : ''}`}>Travel News</Link></li>
+                            <li><Link to="/halamanbukutamu" className={`nav-link ${isActive('/halamanbukutamu') ? 'active' : ''}`}>Buku Tamu</Link></li>
                             <li>
 
                                 {/* PERBAIKAN: Menambahkan ikon Font Awesome */}
