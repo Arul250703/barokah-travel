@@ -112,7 +112,7 @@ const Sidebar = () => {
         <div
           className={`sidebar-overlay${isMobileOpen ? " active" : ""}`}
           onClick={closeMobileSidebar}
-        />
+        ></div>
       )}
 
       {/* Sidebar Toggle Button */}

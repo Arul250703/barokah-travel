@@ -1,82 +1,95 @@
-// src/pages/ScannerPage.js
-
 import React, { useEffect, useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
-import "../components/styles/QrPage.css"; // Pastikan path CSS ini benar
+import { Link } from "react-router-dom";
+import "../components/styles/QrPage.css"; // Pastikan path ini sesuai dengan struktur proyek Anda
+import "../components/styles/ScannerPage.css"; // Pastikan path ini sesuai
 
 const ScannerPage = () => {
   const [scanResult, setScanResult] = useState(null);
-  const [isScanning, setIsScanning] = useState(false); // State untuk mengontrol proses scan
+  const [isScanning, setIsScanning] = useState(false);
 
   useEffect(() => {
     let scannerInstance = null;
 
-    // Hanya jalankan scanner jika isScanning bernilai true
     if (isScanning) {
       scannerInstance = new Html5QrcodeScanner(
-        "qr-reader-container", // Target div untuk scanner
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        false // Verbose logging
+        "qr-reader-container",
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        false
       );
 
-      const onScanSuccess = (decodedText, decodedResult) => {
-        setIsScanning(false); // Sembunyikan tampilan kamera setelah scan berhasil
-        validateTicket(decodedText); // Lanjutkan ke validasi tiket
+      const onScanSuccess = (decodedText) => {
+        setIsScanning(false);
+        validateTicket(decodedText);
       };
 
-      const onScanError = (error) => {
-        // Bisa diabaikan untuk error minor
-      };
-
-      scannerInstance.render(onScanSuccess, onScanError);
+      scannerInstance.render(onScanSuccess, () => {});
     }
 
-    // Fungsi cleanup untuk membersihkan scanner saat komponen ditutup
     return () => {
-      if (scannerInstance && scannerInstance.getState() === 2 /* SCANNING */) {
-        scannerInstance.clear().catch((error) => {
-          console.error("Gagal membersihkan scanner.", error);
-        });
+      if (scannerInstance && typeof scannerInstance.clear === "function") {
+        scannerInstance.clear().catch(() => {});
       }
     };
-  }, [isScanning]); // Jalankan ulang efek ini setiap kali nilai isScanning berubah
+  }, [isScanning]);
 
-  const validateTicket = async (decodedText) => {
-    displayResult("loading", "MEMPROSES...", "Menghubungi server...");
+  // Fungsi validasi ini sekarang berinteraksi dengan localStorage
+  const validateTicket = (decodedText) => {
     try {
       let ticketId;
       try {
-        // Coba parse sebagai JSON terlebih dahulu
         const ticketData = JSON.parse(decodedText);
         ticketId = ticketData.ticketId || decodedText;
-      } catch (e) {
-        // Jika gagal, anggap sebagai teks biasa
+      } catch {
         ticketId = decodedText;
       }
 
-      const response = await fetch("/api/validate-ticket", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ticketId: ticketId }),
-      });
-      const result = await response.json();
-      if (response.ok) {
-        displayResult("success", result.message, `Atas nama: ${result.nama}`);
-      } else {
-        if (response.status === 409) {
-          displayResult("warning", result.message, `Atas nama: ${result.nama}`);
-        } else {
-          displayResult("error", result.message, `ID Tiket: ${ticketId}`);
-        }
+      // Ambil data tiket dari localStorage
+      const allTickets = JSON.parse(localStorage.getItem("allTickets")) || [];
+      const targetTicket = allTickets.find((t) => t.id === ticketId);
+
+      if (!targetTicket) {
+        displayResult(
+          "error",
+          "TIKET TIDAK DITEMUKAN",
+          `ID Tiket: ${ticketId}`
+        );
+        return;
       }
+      if (targetTicket.status === "sudah_digunakan") {
+        displayResult(
+          "warning",
+          "TIKET SUDAH DIGUNAKAN",
+          `Atas nama: ${targetTicket.namaPelanggan}`
+        );
+        return;
+      }
+      if (targetTicket.status === "hangus") {
+        displayResult(
+          "error",
+          "TIKET HANGUS/BATAL",
+          `Atas nama: ${targetTicket.namaPelanggan}`
+        );
+        return;
+      }
+
+      // Jika valid, update datanya
+      const updatedTickets = allTickets.map((t) =>
+        t.id === ticketId ? { ...t, status: "sudah_digunakan" } : t
+      );
+
+      // Simpan kembali ke localStorage
+      localStorage.setItem("allTickets", JSON.stringify(updatedTickets));
+      displayResult(
+        "success",
+        "VALIDASI BERHASIL",
+        `Atas nama: ${targetTicket.namaPelanggan}`
+      );
     } catch (error) {
       displayResult(
         "error",
-        "KONEKSI GAGAL",
-        "Tidak dapat terhubung ke server."
+        "QR CODE TIDAK VALID",
+        "Format data tidak dikenali."
       );
     }
   };
@@ -85,16 +98,13 @@ const ScannerPage = () => {
     setScanResult({ type, message, name });
   };
 
-  // Fungsi untuk memulai atau mengulang scan
   const handleStartScan = () => {
-    setScanResult(null); // Hapus hasil scan sebelumnya
-    setIsScanning(true); // Tampilkan scanner
+    setScanResult(null);
+    setIsScanning(true);
   };
 
-  const getResultCardClassName = () => {
-    if (!scanResult) return "result-card";
-    return `result-card ${scanResult.type}`;
-  };
+  const getResultCardClassName = () =>
+    `result-card ${scanResult ? scanResult.type : ""}`;
 
   const getIcon = () => {
     if (!scanResult) return null;
@@ -116,32 +126,25 @@ const ScannerPage = () => {
         <h1>Pemindai Tiket</h1>
         <p>Arahkan kamera ke QR Code pada tiket pelanggan.</p>
 
-        {/* Area ini akan menampilkan kamera jika isScanning true */}
         {isScanning && <div id="qr-reader-container"></div>}
 
-        {/* Tombol ini hanya muncul saat tidak sedang memindai */}
         {!isScanning && (
           <button className="start-scan-btn" onClick={handleStartScan}>
             {scanResult ? "Pindai Lagi" : "Mulai Memindai"}
           </button>
         )}
 
-        {/* Hasil scan akan muncul di bawah */}
         {scanResult && (
-          <div className={getResultCardClassName()}>
-            {scanResult.type === "loading" ? (
-              <>
-                <div className="message">{scanResult.message}</div>
-                <div className="name">{scanResult.name}</div>
-              </>
-            ) : (
-              <>
-                <div className="icon">{getIcon()}</div>
-                <div className="message">{scanResult.message}</div>
-                <div className="name">{scanResult.name}</div>
-              </>
-            )}
-          </div>
+          <>
+            <div className={getResultCardClassName()}>
+              <div className="icon">{getIcon()}</div>
+              <div className="message">{scanResult.message}</div>
+              <div className="name">{scanResult.name}</div>
+            </div>
+            <Link to="/" className="back-to-admin-link">
+              Kembali ke Dashboard Admin
+            </Link>
+          </>
         )}
       </div>
     </div>
