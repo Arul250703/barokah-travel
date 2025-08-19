@@ -69,8 +69,7 @@
 
                                 {/* PERBAIKAN: Menambahkan ikon Font Awesome */}
                                 <Link to="/admin" className="btn btn-primary">
-                                    <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', color: "red" }} />
-                                    
+                                    <FontAwesomeIcon icon={faUser} style={{ marginRight: '8px', color: "red" }} /> 
                                 </Link>
                             </li>
                         </ul>

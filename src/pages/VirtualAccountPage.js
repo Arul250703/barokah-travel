@@ -1,21 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import '../components/styles/VirtualAccountPage.css'; // Import CSS file
+import '../components/styles/VirtualAccountPage.css';
 
 const VirtualAccount = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState('');
   const [copied, setCopied] = useState(false);
+  const [paymentType, setPaymentType] = useState('full'); // 'full' atau 'dp'
+  const [activeTab, setActiveTab] = useState('atm');
 
-  // Mengambil data dari Invoice
+  // Mengambil data dari halaman sebelumnya
   const paymentData = location.state || {
-    namaPaket: "Data tidak tersedia",
-    totalHarga: 0,
-    paymentMethod: { name: "Bank", color: "#000" },
-    virtualAccountNumber: "0000000000000",
-    expiryTime: new Date()
+    methodName: "BCA Virtual Account",
+    vaNumber: "8808123456789",
+    amount: "Rp 0",
+    expiry: new Date().toLocaleString(),
+    // Data tambahan dari detail pembayaran
+    namaPaket: "Paket tidak tersedia",
+    harga: 0,
+    peserta: [],
+    emailKontak: ""
   };
+
+  // Menghitung total dan DP
+  const totalPeserta = paymentData.peserta?.length || 1;
+  const hargaPerOrang = paymentData.harga || 0;
+  const totalHarga = hargaPerOrang * totalPeserta;
+  const dpAmount = Math.floor(totalHarga * 0.3); // DP 30%
+  const sisaAmount = totalHarga - dpAmount;
 
   // Format Rupiah
   const formatRupiah = (angka) =>
@@ -29,7 +42,7 @@ const VirtualAccount = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const expiry = new Date(paymentData.expiryTime).getTime();
+      const expiry = new Date(paymentData.expiry).getTime();
       const distance = expiry - now;
 
       if (distance < 0) {
@@ -44,18 +57,18 @@ const VirtualAccount = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [paymentData.expiryTime]);
+  }, [paymentData.expiry]);
 
   // Copy Virtual Account Number
   const copyVANumber = () => {
-    navigator.clipboard.writeText(paymentData.virtualAccountNumber);
+    navigator.clipboard.writeText(paymentData.vaNumber);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   // Get bank instructions
   const getBankInstructions = () => {
-    const bankId = paymentData.paymentMethod.name.toLowerCase();
+    const bankId = (paymentData.methodName || '').toLowerCase();
     
     if (bankId.includes('bca')) {
       return {
@@ -96,46 +109,6 @@ const VirtualAccount = () => {
           "Konfirmasi pembayaran"
         ]
       };
-    } else if (bankId.includes('bni')) {
-      return {
-        atm: [
-          "Masukkan kartu ATM BNI dan PIN",
-          "Pilih menu 'Menu Lain'",
-          "Pilih 'Transfer'",
-          "Pilih 'Virtual Account Billing'",
-          "Masukkan nomor Virtual Account",
-          "Masukkan nominal transfer",
-          "Konfirmasi pembayaran"
-        ],
-        mobile: [
-          "Login ke aplikasi BNI Mobile Banking",
-          "Pilih menu 'Transfer'",
-          "Pilih 'Virtual Account Billing'",
-          "Masukkan nomor Virtual Account",
-          "Masukkan nominal transfer",
-          "Konfirmasi pembayaran"
-        ]
-      };
-    } else if (bankId.includes('bri')) {
-      return {
-        atm: [
-          "Masukkan kartu ATM BRI dan PIN",
-          "Pilih menu 'Transaksi Lain'",
-          "Pilih 'Pembayaran'",
-          "Pilih 'BRIVA'",
-          "Masukkan nomor BRIVA",
-          "Masukkan nominal pembayaran",
-          "Konfirmasi pembayaran"
-        ],
-        mobile: [
-          "Login ke aplikasi BRImo",
-          "Pilih menu 'Pembayaran'",
-          "Pilih 'BRIVA'",
-          "Masukkan nomor BRIVA",
-          "Masukkan nominal pembayaran",
-          "Konfirmasi pembayaran"
-        ]
-      };
     } else {
       return {
         atm: [
@@ -164,11 +137,18 @@ const VirtualAccount = () => {
     navigate(-1);
   };
 
-  // Updated function - navigate to payment status page
   const handleCheckPaymentStatus = () => {
     navigate('/payment-status', { 
-      state: paymentData 
+      state: {
+        ...paymentData,
+        paymentType,
+        amountPaid: paymentType === 'full' ? totalHarga : dpAmount
+      }
     });
+  };
+
+  const getCurrentAmount = () => {
+    return paymentType === 'full' ? totalHarga : dpAmount;
   };
 
   return (
@@ -176,50 +156,144 @@ const VirtualAccount = () => {
       <div className="va-container">
         {/* Header */}
         <div className="va-header">
-          <div 
-            className="bank-logo" 
-            style={{backgroundColor: paymentData.paymentMethod.color}}
-          >
+          <div className="bank-logo">
             🏦
           </div>
-          <h1 className="va-title">Virtual Account</h1>
-          <p className="bank-name">{paymentData.paymentMethod.name}</p>
-        </div>
-
-        {/* Payment Summary */}
-        <div className="summary-card">
-          <div className="summary-header">
-            <h3 className="summary-title">Ringkasan Pembayaran</h3>
+          <div className="header-content">
+            <h1 className="va-title">Pembayaran Virtual Account</h1>
+            <p className="bank-name">{paymentData.methodName}</p>
             <div className={`timer ${timeLeft === 'EXPIRED' ? 'expired' : ''}`}>
               <span className="timer-icon">⏰</span>
               <span className="timer-text">
-                {timeLeft === 'EXPIRED' ? 'EXPIRED' : `Sisa waktu: ${timeLeft}`}
+                {timeLeft === 'EXPIRED' ? 'KADALUARSA' : `Sisa waktu: ${timeLeft}`}
               </span>
-            </div>
-          </div>
-          
-          <div className="summary-content">
-            <div className="summary-row">
-              <span>Paket Wisata:</span>
-              <strong>{paymentData.namaPaket}</strong>
-            </div>
-            <div className="summary-row">
-              <span>Total Pembayaran:</span>
-              <strong className="total-amount">{formatRupiah(paymentData.totalHarga)}</strong>
             </div>
           </div>
         </div>
 
-        {/* Virtual Account Number */}
+        {/* Package & Participant Details */}
+        <div className="details-card">
+          <h3 className="card-title">
+            <span className="card-icon">📋</span>
+            Detail Pemesanan
+          </h3>
+          <div className="details-content">
+            <div className="detail-row">
+              <span className="detail-label">Paket Wisata:</span>
+              <span className="detail-value">{paymentData.namaPaket || 'Paket tidak tersedia'}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Harga per Orang:</span>
+              <span className="detail-value">{formatRupiah(hargaPerOrang)}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Jumlah Peserta:</span>
+              <span className="detail-value">{totalPeserta} orang</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Email Kontak:</span>
+              <span className="detail-value">{paymentData.emailKontak || '-'}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Participants List */}
+        {paymentData.peserta && paymentData.peserta.length > 0 && (
+          <div className="participants-card">
+            <h3 className="card-title">
+              <span className="card-icon">👥</span>
+              Data Peserta
+            </h3>
+            <div className="participants-list">
+              {paymentData.peserta.map((peserta, index) => (
+                <div key={index} className="participant-item">
+                  <div className="participant-header">
+                    <h4>Peserta {index + 1}</h4>
+                  </div>
+                  <div className="participant-details">
+                    <div className="participant-row">
+                      <span>Nama:</span>
+                      <span>{peserta.nama}</span>
+                    </div>
+                    <div className="participant-row">
+                      <span>Telepon:</span>
+                      <span>{peserta.telepon}</span>
+                    </div>
+                    <div className="participant-row">
+                      <span>TTL:</span>
+                      <span>{peserta.tempatLahir}, {peserta.tanggalLahir}</span>
+                    </div>
+                    <div className="participant-row full-width">
+                      <span>Alamat:</span>
+                      <span>{peserta.alamat}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Payment Options */}
+        <div className="payment-options-card">
+          <h3 className="card-title">
+            <span className="card-icon">💰</span>
+            Pilihan Pembayaran
+          </h3>
+          <div className="payment-options">
+            <div 
+              className={`payment-option ${paymentType === 'full' ? 'active' : ''}`}
+              onClick={() => setPaymentType('full')}
+            >
+              <div className="option-header">
+                <div className="radio-button">
+                  {paymentType === 'full' && <div className="radio-dot"></div>}
+                </div>
+                <div className="option-content">
+                  <h4>Bayar Penuh</h4>
+                  <p className="option-description">Bayar seluruh tagihan sekaligus</p>
+                </div>
+              </div>
+              <div className="option-amount">
+                {formatRupiah(totalHarga)}
+              </div>
+            </div>
+
+            <div 
+              className={`payment-option ${paymentType === 'dp' ? 'active' : ''}`}
+              onClick={() => setPaymentType('dp')}
+            >
+              <div className="option-header">
+                <div className="radio-button">
+                  {paymentType === 'dp' && <div className="radio-dot"></div>}
+                </div>
+                <div className="option-content">
+                  <h4>Bayar DP (30%)</h4>
+                  <p className="option-description">
+                    Sisa pembayaran: {formatRupiah(sisaAmount)}
+                  </p>
+                </div>
+              </div>
+              <div className="option-amount">
+                {formatRupiah(dpAmount)}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Virtual Account Card */}
         <div className="va-card">
-          <h3 className="va-title">Nomor Virtual Account</h3>
+          <h3 className="card-title">
+            <span className="card-icon">💳</span>
+            Nomor Virtual Account
+          </h3>
           <div className="va-number-container">
             <span 
               className="va-number"
               onClick={copyVANumber}
               title="Klik untuk menyalin"
             >
-              {paymentData.virtualAccountNumber}
+              {paymentData.vaNumber}
             </span>
             <button 
               className={`copy-button ${copied ? 'copy-success' : ''}`}
@@ -228,30 +302,40 @@ const VirtualAccount = () => {
               {copied ? '✓ Tersalin' : '📋 Salin'}
             </button>
           </div>
-          <p className="va-note">
-            Gunakan nomor ini untuk melakukan pembayaran melalui ATM, Mobile Banking, atau Internet Banking
-          </p>
+          <div className="payment-amount">
+            <span className="amount-label">Jumlah yang harus dibayar:</span>
+            <span className="amount-value">{formatRupiah(getCurrentAmount())}</span>
+          </div>
         </div>
 
-        {/* Payment Instructions */}
+        {/* Instructions */}
         <div className="instructions-card">
-          <h3 className="instructions-title">📋 Cara Pembayaran</h3>
-          
+          <h3 className="card-title">
+            <span className="card-icon">📋</span>
+            Cara Pembayaran
+          </h3>
           <div className="instructions-tabs">
-            <div className="tab-content">
-              <h4 className="tab-title">🏧 Melalui ATM</h4>
-              <ol className="instructions-list">
-                {instructions.atm.map((step, index) => (
-                  <li key={index} className="instruction-item">{step}</li>
-                ))}
-              </ol>
+            <div className="tab-buttons">
+              <button 
+                className={`tab-button ${activeTab === 'atm' ? 'active' : ''}`}
+                onClick={() => setActiveTab('atm')}
+              >
+                🏧 ATM
+              </button>
+              <button 
+                className={`tab-button ${activeTab === 'mobile' ? 'active' : ''}`}
+                onClick={() => setActiveTab('mobile')}
+              >
+                📱 Mobile Banking
+              </button>
             </div>
-
             <div className="tab-content">
-              <h4 className="tab-title">📱 Mobile Banking</h4>
               <ol className="instructions-list">
-                {instructions.mobile.map((step, index) => (
-                  <li key={index} className="instruction-item">{step}</li>
+                {instructions[activeTab].map((step, index) => (
+                  <li key={index} className="instruction-item">
+                    <span className="step-number">{index + 1}</span>
+                    <span className="step-text">{step}</span>
+                  </li>
                 ))}
               </ol>
             </div>
@@ -260,13 +344,19 @@ const VirtualAccount = () => {
 
         {/* Important Notes */}
         <div className="notes-card">
-          <h3 className="notes-title">⚠️ Penting untuk Diperhatikan</h3>
+          <h3 className="card-title">
+            <span className="card-icon">⚠️</span>
+            Penting untuk Diperhatikan
+          </h3>
           <ul className="notes-list">
-            <li>Transfer harus dilakukan dengan nominal yang tepat: <strong>{formatRupiah(paymentData.totalHarga)}</strong></li>
-            <li>Simpan bukti transfer hingga pembayaran dikonfirmasi</li>
-            <li>Virtual Account akan kedaluwarsa dalam 24 jam</li>
-            <li>Jangan berikan nomor Virtual Account kepada orang lain</li>
-            <li>Hubungi customer service jika ada kendala</li>
+            <li>Pastikan nominal yang ditransfer sesuai dengan jumlah tagihan</li>
+            <li>Virtual Account akan otomatis nonaktif setelah batas waktu berakhir</li>
+            <li>Simpan bukti pembayaran untuk keperluan konfirmasi</li>
+            {paymentType === 'dp' && (
+              <li className="highlight">
+                <strong>Sisa pembayaran sebesar {formatRupiah(sisaAmount)} harus dilunasi sebelum keberangkatan</strong>
+              </li>
+            )}
           </ul>
         </div>
 
@@ -276,26 +366,17 @@ const VirtualAccount = () => {
             className="back-button"
             onClick={handleBackToInvoice}
           >
-            ← Kembali ke Invoice
+            <span>←</span>
+            Kembali ke Invoice
           </button>
           <button 
             className="check-button"
             onClick={handleCheckPaymentStatus}
+            disabled={timeLeft === 'EXPIRED'}
           >
-            🔄 Cek Status Pembayaran
+            <span>🔄</span>
+            Cek Status Pembayaran
           </button>
-        </div>
-
-        {/* Footer */}
-        <div className="va-footer">
-          <p className="footer-text">
-            Ada pertanyaan? Hubungi Customer Service kami di 
-            <strong> 0804-1-500-000</strong> atau 
-            <strong> cs@barokahtour.com</strong>
-          </p>
-          <p className="footer-text" style={{marginTop: '10px', fontSize: '12px'}}>
-            Pastikan Anda melakukan pembayaran sebelum batas waktu yang ditentukan
-          </p>
         </div>
       </div>
     </div>
