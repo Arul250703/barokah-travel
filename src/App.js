@@ -78,43 +78,34 @@ function App() {
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
-        <Route path="/tiket-page" element={<TiketPage />} />
-<<<<<<< HEAD
-        <Route path="/qr-page" element={<QrPage />} />
-        <Route path="/admin" element={<Admin />} />
+<Route path="/tiket-page" element={<TiketPage />} />
+<Route path="/qr-page" element={<QrPage />} />
+<Route path="/admin" element={<Admin />} />
 
-=======
->>>>>>> d4e991a1d61388a3738c638dcef36b0d0fef631f
-
-        {/* Grup 3: Halaman Admin (dengan Sidebar) */}
-        <Route element={<AdminLayoutWrapper />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/keuangan" element={<Keuangan />} />
-<<<<<<< HEAD
-=======
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/qr-page" element={<QrPage />} />
->>>>>>> d4e991a1d61388a3738c638dcef36b0d0fef631f
-          {/* Tambahan halaman admin */}
-          <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
-          <Route
-            path="/bookings"
-            element={<div>Bookings Page (Coming Soon)</div>}
-          />
-          <Route
-            path="/buku-tamu"
-            element={<div>Buku Tamu Page (Coming Soon)</div>}
-          />
-          <Route
-            path="/reports"
-            element={<div>Reports Page (Coming Soon)</div>}
-          />
-          <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
-          <Route
-            path="/settings"
-            element={<div>Settings Page (Coming Soon)</div>}
-          />
-        </Route>
+{/* Grup 3: Halaman Admin (dengan Sidebar) */}
+<Route element={<AdminLayoutWrapper />}>
+  <Route path="/dashboard" element={<Dashboard />} />
+  <Route path="/keuangan" element={<Keuangan />} />
+  {/* Tambahan halaman admin */}
+  <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
+  <Route
+    path="/bookings"
+    element={<div>Bookings Page (Coming Soon)</div>}
+  />
+  <Route
+    path="/buku-tamu"
+    element={<div>Buku Tamu Page (Coming Soon)</div>}
+  />
+  <Route
+    path="/reports"
+    element={<div>Reports Page (Coming Soon)</div>}
+  />
+  <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
+  <Route
+    path="/settings"
+    element={<div>Settings Page (Coming Soon)</div>}
+  />
+</Route>
 
         {/* Fallback 404 */}
         <Route
