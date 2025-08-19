@@ -79,12 +79,13 @@ function App() {
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
         <Route path="/tiket-page" element={<TiketPage />} />
-        <Route path="/qr-page" element={<QrPage />} />
 
         {/* Grup 3: Halaman Admin (dengan Sidebar) */}
         <Route element={<AdminLayoutWrapper />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/keuangan" element={<Keuangan />} />
+                  <Route path="/qr-page" element={<QrPage />} />
+
           <Route path="/admin" element={<Admin />} />
           {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
