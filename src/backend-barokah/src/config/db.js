@@ -5,7 +5,7 @@ const connection = mysql.createConnection({
   host: 'localhost',          // Alamat server MySQL (biasanya localhost)
   user: 'root',               // Username default untuk XAMPP
   password: '',               // Password default untuk XAMPP adalah kosong
-  database: 'barokah_tour_db' // Nama database yang Anda buat
+  database: 'barokah_tour' // Nama database yang Anda buat
 });
 
 // Mencoba menghubungkan ke database

@@ -11,16 +11,11 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-<<<<<<< HEAD
+
     "cors": "^2.8.5",
-=======
-<<<<<<< Updated upstream
-    "cors": "^2.8.5",
-=======
+
     "axios": "^1.11.0",
     "file-saver": "^2.0.5",
->>>>>>> Stashed changes
->>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
     "html5-qrcode": "^2.3.8",
     "mysql2": "^3.14.3",
     "qrcode.react": "^4.2.0",

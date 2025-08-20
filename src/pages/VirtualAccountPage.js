@@ -7,7 +7,7 @@ const VirtualAccount = () => {
   const navigate = useNavigate();
   const [timeLeft, setTimeLeft] = useState('');
   const [copied, setCopied] = useState(false);
-  const [paymentType, setPaymentType] = useState('full'); // 'full' atau 'dp'
+  const [paymentType, setPaymentType] = useState('full');
   const [activeTab, setActiveTab] = useState('atm');
 
   // Mengambil data dari halaman sebelumnya
@@ -15,20 +15,29 @@ const VirtualAccount = () => {
     methodName: "BCA Virtual Account",
     vaNumber: "8808123456789",
     amount: "Rp 0",
-    expiry: new Date().toLocaleString(),
-    // Data tambahan dari detail pembayaran
+    expiry: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 jam dari sekarang
     namaPaket: "Paket tidak tersedia",
     harga: 0,
     peserta: [],
-    emailKontak: ""
+    emailKontak: "",
+    totalHarga: 0
   };
 
+  // Pastikan semua data yang diperlukan tersedia
+  const {
+    namaPaket = "Paket tidak tersedia",
+    harga = 0,
+    peserta = [],
+    emailKontak = "",
+    totalHarga = 0
+  } = paymentData;
+
   // Menghitung total dan DP
-  const totalPeserta = paymentData.peserta?.length || 1;
-  const hargaPerOrang = paymentData.harga || 0;
-  const totalHarga = hargaPerOrang * totalPeserta;
-  const dpAmount = Math.floor(totalHarga * 0.3); // DP 30%
-  const sisaAmount = totalHarga - dpAmount;
+  const totalPeserta = peserta.length || 1;
+  const hargaPerOrang = harga || 0;
+  const calculatedTotalHarga = totalHarga || (hargaPerOrang * totalPeserta);
+  const dpAmount = Math.floor(calculatedTotalHarga * 0.3);
+  const sisaAmount = calculatedTotalHarga - dpAmount;
 
   // Format Rupiah
   const formatRupiah = (angka) =>
@@ -40,9 +49,13 @@ const VirtualAccount = () => {
 
   // Countdown timer
   useEffect(() => {
+    const expiryDate = paymentData.expiry instanceof Date 
+      ? paymentData.expiry 
+      : new Date(paymentData.expiry);
+    
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const expiry = new Date(paymentData.expiry).getTime();
+      const expiry = expiryDate.getTime();
       const distance = expiry - now;
 
       if (distance < 0) {
@@ -142,13 +155,13 @@ const VirtualAccount = () => {
       state: {
         ...paymentData,
         paymentType,
-        amountPaid: paymentType === 'full' ? totalHarga : dpAmount
+        amountPaid: paymentType === 'full' ? calculatedTotalHarga : dpAmount
       }
     });
   };
 
   const getCurrentAmount = () => {
-    return paymentType === 'full' ? totalHarga : dpAmount;
+    return paymentType === 'full' ? calculatedTotalHarga : dpAmount;
   };
 
   return (
@@ -180,7 +193,7 @@ const VirtualAccount = () => {
           <div className="details-content">
             <div className="detail-row">
               <span className="detail-label">Paket Wisata:</span>
-              <span className="detail-value">{paymentData.namaPaket || 'Paket tidak tersedia'}</span>
+              <span className="detail-value">{namaPaket}</span>
             </div>
             <div className="detail-row">
               <span className="detail-label">Harga per Orang:</span>
@@ -192,20 +205,24 @@ const VirtualAccount = () => {
             </div>
             <div className="detail-row">
               <span className="detail-label">Email Kontak:</span>
-              <span className="detail-value">{paymentData.emailKontak || '-'}</span>
+              <span className="detail-value">{emailKontak || '-'}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Total Harga:</span>
+              <span className="detail-value">{formatRupiah(calculatedTotalHarga)}</span>
             </div>
           </div>
         </div>
 
         {/* Participants List */}
-        {paymentData.peserta && paymentData.peserta.length > 0 && (
+        {peserta && peserta.length > 0 && (
           <div className="participants-card">
             <h3 className="card-title">
               <span className="card-icon">👥</span>
               Data Peserta
             </h3>
             <div className="participants-list">
-              {paymentData.peserta.map((peserta, index) => (
+              {peserta.map((peserta, index) => (
                 <div key={index} className="participant-item">
                   <div className="participant-header">
                     <h4>Peserta {index + 1}</h4>
@@ -213,19 +230,19 @@ const VirtualAccount = () => {
                   <div className="participant-details">
                     <div className="participant-row">
                       <span>Nama:</span>
-                      <span>{peserta.nama}</span>
+                      <span>{peserta.nama || '-'}</span>
                     </div>
                     <div className="participant-row">
                       <span>Telepon:</span>
-                      <span>{peserta.telepon}</span>
+                      <span>{peserta.telepon || '-'}</span>
                     </div>
                     <div className="participant-row">
                       <span>TTL:</span>
-                      <span>{peserta.tempatLahir}, {peserta.tanggalLahir}</span>
+                      <span>{peserta.tempatLahir || '-'}, {peserta.tanggalLahir || '-'}</span>
                     </div>
                     <div className="participant-row full-width">
                       <span>Alamat:</span>
-                      <span>{peserta.alamat}</span>
+                      <span>{peserta.alamat || '-'}</span>
                     </div>
                   </div>
                 </div>
@@ -255,7 +272,7 @@ const VirtualAccount = () => {
                 </div>
               </div>
               <div className="option-amount">
-                {formatRupiah(totalHarga)}
+                {formatRupiah(calculatedTotalHarga)}
               </div>
             </div>
 

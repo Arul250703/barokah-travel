@@ -87,12 +87,10 @@ function App() {
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
-<<<<<<< HEAD
         <Route path="/tiket-page" element={<TiketPage />} />
 
         <Route path="/admin" element={<Admin />} />
-=======
-<<<<<<< Updated upstream
+
 <Route path="/tiket-page" element={<TiketPage />} />
 <Route path="/admin" element={<Admin />} />
 
@@ -122,24 +120,22 @@ function App() {
     element={<div>Settings Page (Coming Soon)</div>}
   />
 </Route>
-=======
+
         <Route path="/tiket-page" element={<TiketPage />} />
                   <Route path="/admin" element={<Admin />} />
 
->>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
 
         {/* Grup 3: Halaman Admin (dengan Sidebar) */}
         <Route element={<AdminLayoutWrapper />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/keuangan" element={<Keuangan />} />
           <Route path="/qr-page" element={<QrPage />} />
-<<<<<<< HEAD
+
 
           <Route path="/admin" element={<Admin />} />
-=======
           <Route path="/bukutamu" element={<BukuTamu />} />
 
->>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
+
           {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
           <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
@@ -148,7 +144,7 @@ function App() {
           <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
           <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
         </Route>
->>>>>>> Stashed changes
+
 
         {/* Fallback 404 */}
         <Route

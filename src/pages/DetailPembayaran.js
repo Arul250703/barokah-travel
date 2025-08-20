@@ -82,7 +82,6 @@ const DetailPembayaran = () => {
       peserta // Backend sudah diatur untuk menerima 'peserta'
     };
 
-<<<<<<< HEAD
     try {
       // 2. Kirim data ke backend menggunakan fetch
       const response = await fetch("http://localhost:5000/api/bookings", {
@@ -116,24 +115,8 @@ const DetailPembayaran = () => {
     } finally {
       setIsSubmitting(false);
     }
-=======
-    // Navigasi ke halaman Virtual Account dengan membawa SEMUA data
-    navigate("/virtual-account", { state: paymentData });
-    // Navigasi ke halaman Invoice dengan membawa data
-    navigate("/invoice  ", {
-      state: {
-        namaPaket,
-        harga,
-        peserta,
-        emailKontak,
-        totalHarga,
-      },
-    });
-<<<<<<< HEAD
 
-=======
->>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
->>>>>>> 4aac5b2f26bbff3057cd8460069f56d716d35829
+    // Navigasi sudah dilakukan di dalam blok try di atas, tidak perlu lagi di sini.
   };
 
   return (
