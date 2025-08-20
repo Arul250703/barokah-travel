@@ -100,10 +100,6 @@ const DetailPembayaran = () => {
         totalHarga,
       },
     });
-<<<<<<< HEAD
-
-=======
->>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
   };
 
   return (
