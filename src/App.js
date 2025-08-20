@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Outlet, useLocation} from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AdminLayout from './components/AdminLayout';
@@ -28,16 +28,24 @@ import Register from './pages/Register';
 import ScannerPage from './pages/ScannerPage';
 import TiketPage from './pages/TiketPage';
 import QrPage from './pages/QrPage';
+import BukuTamu from './pages/BukuTamu';
+import HalamanBukuTamu from './pages/HalamanBukuTamu';
 
 // Layout untuk user (Header + Footer)
 const SiteLayout = () => {
+  const location = useLocation();
+
+  // daftar halaman yang tidak pakai footer
+  const hideFooterRoutes = ["/halamanbukutamu"];
+
+  const hideFooter = hideFooterRoutes.includes(location.pathname);
   return (
     <>
       <Header />
       <main>
         <Outlet />
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
     </>
   );
 };
@@ -69,6 +77,7 @@ function App() {
           <Route path="/surabaya" element={<Surabaya />} />
           <Route path="/travel/:id" element={<DetailNews />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/halamanbukutamu" element={<HalamanBukuTamu />} />
         </Route>
 
         {/* Grup 2: Halaman tanpa Header & Footer (Pembayaran, Tiket, dsb.) */}
@@ -78,6 +87,12 @@ function App() {
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
+<<<<<<< HEAD
+        <Route path="/tiket-page" element={<TiketPage />} />
+
+        <Route path="/admin" element={<Admin />} />
+=======
+<<<<<<< Updated upstream
 <Route path="/tiket-page" element={<TiketPage />} />
 <Route path="/admin" element={<Admin />} />
 
@@ -107,6 +122,33 @@ function App() {
     element={<div>Settings Page (Coming Soon)</div>}
   />
 </Route>
+=======
+        <Route path="/tiket-page" element={<TiketPage />} />
+                  <Route path="/admin" element={<Admin />} />
+
+>>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
+
+        {/* Grup 3: Halaman Admin (dengan Sidebar) */}
+        <Route element={<AdminLayoutWrapper />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/keuangan" element={<Keuangan />} />
+          <Route path="/qr-page" element={<QrPage />} />
+<<<<<<< HEAD
+
+          <Route path="/admin" element={<Admin />} />
+=======
+          <Route path="/bukutamu" element={<BukuTamu />} />
+
+>>>>>>> a19dc494d94e797ab7ef71d9ef9a97bebaed6723
+          {/* Tambahan halaman admin */}
+          <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
+          <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
+          {/* <Route path="/bukutamu" element={<div>Buku Tamu Page (Coming Soon)</div>} /> */}
+          <Route path="/reports" element={<div>Reports Page (Coming Soon)</div>} />
+          <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
+          <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
+        </Route>
+>>>>>>> Stashed changes
 
         {/* Fallback 404 */}
         <Route
