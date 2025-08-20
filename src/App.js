@@ -87,19 +87,32 @@ function App() {
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
+<<<<<<< HEAD
 
         <Route path="/tiket-page" element={<TiketPage />} />
 
         <Route path="/admin" element={<Admin />} />
         <Route path="/tiket-page" element={<TiketPage />} />
         
+=======
+        <Route path="/tiket-page" element={<TiketPage />} />
+
+        <Route path="/admin" element={<Admin />} />
+
+<Route path="/tiket-page" element={<TiketPage />} />
+<Route path="/admin" element={<Admin />} />
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 
 {/* Grup 3: Halaman Admin (dengan Sidebar) */}
 <Route element={<AdminLayoutWrapper />}>
   <Route path="/dashboard" element={<Dashboard />} />
   <Route path="/keuangan" element={<Keuangan />} />
   <Route path="/qr-page" element={<QrPage />} />
+<<<<<<< HEAD
   <Route path="/bukutamu" element={<BukuTamu />} />
+=======
+
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
   {/* Tambahan halaman admin */}
   <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
   <Route
@@ -120,15 +133,32 @@ function App() {
     element={<div>Settings Page (Coming Soon)</div>}
   />
 </Route>
+<<<<<<< HEAD
         <Route path="/tiket-page" element={<TiketPage />} />
                   <Route path="/admin" element={<Admin />} />
 
+=======
+
+        <Route path="/tiket-page" element={<TiketPage />} />
+                  <Route path="/admin" element={<Admin />} />
+
+
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
         {/* Grup 3: Halaman Admin (dengan Sidebar) */}
         <Route element={<AdminLayoutWrapper />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/keuangan" element={<Keuangan />} />
           <Route path="/qr-page" element={<QrPage />} />
+<<<<<<< HEAD
           <Route path="/bukutamu" element={<BukuTamu />} />
+=======
+
+
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/bukutamu" element={<BukuTamu />} />
+
+
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
           {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
           <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
@@ -137,6 +167,10 @@ function App() {
           <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
           <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
         </Route>
+<<<<<<< HEAD
+=======
+
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 
         {/* Fallback 404 */}
         <Route

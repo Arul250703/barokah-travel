@@ -2,9 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 // import '../components/styles/Yogyakarta.css';
 import '../components/styles/yogyakarta.css';
+<<<<<<< HEAD
 // import '../components/yles/Yogyakarta.css';
 import '../components/styles/yogyakarta.css';
 
+=======
+
+// import '../components/yles/Yogyakarta.css';
+import '../components/styles/yogyakarta.css';
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 
 // Import Aset Gambar yang relevan untuk halaman ini
 import situ from '../assets/images/situ.jpeg';

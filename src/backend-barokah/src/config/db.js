@@ -1,5 +1,6 @@
 // file: src/config/db.js
 
+<<<<<<< HEAD
 const mysql = require("mysql2/promise");
 const dotenv = require("dotenv");
 
@@ -14,6 +15,14 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
+=======
+// Membuat objek koneksi ke database MySQL Anda
+const connection = mysql.createConnection({
+  host: 'localhost',          // Alamat server MySQL (biasanya localhost)
+  user: 'root',               // Username default untuk XAMPP
+  password: '',               // Password default untuk XAMPP adalah kosong
+  database: 'barokah_tour' // Nama database yang Anda buat
+>>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 });
 
 // Uji koneksi
