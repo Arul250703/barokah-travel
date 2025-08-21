@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mysql = require('mysql2');
+const bcrypt = require('bcrypt'); // Library untuk enkripsi password
+
 
 dotenv.config();
 
@@ -441,6 +443,79 @@ app.get('/api/bookings/:id', (req, res) => {
     });
   });
 });
+
+app.get('/api/users', (req, res) => {
+    const sql = "SELECT id, username, full_name, email, created_at FROM users";
+    db.query(sql, (err, results) => {
+        if (err) return res.status(500).json({ success: false, message: "Kesalahan server." });
+        res.status(200).json({ success: true, data: results });
+    });
+});
+
+// POST: Menambah pengguna baru (BAGIAN INI DIPERBAIKI)
+app.post('/api/users', (req, res) => {
+    // 1. Pastikan nama variabel di sini sama dengan yang dikirim dari frontend
+    const { username, password, full_name, email } = req.body;
+
+    if (!username || !password || !full_name || !email) {
+        return res.status(400).json({ success: false, message: "Semua field wajib diisi." });
+    }
+
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) return res.status(500).json({ success: false, message: "Gagal mengenkripsi password." });
+        
+        // 2. Pastikan urutan VALUES cocok dengan urutan kolom
+        const sql = "INSERT INTO users (username, password, full_name, email) VALUES (?, ?, ?, ?)";
+        db.query(sql, [username, hash, full_name, email], (err, result) => {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).json({ success: false, message: "Username atau Email sudah digunakan." });
+                }
+                console.error("Error saat menyimpan pengguna:", err); // Tambahkan log error
+                return res.status(500).json({ success: false, message: "Gagal menyimpan pengguna ke database." });
+            }
+            res.status(201).json({ success: true, message: "Pengguna baru berhasil ditambahkan!" });
+        });
+    });
+});
+
+// PUT: Mengedit pengguna (BAGIAN INI JUGA DIPERBAIKI)
+app.put('/api/users/:id', (req, res) => {
+    const userId = req.params.id;
+    const { username, password, full_name, email } = req.body;
+
+    if (!password) {
+        const sql = "UPDATE users SET username = ?, full_name = ?, email = ? WHERE id = ?";
+        db.query(sql, [username, full_name, email, userId], (err, result) => {
+            if (err) return res.status(500).json({ success: false, message: "Gagal mengupdate pengguna." });
+            if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan." });
+            res.status(200).json({ success: true, message: "Pengguna berhasil diupdate!" });
+        });
+    } else {
+        bcrypt.hash(password, saltRounds, (err, hash) => {
+            if (err) return res.status(500).json({ success: false, message: "Gagal mengenkripsi password." });
+            const sql = "UPDATE users SET username = ?, password = ?, full_name = ?, email = ? WHERE id = ?";
+            db.query(sql, [username, hash, full_name, email, userId], (err, result) => {
+                if (err) return res.status(500).json({ success: false, message: "Gagal mengupdate pengguna." });
+                if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan." });
+                res.status(200).json({ success: true, message: "Pengguna berhasil diupdate!" });
+            });
+        });
+    }
+});
+
+// DELETE: Menghapus pengguna (Tidak berubah)
+app.delete('/api/users/:id', (req, res) => {
+    const userId = req.params.id;
+    const sql = "DELETE FROM users WHERE id = ?";
+    db.query(sql, [userId], (err, result) => {
+        if (err) return res.status(500).json({ success: false, message: "Gagal menghapus pengguna." });
+        if (result.affectedRows === 0) return res.status(404).json({ success: false, message: "Pengguna tidak ditemukan." });
+        res.status(200).json({ success: true, message: "Pengguna berhasil dihapus!" });
+    });
+});
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -349,3 +349,98 @@ body {
     text-align: center;
   }
 }
+
+
+/* Mendefinisikan variabel warna untuk Mode Terang (Light Mode) */
+body.light {
+  --bg-primary: #f8fafc;        /* Latar belakang utama halaman */
+  --bg-secondary: #ffffff;      /* Latar belakang untuk kartu, tabel */
+  --text-primary: #1e293b;      /* Warna teks utama (hitam) */
+  --text-secondary: #64748b;    /* Warna teks sekunder (abu-abu) */
+  --border-color: #e2e8f0;      /* Warna border */
+  --shadow-color: rgba(0, 0, 0, 0.05);
+  --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Mendefinisikan variabel warna untuk Mode Gelap (Dark Mode) */
+body.dark {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --shadow-color: rgba(0, 0, 0, 0.2);
+  --header-bg: linear-gradient(135deg, #374151 0%, #111827 100%);
+}
+
+/* --- Menerapkan Variabel ke Seluruh Aplikasi --- */
+
+/* Reset dan base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Main layout dengan sidebar */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+  background-color: var(--bg-primary);
+}
+
+/* Header untuk mobile */
+.mobile-header {
+  display: none;
+  background: var(--header-bg);
+  /* ... sisa style mobile header ... */
+}
+
+/* Content padding */
+.page-content {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0;
+  }
+  .mobile-header {
+    display: block;
+  }
+}
+
+/* Tabel */
+.table-container {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px var(--shadow-color);
+  /* ... sisa style tabel ... */
+}
+
+.table th {
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border-color);
+}
+
+.table td {
+  border-bottom: 1px solid var(--border-color);
+}
+
