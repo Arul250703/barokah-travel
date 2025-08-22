@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mysql = require('mysql2');
 const { v4: uuidv4 } = require("uuid");
-const bcrypt = require('bcrypt'); // Library untuk enkripsi password
+const bcrypt = require('bcryptjs'); // Library untuk enkripsi password
 
 
 
