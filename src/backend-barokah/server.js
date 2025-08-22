@@ -516,6 +516,59 @@ app.delete('/api/users/:id', (req, res) => {
 });
 
 
+// === API BARU UNTUK MENYIMPAN TRANSAKSI PEMBAYARAN ===
+app.post('/api/transactions', (req, res) => {
+    const { 
+        booking_id, 
+        payment_type, 
+        amount_paid, 
+        payment_method, 
+        va_number 
+    } = req.body;
+
+    db.beginTransaction(err => {
+        if (err) return res.status(500).json({ success: false, message: "Kesalahan server." });
+
+        // 1. Simpan detail transaksi ke tabel 'transactions'
+        const transactionSql = "INSERT INTO transactions (booking_id, payment_type, amount_paid, payment_method, va_number) VALUES (?, ?, ?, ?, ?)";
+        const transactionValues = [booking_id, payment_type, amount_paid, payment_method, va_number];
+
+        db.query(transactionSql, transactionValues, (err, result) => {
+            if (err) {
+                return db.rollback(() => {
+                    console.error("Error menyimpan transaksi:", err);
+                    res.status(500).json({ success: false, message: "Gagal menyimpan data transaksi." });
+                });
+            }
+
+            // 2. Tentukan status booking baru berdasarkan tipe pembayaran
+            // Jika bayar DP, status jadi 'DP'. Jika bayar penuh, status jadi 'Lunas'.
+            const newStatus = payment_type === 'dp' ? 'DP' : 'Lunas';
+
+            // 3. Update status di tabel 'bookings'
+            const updateBookingSql = "UPDATE bookings SET status = ? WHERE id = ?";
+            db.query(updateBookingSql, [newStatus, booking_id], (err, result) => {
+                if (err) {
+                    return db.rollback(() => {
+                        console.error("Error update status booking:", err);
+                        res.status(500).json({ success: false, message: "Gagal mengupdate status booking." });
+                    });
+                }
+
+                // 4. Jika semua berhasil, konfirmasi transaksi
+                db.commit(err => {
+                    if (err) {
+                        return db.rollback(() => res.status(500).json({ success: false, message: "Kesalahan server." }));
+                    }
+                    res.status(201).json({ success: true, message: "Pembayaran berhasil dicatat!" });
+                });
+            });
+        });
+    });
+});
+// === AKHIR DARI API BARU ===
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
