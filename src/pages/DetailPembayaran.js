@@ -6,23 +6,24 @@ const DetailPembayaran = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { namaPaket, harga } = location.state || {
+  const { package_id, namaPaket, harga } = location.state || {
+    package_id: null,
     namaPaket: "Paket tidak ditemukan",
     harga: 0,
   };
 
   const [peserta, setPeserta] = useState([
-    { 
-      id: 1, 
-      nama: "", 
-      telepon: "", 
+    {
+      id: 1,
+      nama: "",
+      telepon: "",
       alamat: "",
       tempatLahir: "",
-      tanggalLahir: ""
-    }
+      tanggalLahir: "",
+    },
   ]);
   const [emailKontak, setEmailKontak] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false); // State untuk loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePesertaChange = (index, event) => {
     const values = [...peserta];
@@ -32,15 +33,15 @@ const DetailPembayaran = () => {
 
   const tambahPeserta = () => {
     setPeserta([
-      ...peserta, 
-      { 
-        id: peserta.length + 1, 
-        nama: "", 
-        telepon: "", 
+      ...peserta,
+      {
+        id: peserta.length + 1,
+        nama: "",
+        telepon: "",
         alamat: "",
         tempatLahir: "",
-        tanggalLahir: ""
-      }
+        tanggalLahir: "",
+      },
     ]);
   };
 
@@ -61,77 +62,81 @@ const DetailPembayaran = () => {
       minimumFractionDigits: 0,
     }).format(angka);
 
-  // === FUNGSI INI YANG DIPERBAIKI ===
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const isDataLengkap = peserta.every(p => p.nama && p.telepon && p.alamat && p.tempatLahir && p.tanggalLahir);
+
+    // Validasi yang lebih lengkap sesuai dengan data yang dikirim
+    const isDataLengkap = peserta.every(
+      (p) => p.nama && p.telepon && p.alamat && p.tempatLahir && p.tanggalLahir
+    );
+
     if (!isDataLengkap || !emailKontak) {
-      alert("Harap lengkapi semua data peserta dan email kontak.");
+      alert(
+        "Harap lengkapi semua data peserta (nama, telepon, alamat, tempat lahir, tanggal lahir) dan email kontak."
+      );
+      return;
+    }
+
+    if (!package_id) {
+      alert("ID Paket tidak ditemukan. Silakan kembali dan pilih paket lagi.");
       return;
     }
 
     setIsSubmitting(true);
 
-    // 1. Siapkan data dengan nama properti yang BENAR untuk backend
+    // Perbaiki struktur data yang dikirim ke backend
     const dataToSubmit = {
-      namaPaket,
-      emailKontak,
-      totalHarga,
-      status: "Pending",
-      peserta // Backend sudah diatur untuk menerima 'peserta'
+      package_id: package_id,
+      customer_name: peserta[0].nama,
+      customer_email: emailKontak,
+      participants: peserta.map((p) => ({
+        name: p.nama,
+        phone: p.telepon,
+        address: p.alamat, // Tambahkan field yang dibutuhkan backend
+        birth_place: p.tempatLahir, // Tambahkan field yang dibutuhkan backend
+        birth_date: p.tanggalLahir, // Tambahkan field yang dibutuhkan backend
+      })),
+      total_price: totalHarga,
     };
 
-<<<<<<< HEAD
-    // Navigasi ke halaman Virtual Account dengan membawa SEMUA data
-    navigate("/virtual-account", { state: paymentData });
-    // Navigasi ke halaman Invoice dengan membawa data
-    navigate("/invoice  ", {
-      state: {
-        namaPaket,
-        harga,
-        peserta,
-        emailKontak,
-        totalHarga,
-      },
-    });
-=======
+    console.log("Data yang dikirim:", dataToSubmit); // Debug log
+
     try {
-      // 2. Kirim data ke backend menggunakan fetch
       const response = await fetch("http://localhost:5000/api/bookings", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dataToSubmit),
       });
 
       const result = await response.json();
+      console.log("Response dari server:", result); // Debug log
 
       if (response.ok) {
-        // 3. Jika berhasil, siapkan data untuk halaman VA
         const vaDetails = {
-          // Kirim semua data yang relevan ke halaman VA
-          ...dataToSubmit,
-          methodName: "BCA Virtual Account", // Asumsi default
-          vaNumber: "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
-          expiry: new Date(Date.now() + 24 * 60 * 60 * 1000) // Kirim sebagai objek Date
+          namaPaket,
+          harga,
+          peserta,
+          emailKontak,
+          totalHarga,
+          bookingId: result.bookingId,
+          methodName: "BCA Virtual Account",
+          vaNumber:
+            "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
+          expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
         };
-        // Navigasi ke halaman Virtual Account
         navigate("/virtual-account", { state: vaDetails });
       } else {
-        // Jika gagal, tampilkan pesan error dari backend
         alert(`Gagal menyimpan pemesanan: ${result.message}`);
+        console.error("Error response:", result); // Debug log
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Tidak dapat terhubung ke server. Pastikan server backend berjalan.");
+      alert(
+        "Tidak dapat terhubung ke server. Pastikan server backend berjalan."
+      );
     } finally {
       setIsSubmitting(false);
     }
-
-    // Navigasi sudah dilakukan di dalam blok try di atas, tidak perlu lagi di sini.
->>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
   };
 
   return (
@@ -153,11 +158,11 @@ const DetailPembayaran = () => {
             </h3>
             <div className="form-group">
               <label>Email Kontak untuk E-Ticket</label>
-              <input 
-                type="email" 
-                value={emailKontak} 
-                onChange={(e) => setEmailKontak(e.target.value)} 
-                required 
+              <input
+                type="email"
+                value={emailKontak}
+                onChange={(e) => setEmailKontak(e.target.value)}
+                required
               />
             </div>
           </div>
@@ -170,14 +175,67 @@ const DetailPembayaran = () => {
               <div key={index} className="peserta-card">
                 <div className="peserta-header">
                   <h4>Peserta {index + 1}</h4>
-                  {index > 0 && (<button type="button" onClick={() => hapusPeserta(index)} className="remove-btn"><span>×</span> Hapus</button>)}
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => hapusPeserta(index)}
+                      className="remove-btn"
+                    >
+                      <span>×</span> Hapus
+                    </button>
+                  )}
                 </div>
                 <div className="form-grid">
-                  <div className="form-group"><label>Nama Lengkap *</label><input type="text" name="nama" value={data.nama} onChange={(e) => handlePesertaChange(index, e)} required /></div>
-                  <div className="form-group"><label>Nomor Telepon *</label><input type="tel" name="telepon" value={data.telepon} onChange={(e) => handlePesertaChange(index, e)} required /></div>
-                  <div className="form-group full-width"><label>Alamat Lengkap *</label><textarea name="alamat" value={data.alamat} onChange={(e) => handlePesertaChange(index, e)} rows="3" required /></div>
-                  <div className="form-group"><label>Tempat Lahir *</label><input type="text" name="tempatLahir" value={data.tempatLahir} onChange={(e) => handlePesertaChange(index, e)} required /></div>
-                  <div className="form-group"><label>Tanggal Lahir *</label><input type="date" name="tanggalLahir" value={data.tanggalLahir} onChange={(e) => handlePesertaChange(index, e)} required /></div>
+                  <div className="form-group">
+                    <label>Nama Lengkap *</label>
+                    <input
+                      type="text"
+                      name="nama"
+                      value={data.nama}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Nomor Telepon *</label>
+                    <input
+                      type="tel"
+                      name="telepon"
+                      value={data.telepon}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group full-width">
+                    <label>Alamat Lengkap *</label>
+                    <textarea
+                      name="alamat"
+                      value={data.alamat}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      rows="3"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tempat Lahir *</label>
+                    <input
+                      type="text"
+                      name="tempatLahir"
+                      value={data.tempatLahir}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Tanggal Lahir *</label>
+                    <input
+                      type="date"
+                      name="tanggalLahir"
+                      value={data.tanggalLahir}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
+                  </div>
                 </div>
               </div>
             ))}
@@ -191,15 +249,30 @@ const DetailPembayaran = () => {
               Ringkasan Pembayaran
             </h3>
             <div className="summary-content">
-              <div className="summary-row"><span>Harga per orang</span><span>{formatRupiah(harga)}</span></div>
-              <div className="summary-row"><span>Jumlah Peserta</span><span>{peserta.length} orang</span></div>
+              <div className="summary-row">
+                <span>Harga per orang</span>
+                <span>{formatRupiah(harga)}</span>
+              </div>
+              <div className="summary-row">
+                <span>Jumlah Peserta</span>
+                <span>{peserta.length} orang</span>
+              </div>
               <div className="summary-divider"></div>
-              <div className="summary-row total"><span>Total Pembayaran</span><span>{formatRupiah(totalHarga)}</span></div>
+              <div className="summary-row total">
+                <span>Total Pembayaran</span>
+                <span>{formatRupiah(totalHarga)}</span>
+              </div>
             </div>
           </div>
           <div className="action-buttons">
-            <button type="submit" className="submit-btn" disabled={isSubmitting}>
-              {isSubmitting ? 'Menyimpan...' : (
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                "Menyimpan..."
+              ) : (
                 <>
                   <span>🚀</span> Lanjut ke Pembayaran
                 </>

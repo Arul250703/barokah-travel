@@ -4,13 +4,12 @@ import {
   FaCamera,
   FaKeyboard,
   FaHome,
-  FaUndo,
-  FaStop,
-  FaCheck,
   FaTimes,
+  FaCheck,
   FaExclamationTriangle,
+  FaStop,
+  FaUndo,
 } from "react-icons/fa";
-import "../components/styles/QrPage.css";
 import "../components/styles/ScannerPage.css";
 
 const ScannerPage = () => {
@@ -23,7 +22,6 @@ const ScannerPage = () => {
 
   useEffect(() => {
     let scannerInstance = null;
-
     const initializeScanner = async () => {
       if (isScanning) {
         try {
@@ -33,42 +31,27 @@ const ScannerPage = () => {
             {
               fps: 10,
               qrbox: { width: 250, height: 250 },
-              aspectRatio: 1.0,
-              videoConstraints: {
-                facingMode: "environment", // Menggunakan kamera belakang
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-              },
+              videoConstraints: { facingMode: "environment" },
             },
             false
           );
-
           const onScanSuccess = (decodedText) => {
             setIsScanning(false);
             validateTicket(decodedText);
           };
-
-          const onScanFailure = (error) => {
-            // Handle scan failures silently
-            console.log(`Code scan error = ${error}`);
-          };
-
-          scannerInstance.render(onScanSuccess, onScanFailure);
+          scannerInstance.render(onScanSuccess, () => {});
           scannerRef.current = scannerInstance;
         } catch (error) {
-          console.error("Failed to initialize scanner:", error);
           displayResult(
             "error",
             "INISIALISASI KAMERA GAGAL",
-            "Tidak dapat mengakses kamera perangkat. Pastikan Anda memberikan izin kamera."
+            "Pastikan Anda memberikan izin kamera."
           );
           setIsScanning(false);
         }
       }
     };
-
     initializeScanner();
-
     return () => {
       if (
         scannerRef.current &&
@@ -79,31 +62,29 @@ const ScannerPage = () => {
     };
   }, [isScanning]);
 
-  const validateTicket = async (ticketId) => {
+  const validateTicket = async (scannedData) => {
     setIsProcessing(true);
     displayResult("loading", "MEMPROSES...", "Menghubungi server...");
-
     try {
-      let processedTicketId;
+      let idToValidate;
       try {
-        const ticketData = JSON.parse(ticketId);
-        processedTicketId =
-          ticketData.booking_id || ticketData.ticketId || ticketId;
+        const ticketData = JSON.parse(scannedData);
+        idToValidate = ticketData.participant_id;
       } catch {
-        processedTicketId = ticketId.trim();
+        idToValidate = scannedData.trim();
       }
-
+      if (!idToValidate) {
+        throw new Error("Format QR Code tidak valid.");
+      }
       const response = await fetch(
         "http://localhost:5000/api/tickets/validate",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ticketId: processedTicketId }),
+          body: JSON.stringify({ participantId: idToValidate }),
         }
       );
-
       const result = await response.json();
-
       if (response.ok) {
         displayResult("success", result.message, result.name);
       } else if (response.status === 409) {
@@ -112,11 +93,10 @@ const ScannerPage = () => {
         displayResult("error", result.message, result.name || "");
       }
     } catch (error) {
-      console.error("Validation error:", error);
       displayResult(
         "error",
         "KONEKSI GAGAL",
-        "Tidak dapat terhubung ke server. Periksa koneksi internet Anda."
+        "Tidak dapat terhubung ke server."
       );
     } finally {
       setIsProcessing(false);
@@ -148,35 +128,15 @@ const ScannerPage = () => {
     }
   };
 
-  const handleCancelManual = () => {
-    setShowManualInput(false);
-    setManualTicketId("");
-  };
-
   const handleReset = () => {
     setScanResult(null);
     setIsScanning(false);
     setShowManualInput(false);
     setManualTicketId("");
-
-    // Clear scanner instance
-    if (scannerRef.current && typeof scannerRef.current.clear === "function") {
-      scannerRef.current.clear().catch(() => {});
-    }
-  };
-
-  const handleStopScan = () => {
-    setIsScanning(false);
-
-    // Clear scanner instance
-    if (scannerRef.current && typeof scannerRef.current.clear === "function") {
-      scannerRef.current.clear().catch(() => {});
-    }
   };
 
   const getResultCardClassName = () =>
     `result-card ${scanResult ? scanResult.type : ""}`;
-
   const getIcon = () => {
     if (!scanResult) return null;
     switch (scanResult.type) {
@@ -186,8 +146,6 @@ const ScannerPage = () => {
         return <FaTimes className="icon" />;
       case "warning":
         return <FaExclamationTriangle className="icon" />;
-      case "loading":
-        return null;
       default:
         return null;
     }
@@ -196,65 +154,50 @@ const ScannerPage = () => {
   return (
     <div className="scanner-page">
       <div className="scanner-container">
-        {/* Header */}
         <div className="header">
           <h1>Pemindai Tiket</h1>
           <p>
-            Arahkan kamera ke QR Code pada tiket pelanggan atau masukkan ID
-            tiket secara manual.
+            Arahkan kamera ke QR Code atau masukkan ID tiket peserta secara
+            manual.
           </p>
         </div>
 
-        {/* Scanner Area */}
         {isScanning && (
           <div className="scanner-area">
             <div id="qr-reader-container"></div>
             <button
               className="secondary-btn"
-              onClick={handleStopScan}
+              onClick={() => setIsScanning(false)}
               disabled={isProcessing}
             >
-              <FaStop /> Hentikan Pemindaian
+              <FaStop /> Hentikan
             </button>
           </div>
         )}
 
-        {/* Manual Input Area */}
         {showManualInput && (
           <div className="manual-input-area">
             <form className="manual-input-form" onSubmit={handleManualSubmit}>
-              <label className="input-label">ID Tiket / Booking ID:</label>
               <input
                 type="text"
                 className="manual-input"
                 value={manualTicketId}
                 onChange={(e) => setManualTicketId(e.target.value)}
-                placeholder="Masukkan ID tiket atau booking ID"
+                placeholder="Masukkan ID tiket peserta..."
                 disabled={isProcessing}
                 autoFocus
               />
-              <div className="input-actions">
-                <button
-                  type="submit"
-                  className="submit-btn"
-                  disabled={!manualTicketId.trim() || isProcessing}
-                >
-                  {isProcessing ? "Memproses..." : "Validasi Tiket"}
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={handleCancelManual}
-                  disabled={isProcessing}
-                >
-                  Batal
-                </button>
-              </div>
+              <button
+                type="submit"
+                className="submit-btn"
+                disabled={!manualTicketId.trim() || isProcessing}
+              >
+                {isProcessing ? "Memproses..." : "Validasi Tiket"}
+              </button>
             </form>
           </div>
         )}
 
-        {/* Action Buttons */}
         {!isScanning && !showManualInput && (
           <div className="action-buttons">
             <button
@@ -271,27 +214,12 @@ const ScannerPage = () => {
             >
               <FaKeyboard /> Input Manual
             </button>
-            {scanResult && (
-              <button
-                className="secondary-btn"
-                onClick={handleReset}
-                disabled={isProcessing}
-              >
-                <FaUndo /> Reset
-              </button>
-            )}
           </div>
         )}
 
-        {/* Result Display */}
         {scanResult && (
           <div className={getResultCardClassName()}>
             <div className="result-content">
-              {scanResult.type === "loading" && (
-                <div className="loading-spinner">
-                  <div className="spinner"></div>
-                </div>
-              )}
               {getIcon()}
               <div className="message">{scanResult.message}</div>
               {scanResult.name && <div className="name">{scanResult.name}</div>}
@@ -299,11 +227,17 @@ const ScannerPage = () => {
           </div>
         )}
 
-        {/* Navigation */}
-        {scanResult && scanResult.type !== "loading" && (
+        {(scanResult || showManualInput || isScanning) && (
           <div className="navigation">
-            <Link to="/" className="primary-btn">
-              <FaHome /> Kembali ke Dashboard
+            <button
+              className="primary-btn reset-btn"
+              onClick={handleReset}
+              disabled={isProcessing}
+            >
+              <FaUndo /> Reset
+            </button>
+            <Link to="/" className="secondary-btn">
+              <FaHome /> Ke Dashboard
             </Link>
           </div>
         )}

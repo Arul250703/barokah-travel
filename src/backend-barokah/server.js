@@ -1,472 +1,738 @@
-const express = require('express');
-const cors = require('cors');
-<<<<<<< HEAD
-const db = require('./src/config/db'); // Impor koneksi database kita
+const express = require("express");
+const cors = require("cors");
 const dotenv = require("dotenv");
-
-// Import routes
-const ticketRoutes = require("./src/routes/ticketRoutes");
-
-dotenv.config();
-=======
-const dotenv = require('dotenv');
-const mysql = require('mysql2');
+const mysql = require("mysql2");
+const { v4: uuidv4 } = require("uuid");
 
 dotenv.config();
 
-// Database connection
-const db = mysql.createConnection({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'barokah_tour',
-  timezone: '+07:00'
+// Database connection pool (lebih baik dari single connection)
+const db = mysql.createPool({
+  host: process.env.DB_HOST || "localhost",
+  user: process.env.DB_USER || "root",
+  password: process.env.DB_PASSWORD || "",
+  database: process.env.DB_NAME || "barokah_tour",
+  timezone: "+07:00",
+  connectionLimit: 10,
+  acquireTimeout: 60000,
+  timeout: 60000,
 });
 
-// Import routes (jika ada)
-// const ticketRoutes = require('./src/routes/ticketRoutes');
-
->>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-<<<<<<< HEAD
-app.use(express.json());
-app.use(cors());
-
-// Endpoint untuk login
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
-=======
 app.use(cors());
 app.use(express.json());
-
-// Routes (jika ada ticket routes)
-// app.use('/api/tickets', ticketRoutes);
 
 // Test route
-app.get('/', (req, res) => {
-  res.send('🎉 Server backend Barokah Tour berhasil berjalan!');
+app.get("/", (req, res) => {
+  res.send("🎉 Server backend Barokah Tour berhasil berjalan!");
 });
 
-// Test database connection
-app.get('/api/test-db', (req, res) => {
-  db.query('SELECT 1 as test', (err, results) => {
+// GET all bookings (untuk halaman Keuangan & QR Page)
+app.get("/api/bookings", (req, res) => {
+  console.log("📥 GET /api/bookings - Mengambil semua booking...");
+
+  const query = `
+      SELECT 
+        b.id, 
+        b.booking_id, 
+        b.customer_name, 
+        b.customer_email, 
+        b.total_price,
+        b.status AS payment_status, 
+        b.created_at AS booking_date,
+        p.name AS package_name
+      FROM bookings AS b
+      LEFT JOIN packages AS p ON b.package_id = p.id
+      ORDER BY b.created_at DESC
+    `;
+
+  db.query(query, (err, bookings) => {
     if (err) {
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Database connection failed',
-        error: err.message 
-      });
+      console.error("❌ Error fetching bookings:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal mengambil data booking." });
     }
-    res.json({ 
-      success: true, 
-      message: 'Database connected successfully',
-      data: results 
+
+    if (bookings.length === 0) {
+      console.log("ℹ️  Tidak ada booking ditemukan");
+      return res.json({ success: true, data: [] });
+    }
+
+    // Ambil semua peserta untuk semua booking yang ditemukan
+    const bookingIds = bookings.map((b) => b.id);
+    const participantsQuery = `
+            SELECT id AS participant_id, booking_id, name, phone, status AS ticket_status 
+            FROM participants WHERE booking_id IN (?)
+        `;
+
+    db.query(participantsQuery, [bookingIds], (err, participants) => {
+      if (err) {
+        console.error("❌ Error fetching participants:", err);
+        return res
+          .status(500)
+          .json({ success: false, message: "Gagal mengambil data peserta." });
+      }
+
+      // Gabungkan data peserta ke booking yang sesuai
+      const bookingsWithParticipants = bookings.map((booking) => {
+        return {
+          ...booking,
+          participants: participants.filter((p) => p.booking_id === booking.id),
+        };
+      });
+
+      console.log(`✅ Berhasil mengambil ${bookings.length} booking`);
+      res.status(200).json({ success: true, data: bookingsWithParticipants });
     });
   });
 });
 
 // Login endpoint
-app.post('/api/login', (req, res) => {
-  const { username, password } = req.body;
-  const sql = 'SELECT * FROM users WHERE username = ? AND password = ?';
+app.post("/api/login", (req, res) => {
+  console.log("📥 POST /api/login - Proses login...");
 
+  const { username, password } = req.body;
+
+  if (!username || !password) {
+    console.log("❌ Login gagal: Data tidak lengkap");
+    return res
+      .status(400)
+      .json({ success: false, message: "Username dan password harus diisi." });
+  }
+
+  const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
   db.query(sql, [username, password], (err, results) => {
     if (err) {
-      console.error('Error pada database:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Terjadi kesalahan pada server.' 
-      });
+      console.error("❌ Database error pada login:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Terjadi kesalahan pada server." });
     }
 
     if (results.length > 0) {
-      console.log(`Login berhasil untuk user: ${username}`);
-      res.status(200).json({ 
-        success: true, 
-        message: 'Login berhasil!' 
-      });
+      console.log("✅ Login berhasil untuk user:", username);
+      res.status(200).json({ success: true, message: "Login berhasil!" });
     } else {
-      console.log(`Login gagal untuk user: ${username}`);
-      res.status(401).json({ 
-        success: false, 
-        message: 'Username atau password salah.' 
-      });
+      console.log("❌ Login gagal: Kredensial salah untuk user:", username);
+      res
+        .status(401)
+        .json({ success: false, message: "Username atau password salah." });
     }
   });
 });
 
-// Booking endpoint
-app.post('/api/bookings', (req, res) => {
-  const { namaPaket, emailKontak, totalHarga, status, peserta } = req.body;
+// Booking endpoint (membuat booking baru) - IMPLEMENTASI LENGKAP
+app.post("/api/bookings", (req, res) => {
+  console.log("📥 POST /api/bookings - Menerima permintaan booking baru...");
+  console.log("📋 Data yang diterima:", JSON.stringify(req.body, null, 2));
 
-  // Validasi data
-  if (!namaPaket || !emailKontak || !totalHarga || !peserta || !Array.isArray(peserta) || peserta.length === 0) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Data yang dikirim tidak lengkap. Pastikan semua field terisi dan minimal ada 1 peserta.' 
+  const {
+    package_id,
+    customer_name,
+    customer_email,
+    total_price,
+    participants,
+  } = req.body;
+
+  // Validasi input
+  if (!package_id) {
+    console.log("❌ Validasi gagal: package_id kosong");
+    return res
+      .status(400)
+      .json({ success: false, message: "Package ID tidak boleh kosong." });
+  }
+
+  if (!customer_name) {
+    console.log("❌ Validasi gagal: customer_name kosong");
+    return res
+      .status(400)
+      .json({ success: false, message: "Nama customer tidak boleh kosong." });
+  }
+
+  if (!customer_email) {
+    console.log("❌ Validasi gagal: customer_email kosong");
+    return res
+      .status(400)
+      .json({ success: false, message: "Email customer tidak boleh kosong." });
+  }
+
+  if (
+    !participants ||
+    !Array.isArray(participants) ||
+    participants.length === 0
+  ) {
+    console.log("❌ Validasi gagal: participants tidak valid");
+    return res.status(400).json({
+      success: false,
+      message: "Data peserta tidak valid atau kosong.",
     });
   }
 
-  db.beginTransaction(err => {
+  if (total_price === undefined || total_price === null) {
+    console.log("❌ Validasi gagal: total_price kosong");
+    return res
+      .status(400)
+      .json({ success: false, message: "Total harga tidak boleh kosong." });
+  }
+
+  // Validasi setiap participant
+  for (let i = 0; i < participants.length; i++) {
+    const p = participants[i];
+    if (!p.name || !p.phone || !p.address || !p.birth_place) {
+      console.log(`❌ Validasi gagal: Data peserta ${i + 1} tidak lengkap:`, p);
+      return res.status(400).json({
+        success: false,
+        message: `Data peserta ${
+          i + 1
+        } tidak lengkap. Pastikan nama, telepon, alamat, dan tempat lahir terisi.`,
+      });
+    }
+  }
+
+  console.log("✅ Validasi berhasil, memulai transaksi database...");
+
+  db.getConnection((err, connection) => {
     if (err) {
-      console.error('Error memulai transaksi:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Kesalahan server saat memulai transaksi.' 
+      console.error("❌ Gagal mendapatkan koneksi database:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Kesalahan server saat koneksi database.",
       });
     }
 
-    const bookingSql = `INSERT INTO bookings 
-      (package_name, contact_email, total_price, status, created_at) 
-      VALUES (?, ?, ?, ?, NOW())`;
-    const bookingValues = [namaPaket, emailKontak, totalHarga, status || 'Pending'];
+    console.log("🔗 Koneksi database berhasil, memulai transaksi...");
 
-    db.query(bookingSql, bookingValues, (err, result) => {
+    connection.beginTransaction((err) => {
       if (err) {
-        return db.rollback(() => {
-          console.error('Error menyimpan booking:', err);
-          res.status(500).json({ 
-            success: false, 
-            message: 'Gagal menyimpan data pemesanan.',
-            error: err.message 
-          });
-        });
+        console.error("❌ Gagal memulai transaksi:", err);
+        connection.release();
+        return res
+          .status(500)
+          .json({ success: false, message: "Gagal memulai transaksi." });
       }
 
-      const bookingId = result.insertId;
-      const participantSql = `INSERT INTO participants 
-        (booking_id, name, phone, address, birth_place, birth_date) 
-        VALUES ?`;
-      
-      const participantValues = peserta.map(p => [
-        bookingId,
-        p.nama || p.name || '',
-        p.telepon || p.phone || '',
-        p.alamat || p.address || '',
-        p.tempatLahir || p.birth_place || '',
-        p.tanggalLahir || p.birth_date || null
-      ]);
+      console.log("🔄 Transaksi dimulai, mengambil kode paket...");
 
-      db.query(participantSql, [participantValues], (err, result) => {
+      // Ambil kode paket dan kota
+      const getCodesQuery =
+        "SELECT p.trip_code, c.city_code FROM packages p JOIN cities c ON p.city_id = c.id WHERE p.id = ?";
+
+      connection.query(getCodesQuery, [package_id], (err, results) => {
         if (err) {
-          return db.rollback(() => {
-            console.error('Error menyimpan peserta:', err);
-            res.status(500).json({ 
-              success: false, 
-              message: 'Gagal menyimpan data peserta.',
-              error: err.message 
-            });
+          console.error("❌ Error mengambil kode paket:", err);
+          return connection.rollback(() => {
+            connection.release();
+            res
+              .status(500)
+              .json({ success: false, message: "Gagal mengambil data paket." });
           });
         }
 
-        db.commit(err => {
+        if (results.length === 0) {
+          console.log("❌ Paket tidak ditemukan untuk ID:", package_id);
+          return connection.rollback(() => {
+            connection.release();
+            res
+              .status(404)
+              .json({ success: false, message: "Paket tidak ditemukan." });
+          });
+        }
+
+        const { city_code, trip_code } = results[0];
+        const unique_id = uuidv4().split("-")[0].toUpperCase();
+        const newBookingId = `${city_code}-${trip_code}-${unique_id}`;
+
+        console.log("🆔 Booking ID baru dibuat:", newBookingId);
+        console.log("💾 Menyimpan data booking...");
+
+        const bookingSql = `INSERT INTO bookings (booking_id, package_id, customer_name, customer_email, total_price, status, created_at) VALUES (?, ?, ?, ?, ?, 'selesai', NOW())`;
+        const bookingValues = [
+          newBookingId,
+          package_id,
+          customer_name,
+          customer_email,
+          total_price,
+        ];
+
+        connection.query(bookingSql, bookingValues, (err, result) => {
           if (err) {
-            return db.rollback(() => {
-              console.error('Error saat commit:', err);
-              res.status(500).json({ 
-                success: false, 
-                message: 'Kesalahan server saat commit.',
-                error: err.message 
+            console.error("❌ Error menyimpan booking:", err);
+            return connection.rollback(() => {
+              connection.release();
+              res.status(500).json({
+                success: false,
+                message: "Gagal menyimpan data pemesanan.",
               });
             });
           }
-          console.log('Pemesanan baru berhasil disimpan dengan ID:', bookingId);
-          res.status(201).json({ 
-            success: true, 
-            message: 'Pemesanan berhasil dibuat!', 
-            bookingId: bookingId 
-          });
+
+          const newBookingPrimaryKey = result.insertId;
+          console.log("✅ Booking tersimpan dengan ID:", newBookingPrimaryKey);
+          console.log("👥 Menyimpan data peserta...");
+
+          const participantSql = `INSERT INTO participants (booking_id, name, phone, address, birth_place, birth_date, status) VALUES ?`;
+          const participantValues = participants.map((p) => [
+            newBookingPrimaryKey,
+            p.name,
+            p.phone,
+            p.address,
+            p.birth_place,
+            p.birth_date || null,
+            "valid",
+          ]);
+
+          console.log("📊 Data peserta yang akan disimpan:", participantValues);
+
+          connection.query(
+            participantSql,
+            [participantValues],
+            (err, result) => {
+              if (err) {
+                console.error("❌ Error menyimpan peserta:", err);
+                return connection.rollback(() => {
+                  connection.release();
+                  res.status(500).json({
+                    success: false,
+                    message: "Gagal menyimpan data peserta.",
+                  });
+                });
+              }
+
+              console.log("✅ Data peserta tersimpan, melakukan commit...");
+
+              connection.commit((err) => {
+                if (err) {
+                  console.error("❌ Error saat commit:", err);
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({
+                      success: false,
+                      message: "Kesalahan server saat commit.",
+                    });
+                  });
+                }
+
+                console.log("🎉 Transaksi berhasil! Booking ID:", newBookingId);
+                connection.release();
+                res.status(201).json({
+                  success: true,
+                  message: "Pemesanan berhasil dibuat!",
+                  bookingId: newBookingId,
+                });
+              });
+            }
+          );
         });
       });
     });
   });
 });
 
-// Laporan keuangan endpoint - DIPERBAIKI
-app.get('/api/laporan-keuangan', (req, res) => {
-  const sql = `
+// GET booking by ID
+app.get("/api/bookings/:bookingId", (req, res) => {
+  console.log("📥 GET /api/bookings/:bookingId - Mengambil detail booking...");
+
+  const { bookingId } = req.params;
+
+  const query = `
     SELECT 
-      b.id,
-      b.package_name as paketTour,
-      b.contact_email as email,
-      b.total_price as totalTagihan,
-      b.status,
-      b.created_at as tanggal,
-      (SELECT p.name FROM participants p WHERE p.booking_id = b.id LIMIT 1) as namaPelanggan
-    FROM bookings b
-    ORDER BY b.created_at DESC
+      b.id, 
+      b.booking_id, 
+      b.customer_name, 
+      b.customer_email, 
+      b.status AS payment_status, 
+      p.name AS package_name
+    FROM bookings AS b
+    LEFT JOIN packages AS p ON b.package_id = p.id
+    WHERE b.booking_id = ?
   `;
 
-  db.query(sql, (err, results) => {
+  db.query(query, [bookingId], (err, results) => {
     if (err) {
-      console.error('Error mengambil laporan:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Kesalahan server saat mengambil data.',
-        error: err.message 
-      });
+      console.error("❌ Error mengambil booking:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Kesalahan server." });
     }
 
-    // Jika tidak ada data
     if (results.length === 0) {
-      return res.status(200).json({ 
-        success: true, 
-        data: [],
-        message: 'Tidak ada data booking ditemukan.' 
+      console.log("❌ Booking tidak ditemukan:", bookingId);
+      return res
+        .status(404)
+        .json({ success: false, message: "Booking tidak ditemukan." });
+    }
+
+    const booking = results[0];
+    const participantsQuery =
+      "SELECT id AS participant_id, name, phone, status AS ticket_status FROM participants WHERE booking_id = ?";
+
+    db.query(participantsQuery, [booking.id], (err, participants) => {
+      if (err) {
+        console.error("❌ Error mengambil peserta:", err);
+        return res
+          .status(500)
+          .json({ success: false, message: "Gagal mengambil data peserta." });
+      }
+
+      booking.participants = participants;
+      console.log("✅ Detail booking berhasil diambil:", bookingId);
+      res.status(200).json(booking);
+    });
+  });
+});
+
+// ================ IMPLEMENTASI UPDATE BOOKING ================
+app.put("/api/bookings/:id", (req, res) => {
+  console.log("📥 PUT /api/bookings/:id - Update booking...");
+
+  const bookingId = req.params.id;
+  const { package_name, customer_email, total_price, payment_status } =
+    req.body;
+
+  console.log("📋 Data update yang diterima:", {
+    bookingId,
+    package_name,
+    customer_email,
+    total_price,
+    payment_status,
+  });
+
+  // Validasi input
+  if (!customer_email) {
+    console.log("❌ Validasi gagal: customer_email kosong");
+    return res.status(400).json({
+      success: false,
+      message: "Email customer tidak boleh kosong.",
+    });
+  }
+
+  if (total_price === undefined || total_price === null || total_price < 0) {
+    console.log("❌ Validasi gagal: total_price tidak valid");
+    return res.status(400).json({
+      success: false,
+      message: "Total harga tidak valid.",
+    });
+  }
+
+  // Cek apakah booking exists
+  const checkBookingQuery = "SELECT id FROM bookings WHERE id = ?";
+
+  db.query(checkBookingQuery, [bookingId], (err, results) => {
+    if (err) {
+      console.error("❌ Error checking booking existence:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Kesalahan server saat validasi.",
       });
     }
 
-    // Ambil detail peserta untuk setiap booking
-    const bookingIds = results.map(row => row.id);
-    const participantSql = `
-      SELECT 
-        booking_id,
-        id,
-        name,
-        phone,
-        address,
-        birth_place,
-        birth_date
-      FROM participants 
-      WHERE booking_id IN (${bookingIds.map(() => '?').join(',')})
-      ORDER BY booking_id, id
+    if (results.length === 0) {
+      console.log("❌ Booking tidak ditemukan untuk update:", bookingId);
+      return res.status(404).json({
+        success: false,
+        message: "Booking tidak ditemukan.",
+      });
+    }
+
+    // Update booking data
+    const updateQuery = `
+      UPDATE bookings 
+      SET customer_email = ?, total_price = ?, status = ?, updated_at = NOW()
+      WHERE id = ?
     `;
 
-    db.query(participantSql, bookingIds, (err, participants) => {
+    const updateValues = [
+      customer_email,
+      total_price,
+      payment_status || "menunggu_pembayaran",
+      bookingId,
+    ];
+
+    db.query(updateQuery, updateValues, (err, result) => {
       if (err) {
-        console.error('Error mengambil data peserta:', err);
-        return res.status(500).json({ 
-          success: false, 
-          message: 'Kesalahan server saat mengambil data peserta.',
-          error: err.message 
+        console.error("❌ Error updating booking:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Gagal mengupdate data booking.",
         });
       }
 
-      // Group peserta berdasarkan booking_id
-      const participantsByBooking = {};
-      participants.forEach(participant => {
-        if (!participantsByBooking[participant.booking_id]) {
-          participantsByBooking[participant.booking_id] = [];
-        }
-        participantsByBooking[participant.booking_id].push(participant);
-      });
+      if (result.affectedRows === 0) {
+        console.log("❌ Tidak ada data yang diupdate:", bookingId);
+        return res.status(404).json({
+          success: false,
+          message: "Data booking tidak ditemukan atau tidak berubah.",
+        });
+      }
 
-      // Gabungkan data booking dengan peserta
-      const data = results.map(row => ({
-        id: row.id,
-        paketTour: row.paketTour || '',
-        email: row.email || '',
-        totalTagihan: parseFloat(row.totalTagihan) || 0,
-        status: row.status || 'Pending',
-        tanggal: row.tanggal,
-        namaPelanggan: row.namaPelanggan || 'N/A',
-        items: participantsByBooking[row.id] || []
-      }));
-      
-      console.log(`Berhasil mengambil ${data.length} data laporan keuangan`);
-      res.status(200).json({ 
-        success: true, 
-        data: data,
-        total: data.length 
+      console.log("✅ Booking berhasil diupdate:", bookingId);
+      res.status(200).json({
+        success: true,
+        message: "Data booking berhasil diupdate!",
       });
     });
   });
 });
 
-// Update booking endpoint - DIPERBAIKI
-app.put('/api/bookings/:id', (req, res) => {
-  const bookingId = req.params.id;
-  const { paketTour, email, totalTagihan, status } = req.body;
-  
-  // Validasi data
-  if (!paketTour || !email || !totalTagihan || !status) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Semua field harus diisi.' 
-    });
-  }
-  
-  const sql = `UPDATE bookings SET 
-    package_name = ?, 
-    contact_email = ?, 
-    total_price = ?, 
-    status = ?,
-    updated_at = NOW()
-    WHERE id = ?`;
-  
-  const values = [paketTour, email, parseFloat(totalTagihan), status, bookingId];
-  
-  db.query(sql, values, (err, result) => {
-    if (err) {
-      console.error('Error mengupdate booking:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Gagal mengupdate booking.',
-        error: err.message 
-      });
-    }
-    
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Booking tidak ditemukan.' 
-      });
-    }
-    
-    console.log(`Booking ID ${bookingId} berhasil diupdate`);
-    res.status(200).json({ 
-      success: true, 
-      message: 'Booking berhasil diupdate!' 
-    });
-  });
-});
+// ================ IMPLEMENTASI DELETE BOOKING ================
+app.delete("/api/bookings/:id", (req, res) => {
+  console.log("📥 DELETE /api/bookings/:id - Hapus booking...");
 
-// Delete booking endpoint - DIPERBAIKI
-app.delete('/api/bookings/:id', (req, res) => {
   const bookingId = req.params.id;
-  
-  db.beginTransaction(err => {
+
+  console.log("🗑️ Menghapus booking ID:", bookingId);
+
+  // Gunakan transaction untuk memastikan data consistency
+  db.getConnection((err, connection) => {
     if (err) {
-      console.error('Error memulai transaksi delete:', err);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Kesalahan server saat memulai transaksi.',
-        error: err.message 
+      console.error("❌ Gagal mendapatkan koneksi database:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Kesalahan server saat koneksi database.",
       });
     }
 
-    // Delete peserta terlebih dahulu (foreign key constraint)
-    const deleteParticipantsSql = 'DELETE FROM participants WHERE booking_id = ?';
-    
-    db.query(deleteParticipantsSql, [bookingId], (err, result) => {
+    connection.beginTransaction((err) => {
       if (err) {
-        return db.rollback(() => {
-          console.error('Error menghapus peserta:', err);
-          res.status(500).json({ 
-            success: false, 
-            message: 'Gagal menghapus peserta.',
-            error: err.message 
-          });
+        console.error("❌ Gagal memulai transaksi:", err);
+        connection.release();
+        return res.status(500).json({
+          success: false,
+          message: "Gagal memulai transaksi.",
         });
       }
 
-      // Kemudian delete booking
-      const deleteBookingSql = 'DELETE FROM bookings WHERE id = ?';
-      
-      db.query(deleteBookingSql, [bookingId], (err, result) => {
+      // Cek apakah booking exists
+      const checkBookingQuery =
+        "SELECT id, booking_id FROM bookings WHERE id = ?";
+
+      connection.query(checkBookingQuery, [bookingId], (err, results) => {
         if (err) {
-          return db.rollback(() => {
-            console.error('Error menghapus booking:', err);
-            res.status(500).json({ 
-              success: false, 
-              message: 'Gagal menghapus booking.',
-              error: err.message 
+          console.error("❌ Error checking booking existence:", err);
+          return connection.rollback(() => {
+            connection.release();
+            res.status(500).json({
+              success: false,
+              message: "Kesalahan server saat validasi.",
             });
           });
         }
 
-        if (result.affectedRows === 0) {
-          return db.rollback(() => {
-            res.status(404).json({ 
-              success: false, 
-              message: 'Booking tidak ditemukan.' 
+        if (results.length === 0) {
+          console.log("❌ Booking tidak ditemukan untuk delete:", bookingId);
+          return connection.rollback(() => {
+            connection.release();
+            res.status(404).json({
+              success: false,
+              message: "Booking tidak ditemukan.",
             });
           });
         }
 
-        db.commit(err => {
-          if (err) {
-            return db.rollback(() => {
-              console.error('Error commit delete:', err);
-              res.status(500).json({ 
-                success: false, 
-                message: 'Kesalahan server saat commit.',
-                error: err.message 
+        const bookingData = results[0];
+        console.log("🔍 Booking ditemukan:", bookingData.booking_id);
+
+        // Delete participants terlebih dahulu (foreign key constraint)
+        const deleteParticipantsQuery =
+          "DELETE FROM participants WHERE booking_id = ?";
+
+        connection.query(
+          deleteParticipantsQuery,
+          [bookingId],
+          (err, result) => {
+            if (err) {
+              console.error("❌ Error deleting participants:", err);
+              return connection.rollback(() => {
+                connection.release();
+                res.status(500).json({
+                  success: false,
+                  message: "Gagal menghapus data peserta.",
+                });
+              });
+            }
+
+            console.log(`✅ ${result.affectedRows} peserta dihapus`);
+
+            // Sekarang delete booking
+            const deleteBookingQuery = "DELETE FROM bookings WHERE id = ?";
+
+            connection.query(deleteBookingQuery, [bookingId], (err, result) => {
+              if (err) {
+                console.error("❌ Error deleting booking:", err);
+                return connection.rollback(() => {
+                  connection.release();
+                  res.status(500).json({
+                    success: false,
+                    message: "Gagal menghapus data booking.",
+                  });
+                });
+              }
+
+              if (result.affectedRows === 0) {
+                console.log("❌ Tidak ada booking yang dihapus:", bookingId);
+                return connection.rollback(() => {
+                  connection.release();
+                  res.status(404).json({
+                    success: false,
+                    message: "Data booking tidak ditemukan.",
+                  });
+                });
+              }
+
+              // Commit transaction
+              connection.commit((err) => {
+                if (err) {
+                  console.error("❌ Error saat commit delete:", err);
+                  return connection.rollback(() => {
+                    connection.release();
+                    res.status(500).json({
+                      success: false,
+                      message: "Kesalahan server saat commit.",
+                    });
+                  });
+                }
+
+                console.log(
+                  "🎉 Booking berhasil dihapus:",
+                  bookingData.booking_id
+                );
+                connection.release();
+                res.status(200).json({
+                  success: true,
+                  message: `Booking #${bookingData.booking_id} berhasil dihapus!`,
+                });
               });
             });
           }
-          
-          console.log(`Booking ID ${bookingId} berhasil dihapus`);
-          res.status(200).json({ 
-            success: true, 
-            message: 'Booking berhasil dihapus!' 
-          });
-        });
+        );
       });
     });
   });
 });
 
-// Get single booking endpoint (tambahan untuk debug)
-app.get('/api/bookings/:id', (req, res) => {
-  const bookingId = req.params.id;
-  
-  const sql = `
-    SELECT 
-      b.*,
-      p.id as participant_id,
-      p.name as participant_name,
-      p.phone as participant_phone,
-      p.address as participant_address,
-      p.birth_place as participant_birth_place,
-      p.birth_date as participant_birth_date
-    FROM bookings b
-    LEFT JOIN participants p ON b.id = p.booking_id
-    WHERE b.id = ?
-    ORDER BY p.id
-  `;
-  
-  db.query(sql, [bookingId], (err, results) => {
+// Validasi participant untuk scanner
+app.post("/api/validate-participant ", (req, res) => {
+  console.log("📥 POST /api/validate-participant - Validasi tiket...");
+
+  const { participantId } = req.body;
+
+  if (!participantId) {
+    console.log("❌ Validasi gagal: participantId kosong");
+    return res
+      .status(400)
+      .json({ success: false, message: "ID Peserta tidak boleh kosong." });
+  }
+
+  const findSql = "SELECT * FROM participants WHERE id = ?";
+  db.query(findSql, [participantId], (err, results) => {
     if (err) {
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Kesalahan server.',
-        error: err.message 
+      console.error("❌ Error mencari peserta:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Kesalahan server." });
+    }
+
+    const participant = results[0];
+    if (!participant) {
+      console.log("❌ Tiket tidak ditemukan:", participantId);
+      return res
+        .status(404)
+        .json({ success: false, message: "TIKET TIDAK DITEMUKAN" });
+    }
+
+    if (participant.status === "sudah_digunakan") {
+      console.log("❌ Tiket sudah digunakan:", participantId);
+      return res.status(409).json({
+        success: false,
+        message: "TIKET SUDAH DIGUNAKAN",
+        name: participant.name,
       });
     }
-    
-    if (results.length === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Booking tidak ditemukan.' 
+
+    if (participant.status === "hangus") {
+      console.log("❌ Tiket hangus:", participantId);
+      return res.status(410).json({
+        success: false,
+        message: "TIKET HANGUS/BATAL",
+        name: participant.name,
       });
     }
-    
-    // Format data
-    const booking = {
-      id: results[0].id,
-      package_name: results[0].package_name,
-      contact_email: results[0].contact_email,
-      total_price: results[0].total_price,
-      status: results[0].status,
-      created_at: results[0].created_at,
-      participants: results.filter(r => r.participant_id).map(r => ({
-        id: r.participant_id,
-        name: r.participant_name,
-        phone: r.participant_phone,
-        address: r.participant_address,
-        birth_place: r.participant_birth_place,
-        birth_date: r.participant_birth_date
-      }))
-    };
-    
-    res.json({ 
-      success: true, 
-      data: booking 
-    });
+
+    if (participant.status === "valid") {
+      const updateSql =
+        "UPDATE participants SET status = 'sudah_digunakan', scanned_at = NOW() WHERE id = ?";
+      db.query(updateSql, [participantId], (err, result) => {
+        if (err) {
+          console.error("❌ Error update status tiket:", err);
+          return res
+            .status(500)
+            .json({ success: false, message: "Gagal update status tiket." });
+        }
+
+        console.log("✅ Validasi berhasil:", participant.name);
+        res.status(200).json({
+          success: true,
+          message: "VALIDASI BERHASIL",
+          name: participant.name,
+        });
+      });
+    } else {
+      console.log("❌ Status tiket tidak valid:", participant.status);
+      res.status(400).json({
+        success: false,
+        message: "Status tiket tidak valid untuk check-in.",
+      });
+    }
+  });
+});
+
+// Laporan keuangan endpoint
+app.get("/api/laporan-keuangan", (req, res) => {
+  console.log("📥 GET /api/laporan-keuangan - Mengambil laporan keuangan...");
+
+  const query = `
+    SELECT 
+      DATE(created_at) as tanggal,
+      COUNT(*) as jumlah_booking,
+      SUM(total_price) as total_pendapatan
+    FROM bookings 
+    WHERE status = 'selesai'
+    GROUP BY DATE(created_at)
+    ORDER BY tanggal DESC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("❌ Error mengambil laporan keuangan:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Gagal mengambil laporan keuangan." });
+    }
+
+    console.log("✅ Laporan keuangan berhasil diambil");
+    res.status(200).json({ success: true, data: results });
   });
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error('Unhandled error:', err);
-  res.status(500).json({ 
-    success: false, 
-    message: 'Internal server error',
-    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  console.error("💥 Unhandled error:", err);
+  res.status(500).json({
+    success: false,
+    message: "Terjadi kesalahan server yang tidak terduga.",
+  });
+});
+
+// Handle 404
+app.use((req, res) => {
+  console.log("❓ Endpoint tidak ditemukan:", req.method, req.path);
+  res.status(404).json({
+    success: false,
+    message: `Endpoint ${req.method} ${req.path} tidak ditemukan.`,
   });
 });
 
@@ -474,40 +740,26 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`🖥️ Server berjalan di http://localhost:${PORT}`);
 });
->>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
 
 // Handle database connection
-db.connect(err => {
-  if (err) {
-    console.error('❌ Error connecting to database:', err);
-    console.log('Database config:', {
-      host: process.env.DB_HOST || 'localhost',
-      user: process.env.DB_USER || 'root',
-      database: process.env.DB_NAME || 'barokah_tour'
-    });
-    process.exit(1);
+db.on("connection", function (connection) {
+  console.log("✅ Connected to MySQL database dengan ID:", connection.threadId);
+});
+
+db.on("error", function (err) {
+  console.error("❌ Database error:", err);
+  if (err.code === "PROTOCOL_CONNECTION_LOST") {
+    console.log("🔄 Mencoba reconnect ke database...");
+  } else {
+    throw err;
   }
-  console.log('✅ Connected to MySQL database');
 });
 
-<<<<<<< HEAD
-app.get("/", (req, res) => {
-  res.send("🎉 Server backend Barokah Tour berhasil berjalan!");
-});
-
-// Gunakan routes
-app.use("/api/tickets", ticketRoutes);
-
-app.listen(PORT, () => {
-  console.log(`🖥️ Server berjalan di http://localhost:${PORT}`);
-});
-=======
-// Handle process termination
-process.on('SIGINT', () => {
-  console.log('\n🔄 Menutup koneksi database...');
+// Graceful shutdown
+process.on("SIGINT", () => {
+  console.log("\n🛑 Shutting down server...");
   db.end(() => {
-    console.log('✅ Database disconnected');
+    console.log("✅ Database connection closed.");
     process.exit(0);
   });
 });
->>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb

@@ -11,13 +11,8 @@
     "@testing-library/jest-dom": "^6.6.4",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-
-    "cors": "^2.8.5",
-<<<<<<< HEAD
-=======
-
->>>>>>> 4da6ef3e30daea19c6ea14071bc713aeeb61b8bb
     "axios": "^1.11.0",
+    "cors": "^2.8.5",
     "file-saver": "^2.0.5",
     "html5-qrcode": "^2.3.8",
     "mysql2": "^3.14.3",
@@ -27,6 +22,7 @@
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.8.0",
     "react-scripts": "5.0.1",
+    "uuid": "^11.1.0",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
   },

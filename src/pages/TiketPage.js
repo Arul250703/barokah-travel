@@ -1,29 +1,60 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
-import Tiket from "../pages/Tiket.js";
-import "../components/styles/TiketPage.css"; // Pastikan path CSS ini benar
+// src/pages/TiketPage.js
+import React, { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import Tiket from "./Tiket"; // Pastikan path ini benar
+import "../components/styles/TiketPage.css";
 
 const TiketPage = () => {
-  const location = useLocation();
-  const [isLoaded, setIsLoaded] = useState(false);
+  // --- PERUBAHAN UTAMA: Mengambil data dari URL, bukan state ---
+  const { bookingId } = useParams();
+  const [bookingData, setBookingData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Add loading effect for smoother animation
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
-    return () => clearTimeout(timer);
-  }, []);
+    // Fungsi untuk mengambil detail booking dari backend
+    const fetchBookingDetails = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(
+          `http://localhost:5000/api/bookings/${bookingId}`
+        );
+        if (!response.ok) {
+          const errData = await response.json();
+          throw new Error(errData.message || "Booking tidak ditemukan.");
+        }
+        const data = await response.json();
+        setBookingData(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Check if state and peserta exist
-  if (!location.state || !location.state.peserta) {
+    if (bookingId) {
+      fetchBookingDetails();
+    }
+  }, [bookingId]);
+
+  // Tampilan saat data sedang dimuat
+  if (loading) {
     return (
       <div className="tiket-page-container">
-        <div className={`tiket-page-content ${isLoaded ? "loaded" : ""}`}>
-          <h1 className="tiket-page-title">Oops! Data Tiket Tidak Ditemukan</h1>
-          <p className="tiket-page-subtitle">
-            Alur data terputus. Silakan mulai kembali dari halaman pemesanan.
-          </p>
+        <div className="tiket-page-content">
+          <h1>Memuat data tiket...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  // Tampilan jika terjadi error
+  if (error) {
+    return (
+      <div className="tiket-page-container">
+        <div className="tiket-page-content">
+          <h1>Oops! Terjadi Kesalahan</h1>
+          <p>{error}</p>
           <Link to="/" className="back-to-home-link">
             <span>Kembali ke Beranda</span>
           </Link>
@@ -32,34 +63,54 @@ const TiketPage = () => {
     );
   }
 
-  // Extract data from state
-  const { peserta, namaPaket, emailKontak } = location.state;
+  // Tampilan jika data tidak ditemukan
+  if (!bookingData) {
+    return (
+      <div className="tiket-page-container">
+        <div className="tiket-page-content">
+          <h1>Data booking tidak ditemukan.</h1>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="tiket-page-container">
-      <div className={`tiket-page-content ${isLoaded ? "loaded" : ""}`}>
+      <div className="tiket-page-content loaded">
         <h1 className="tiket-page-title">Pemesanan Berhasil!</h1>
         <p className="tiket-page-subtitle">
-          E-Ticket telah dikirim ke email <strong>{emailKontak}</strong>.
+          Berikut adalah e-tiket untuk setiap peserta. Tunjukkan QR Code kepada
+          petugas di lokasi.
         </p>
 
-        {/* Ticket List with staggered animation */}
+        <div className="booking-info">
+          <span>
+            ID Booking: <strong>{bookingData.booking_id}</strong>
+          </span>
+          <span>
+            Paket: <strong>{bookingData.package_name}</strong>
+          </span>
+        </div>
+
         <div className="tiket-list">
-          {peserta.map((p, index) => (
+          {bookingData.participants.map((participant) => (
             <div
-              key={index}
-              style={{
-                "--ticket-index": index,
-                animationDelay: `${0.8 + index * 0.1}s`,
-              }}
+              key={participant.participant_id}
+              style={{ "--ticket-index": participant.participant_id }}
             >
-              <Tiket nama={p.nama} telepon={p.telepon} namaPaket={namaPaket} />
+              <Tiket
+                participantId={participant.participant_id}
+                bookingId={bookingData.booking_id}
+                nama={participant.name}
+                telepon={participant.phone}
+                namaPaket={bookingData.package_name}
+              />
             </div>
           ))}
         </div>
 
         <Link to="/" className="back-to-home-link">
-          <span>Selesai & Kembali ke Beranda</span>
+          <span>Selesai & Kembali ke Dashboard</span>
         </Link>
       </div>
     </div>
