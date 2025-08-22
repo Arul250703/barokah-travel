@@ -1,17 +1,11 @@
-<<<<<<< HEAD
-const express = require("express");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const mysql = require("mysql2");
-const { v4: uuidv4 } = require("uuid");
-=======
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const mysql = require('mysql2');
+const { v4: uuidv4 } = require("uuid");
 const bcrypt = require('bcrypt'); // Library untuk enkripsi password
 
->>>>>>> 01151765409814fcabc59811e689b699c876e484
+
 
 dotenv.config();
 
@@ -624,8 +618,8 @@ app.delete("/api/bookings/:id", (req, res) => {
 });
 
 // Validasi participant untuk scanner
-app.post("/api/validate-participant ", (req, res) => {
-  console.log("📥 POST /api/validate-participant - Validasi tiket...");
+app.post("/api/validate ", (req, res) => {
+  console.log("📥 POST /api/validate - Validasi tiket...");
 
   const { participantId } = req.body;
 

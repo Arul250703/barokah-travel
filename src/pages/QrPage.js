@@ -459,7 +459,7 @@ function QrPage() {
 
       // PERBAIKAN: Ganti URL endpoint yang benar
       const response = await fetch(
-        "http://localhost:5000/api/validate-participant",
+        "http://localhost:5000/api/validate",
         {
           method: "POST",
           headers: {
