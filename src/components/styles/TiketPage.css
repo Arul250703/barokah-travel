@@ -444,3 +444,129 @@
     animation: none;
   }
 }
+
+/* Tambahkan CSS berikut ke file src/components/styles/TiketPage.css */
+
+/* Kontainer untuk tombol download semua PDF */
+.pdf-download-controls {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+/* Tombol download semua PDF */
+.download-all-pdf-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.download-all-pdf-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.download-all-pdf-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* Wrapper untuk setiap item tiket */
+.tiket-item-wrapper {
+  position: relative;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tiket-item-wrapper:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+/* Kontainer untuk tombol download individual */
+.individual-pdf-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 15px;
+  padding-top: 10px;
+}
+
+/* Tombol download PDF individual */
+.download-individual-pdf-btn {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(17, 153, 142, 0.3);
+}
+
+.download-individual-pdf-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(17, 153, 142, 0.4);
+}
+
+.download-individual-pdf-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 2px 10px rgba(17, 153, 142, 0.3);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+  .download-all-pdf-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  .pdf-download-controls {
+    margin: 15px 0;
+    padding: 10px;
+  }
+  
+  .individual-pdf-controls {
+    margin-top: 10px;
+  }
+  
+  .download-individual-pdf-btn {
+    width: 80%;
+    max-width: 200px;
+  }
+}
+
+/* Loading state animation */
+.download-all-pdf-btn:disabled,
+.download-individual-pdf-btn:disabled {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.6;
+  }
+}

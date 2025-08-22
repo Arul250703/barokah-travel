@@ -657,13 +657,6 @@
             </select>
             <FaChevronDown className="filter-icon" />
           </div>
-          <button
-            onClick={handleRefresh}
-            className="refresh-btn"
-            disabled={isLoading}
-          >
-            {isLoading ? <FaSpinner className="spinning" /> : "Refresh"}
-          </button>
         </div>
 
         <div className="table-container">

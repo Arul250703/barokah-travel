@@ -3,6 +3,8 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import Tiket from "./Tiket"; // Pastikan path ini benar
 import "../components/styles/TiketPage.css";
+import html2canvas from "html2canvas";
+import jsPDF from "jspdf";
 
 const TiketPage = () => {
   // --- PERUBAHAN UTAMA: Mengambil data dari URL, bukan state ---
@@ -10,6 +12,7 @@ const TiketPage = () => {
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     // Fungsi untuk mengambil detail booking dari backend
@@ -36,6 +39,114 @@ const TiketPage = () => {
       fetchBookingDetails();
     }
   }, [bookingId]);
+
+  // Fungsi untuk download PDF semua tiket
+  const downloadAllTicketsPDF = async () => {
+    if (!bookingData) return;
+
+    setIsDownloading(true);
+
+    try {
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const ticketElements = document.querySelectorAll(".tiket-container");
+      let isFirstPage = true;
+
+      for (let i = 0; i < ticketElements.length; i++) {
+        if (!isFirstPage) {
+          pdf.addPage();
+        }
+
+        const element = ticketElements[i];
+        const canvas = await html2canvas(element, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: "#ffffff",
+        });
+
+        const imgData = canvas.toDataURL("image/png");
+        const imgWidth = 180;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        // Center the ticket on the page
+        const x = (210 - imgWidth) / 2;
+        const y = 20;
+
+        pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+
+        isFirstPage = false;
+      }
+
+      pdf.save(
+        `Tiket_${bookingData.booking_id}_${bookingData.package_name}.pdf`
+      );
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Terjadi kesalahan saat membuat PDF. Silakan coba lagi.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  // Fungsi untuk download PDF tiket individual
+  const downloadSingleTicketPDF = async (participantId) => {
+    if (!bookingData) return;
+
+    setIsDownloading(true);
+
+    try {
+      const ticketElement = document.querySelector(
+        `[data-participant-id="${participantId}"] .tiket-container`
+      );
+
+      if (!ticketElement) {
+        alert("Tiket tidak ditemukan");
+        return;
+      }
+
+      const canvas = await html2canvas(ticketElement, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: "#ffffff",
+      });
+
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const imgData = canvas.toDataURL("image/png");
+      const imgWidth = 180;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      // Center the ticket on the page
+      const x = (210 - imgWidth) / 2;
+      const y = 20;
+
+      pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
+
+      const participant = bookingData.participants.find(
+        (p) => p.participant_id === participantId
+      );
+      const fileName = `Tiket_${participant?.name || participantId}_${
+        bookingData.package_name
+      }.pdf`;
+
+      pdf.save(fileName);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      alert("Terjadi kesalahan saat membuat PDF. Silakan coba lagi.");
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   // Tampilan saat data sedang dimuat
   if (loading) {
@@ -92,11 +203,26 @@ const TiketPage = () => {
           </span>
         </div>
 
+        {/* Tombol Download PDF Semua Tiket */}
+        <div className="pdf-download-controls">
+          <button
+            className="download-all-pdf-btn"
+            onClick={downloadAllTicketsPDF}
+            disabled={isDownloading}
+          >
+            {isDownloading
+              ? "⏳ Sedang membuat PDF..."
+              : "📄 Download Semua Tiket (PDF)"}
+          </button>
+        </div>
+
         <div className="tiket-list">
           {bookingData.participants.map((participant) => (
             <div
               key={participant.participant_id}
+              data-participant-id={participant.participant_id}
               style={{ "--ticket-index": participant.participant_id }}
+              className="tiket-item-wrapper"
             >
               <Tiket
                 participantId={participant.participant_id}
@@ -105,6 +231,19 @@ const TiketPage = () => {
                 telepon={participant.phone}
                 namaPaket={bookingData.package_name}
               />
+
+              {/* Tombol Download PDF Individual */}
+              <div className="individual-pdf-controls">
+                <button
+                  className="download-individual-pdf-btn"
+                  onClick={() =>
+                    downloadSingleTicketPDF(participant.participant_id)
+                  }
+                  disabled={isDownloading}
+                >
+                  📄 Download PDF
+                </button>
+              </div>
             </div>
           ))}
         </div>
