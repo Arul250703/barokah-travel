@@ -173,11 +173,11 @@ const Header = () => {
                         <li className="admin-link">
                             <Link 
                                 to="/admin" 
-                                className="btn btn-primary"
+                                // className="btn btn-primary"
                                 onClick={closeMobileMenu}
                             >
                                 <FontAwesomeIcon icon={faUser} />
-                                <span className="admin-text">Admin</span>
+                                <span className="admin-text"></span>
                             </Link>
                         </li>
                     </ul>
