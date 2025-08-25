@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../components/styles/Yogyakarta.css';
+import '../components/styles/Yogyakarta.css'; 
 
 // Import Aset Gambar yang relevan untuk halaman ini
 import situ from '../assets/images/situ.jpeg';
@@ -19,8 +19,11 @@ import dusun from '../assets/images/dusun.jpeg';
 import pink from '../assets/images/pink.jpeg';
 import gili from '../assets/images/gili.jpeg';
 import bali from '../assets/images/bali.jpeg';
-import museum from '../assets/images/museum ambarawa.jpeg';
-import goa from '../assets/images/Goa Kreo.jpeg';
+
+// Perbaikan: Ganti foto yang eror dengan foto yang sudah ada
+import museumAmbarawa from '../assets/images/yogya.jpeg';
+import goaKreo from '../assets/images/pinus.jpeg';
+
 import videoSection from '../assets/videos/video-section.mp4';
 import servicesBg from '../assets/images/services-bg.jpg';
 
@@ -63,11 +66,9 @@ const eventData = {
 const Yogyakarta = () => {
     const [currentFilter, setCurrentFilter] = useState('all');
     
-    // Logika filter untuk menentukan paket yang akan ditampilkan
     let filteredPackages = [];
     let isEventPackage = false;
     
-    // PERBAIKAN: Gabungkan semua paket wisata, one-day trip, dan overland
     const allWisataPackages = [...yogyakartaData.packages];
 
     if (currentFilter === 'paket') {

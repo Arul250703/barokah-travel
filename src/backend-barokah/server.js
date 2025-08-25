@@ -1,26 +1,41 @@
-// file: server.js
+const express = require('express');
+const cors = require('cors');
+const db = require('./src/config/db'); // Impor koneksi database kita
 
-const express = require("express");
-const dotenv = require("dotenv");
-
-// Memuat variabel environment dari .env
-dotenv.config();
-
-// Inisialisasi aplikasi Express
 const app = express();
+const port = 5000;
 
-// Middleware untuk membaca JSON dari body request
 app.use(express.json());
+app.use(cors());
 
-// Ambil PORT dari .env, atau gunakan 3000 jika tidak ada
-const PORT = process.env.PORT || 3000;
+// Endpoint untuk login
+app.post('/api/login', (req, res) => {
+    const { username, password } = req.body;
 
-// Route sederhana untuk pengetesan
-app.get("/", (req, res) => {
-  res.send("🎉 Server backend berhasil berjalan!");
+    // Buat query SQL untuk mencari user
+    const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+
+    // Jalankan query ke database
+    db.query(sql, [username, password], (err, results) => {
+        if (err) {
+            // Jika ada error pada database
+            console.error("Error pada database:", err);
+            return res.status(500).json({ success: false, message: "Terjadi kesalahan pada server." });
+        }
+
+        // Periksa hasil query
+        if (results.length > 0) {
+            // Jika user ditemukan (panjang hasil lebih dari 0)
+            console.log(`Login berhasil untuk user: ${username}`);
+            res.status(200).json({ success: true, message: 'Login berhasil!' });
+        } else {
+            // Jika user tidak ditemukan
+            console.log(`Login gagal untuk user: ${username}`);
+            res.status(401).json({ success: false, message: 'Username atau password salah.' });
+        }
+    });
 });
 
-// Jalankan server
-app.listen(PORT, () => {
-  console.log(`🖥️ Server berjalan di http://localhost:${PORT}`);
+app.listen(port, () => {
+  console.log(`Server backend berjalan di http://localhost:${port}`);
 });

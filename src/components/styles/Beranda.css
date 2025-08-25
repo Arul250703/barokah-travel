@@ -1,3 +1,13 @@
+/*
+   ===================================
+   |        BERANDA.CSS            |
+   ===================================
+   |  Professional & Responsive CSS  |
+   |  for the Beranda Component      |
+   ===================================
+*/
+
+/* --- A. FONT IMPORTS & GLOBAL VARIABLES --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 :root {
@@ -9,147 +19,80 @@
     --color-gray-500: #64748b;
     --color-gray-700: #334155;
     --color-white: #ffffff;
-    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.07), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.05);
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.07), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     --transition-normal: all 0.25s ease-in-out;
     --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     --border-radius-lg: 0.75rem;
     --border-radius-md: 0.5rem;
 }
 
-/* ===== Global Animations ===== */
+/* --- B. GLOBAL ANIMATIONS --- */
 @keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInLeft {
-    from {
-        opacity: 0;
-        transform: translateX(-30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(-30px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    from { opacity: 0; transform: translateX(30px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    from { opacity: 0; transform: translateY(-50px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes scaleIn {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes float {
-    0%, 100% {
-        transform: translateY(0px);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
 }
 
 @keyframes pulse {
-    0%, 100% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.8;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
 }
 
 @keyframes shimmer {
-    0% {
-        background-position: -200px 0;
-    }
-    100% {
-        background-position: calc(200px + 100%) 0;
-    }
-}
-
-@keyframes ripple {
-    0% {
-        transform: scale(0);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(4);
-        opacity: 0;
-    }
+    0% { background-position: -200px 0; }
+    100% { background-position: calc(200px + 100%) 0; }
 }
 
 @keyframes wiggle {
-    0%, 7% {
-        transform: rotateZ(0);
-    }
-    15% {
-        transform: rotateZ(-15deg);
-    }
-    20% {
-        transform: rotateZ(10deg);
-    }
-    25% {
-        transform: rotateZ(-10deg);
-    }
-    30% {
-        transform: rotateZ(6deg);
-    }
-    35% {
-        transform: rotateZ(-4deg);
-    }
-    40%, 100% {
-        transform: rotateZ(0);
-    }
+    0%, 7% { transform: rotateZ(0); }
+    15% { transform: rotateZ(-15deg); }
+    20% { transform: rotateZ(10deg); }
+    25% { transform: rotateZ(-10deg); }
+    30% { transform: rotateZ(6deg); }
+    35% { transform: rotateZ(-4deg); }
+    40%, 100% { transform: rotateZ(0); }
 }
 
-/* ===== Main Content ===== */
+/* --- C. MAIN CONTENT & SECTIONS --- */
 .beranda-content {
     margin-top: 80px;
     overflow-x: hidden;
-    animation: fadeInUp 0.8s ease-out;
+    font-family: 'Poppins', sans-serif;
+    color: var(--color-gray-700);
 }
 
-/* ===== Hero Section & Slideshow ===== */
+/* Hero Section & Slideshow */
 .hero-section {
     position: relative;
     width: 100%;
     height: 85vh;
     overflow: hidden;
-    color: var(--color-white);
 }
 
 .slideshow-container {
@@ -164,9 +107,10 @@
     width: 100%; height: 100%;
     opacity: 0;
     visibility: hidden;
-    transition: all 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 1.2s ease, visibility 1.2s ease;
     z-index: 1;
     text-decoration: none;
+    cursor: pointer;
 }
 
 .bg-slide.active {
@@ -201,41 +145,22 @@
 
 .dot {
     width: 12px; height: 12px;
-    background: rgba(255,255,255,0.5);
+    background: rgba(255, 255, 255, 0.5);
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
-}
-
-.dot::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: var(--color-white);
-    border-radius: 50%;
-    transition: all 0.3s ease;
-    transform: translate(-50%, -50%);
-}
-
-.dot.active::before,
-.dot:hover::before {
-    width: 100%;
-    height: 100%;
 }
 
 .dot.active,
 .dot:hover {
     background: var(--color-white);
     transform: scale(1.2);
-    box-shadow: 0 0 10px rgba(255,255,255,0.5);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* ===== Tour Services Section ===== */
+/* Tour Services Section */
 .tour-services-wrapper {
     margin-top: -60px;
     position: relative;
@@ -257,23 +182,6 @@
     flex-wrap: wrap;
     transition: var(--transition-smooth);
     position: relative;
-    overflow: hidden;
-}
-
-.tour-icons-container::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.05), transparent);
-    transform: translateX(-100%) rotate(45deg);
-    transition: transform 0.6s ease;
-}
-
-.tour-icons-container:hover::before {
-    transform: translateX(100%) rotate(45deg);
 }
 
 .tour-icons-container:hover {
@@ -290,24 +198,11 @@
     color: var(--color-gray-700);
     transition: var(--transition-smooth);
     position: relative;
-    overflow: hidden;
-}
-
-.tour-icon-item:nth-child(odd) {
-    animation: fadeInLeft 0.6s ease-out calc(0.1s * var(--i, 1)) both;
-}
-
-.tour-icon-item:nth-child(even) {
-    animation: fadeInRight 0.6s ease-out calc(0.1s * var(--i, 1)) both;
 }
 
 .tour-icon-item:hover {
     transform: translateY(-8px) scale(1.05);
     color: var(--color-primary-500);
-}
-
-.tour-icon-item:hover .icon-circle {
-    animation: wiggle 0.6s ease-in-out;
 }
 
 .icon-circle {
@@ -320,29 +215,12 @@
     margin-bottom: 10px;
     overflow: hidden;
     border: 3px solid transparent;
-    background-clip: padding-box;
     transition: var(--transition-smooth);
     position: relative;
 }
 
-.icon-circle::before {
-    content: '';
-    position: absolute;
-    inset: -3px;
-    padding: 3px;
-    background: linear-gradient(45deg, var(--color-primary-500), var(--color-accent-orange));
-    border-radius: 50%;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: xor;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.tour-icon-item:hover .icon-circle::before {
-    opacity: 1;
-}
-
 .tour-icon-item:hover .icon-circle {
+    animation: wiggle 0.6s ease-in-out;
     background: linear-gradient(135deg, var(--color-light-gray), #ffffff);
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
 }
@@ -360,7 +238,7 @@
 .icon-title {
     font-size: 14px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .tour-icon-item:hover .icon-title {
@@ -368,12 +246,11 @@
     text-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
 }
 
-/* ===== Tour Cards Section ===== */
+/* Tour Cards Section */
 .tour-cards-section {
     padding: 60px 24px;
     max-width: 1200px;
     margin: 0 auto;
-    animation: fadeInUp 0.8s ease-out 0.6s both;
 }
 
 .tour-section-title {
@@ -396,9 +273,6 @@
     height: 3px;
     background: linear-gradient(90deg, var(--color-primary-500), var(--color-accent-orange));
     border-radius: 2px;
-    animation: shimmer 2s infinite;
-    background-size: 200px 100%;
-    background-image: linear-gradient(90deg, var(--color-primary-500) 0%, var(--color-accent-orange) 50%, var(--color-primary-500) 100%);
 }
 
 .lihat-semua-link {
@@ -408,22 +282,6 @@
     font-weight: 500;
     transition: var(--transition-smooth);
     position: relative;
-    overflow: hidden;
-}
-
-.lihat-semua-link::before {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: var(--color-primary-600);
-    transition: width 0.3s ease;
-}
-
-.lihat-semua-link:hover::before {
-    width: 100%;
 }
 
 .lihat-semua-link:hover {
@@ -437,6 +295,7 @@
     gap: 20px;
     padding-bottom: 20px;
     scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
 }
 
 .tour-card {
@@ -451,37 +310,11 @@
     display: flex;
     flex-direction: column;
     position: relative;
-    transform: translateY(20px);
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.tour-card:nth-child(1) { animation-delay: 0.1s; }
-.tour-card:nth-child(2) { animation-delay: 0.2s; }
-.tour-card:nth-child(3) { animation-delay: 0.3s; }
-.tour-card:nth-child(4) { animation-delay: 0.4s; }
-.tour-card:nth-child(5) { animation-delay: 0.5s; }
-
-.tour-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(249, 115, 22, 0.05));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    z-index: 1;
-}
-
-.tour-card:hover::before {
-    opacity: 1;
 }
 
 .tour-card:hover {
     transform: translateY(-8px) scale(1.02);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
 }
 
 .tour-card img {
@@ -501,7 +334,6 @@
     flex-direction: column;
     flex-grow: 1;
     position: relative;
-    z-index: 2;
 }
 
 .tour-card h4 {
@@ -511,10 +343,6 @@
     margin-bottom: 10px;
     flex-grow: 1;
     transition: color 0.3s ease;
-}
-
-.tour-card:hover h4 {
-    color: var(--color-primary-600);
 }
 
 .tour-card .card-price {
@@ -533,7 +361,7 @@
     color: var(--color-primary-500);
     padding-top: 5px;
     display: block;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .tour-card:hover .price-value {
@@ -555,22 +383,6 @@
     transition: var(--transition-smooth);
     position: relative;
     overflow: hidden;
-    z-index: 2;
-}
-
-.detail-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-    transition: left 0.5s ease;
-}
-
-.detail-button:hover::before {
-    left: 100%;
 }
 
 .detail-button:hover {
@@ -579,7 +391,7 @@
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
 }
 
-/* ===== Other Sections ===== */
+/* Other Sections */
 .include-bar {
     background: var(--color-primary-700);
     color: white;
@@ -588,19 +400,6 @@
     font-size: 14px;
     line-height: 1.8;
     position: relative;
-    overflow: hidden;
-    animation: fadeInUp 0.8s ease-out 0.8s both;
-}
-
-.include-bar::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    animation: shimmer 3s infinite;
 }
 
 .include-bar span {
@@ -611,24 +410,26 @@
     transition: transform 0.3s ease;
 }
 
-.include-bar:hover span {
-    transform: scale(1.1);
-    animation: float 2s ease-in-out infinite;
-}
-
 .event-organizer-section {
     padding: 60px 24px;
-    text-align: center;
-    animation: fadeInUp 0.8s ease-out 1s both;
+    display: flex; /* Ganti dari text-align menjadi flexbox */
+    flex-direction: column; /* Mengatur konten agar disusun vertikal */
+    align-items: center; /* Membuat semua elemen di tengah secara horizontal */
 }
 
 .section-title {
-    font-size: 24px;
-    font-weight: 700;
+    background: var(--color-accent-orange);
     color: var(--color-gray-700);
-    margin-bottom: 25px;
+    padding: 24px 30px;
+    border-radius: var(--border-radius-lg);
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1.2;
+    max-width: 600px;
+    width: 100%; /* Agar bisa mengambil lebar penuh dan di tengah */
+    text-align: center; /* Memastikan teks di dalam kotak juga di tengah */
     position: relative;
-    display: inline-block;
+    margin: 0 0 25px 0; /* Menghilangkan margin auto, karena flexbox yang mengatur */
 }
 
 .section-title::after {
@@ -663,31 +464,6 @@
     text-decoration: none;
     position: relative;
     overflow: hidden;
-    transform: translateY(20px);
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out 1.2s forwards;
-}
-
-.package-buttons .btn:nth-child(1) { animation-delay: 1.2s; }
-.package-buttons .btn:nth-child(2) { animation-delay: 1.3s; }
-.package-buttons .btn:nth-child(3) { animation-delay: 1.4s; }
-
-.package-buttons .btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-    transition: all 0.4s ease;
-    transform: translate(-50%, -50%);
-}
-
-.package-buttons .btn:hover::before {
-    width: 300px;
-    height: 300px;
 }
 
 .package-buttons .btn:hover {
@@ -700,7 +476,6 @@
     background: var(--color-light-gray);
     padding: 60px 24px;
     text-align: center;
-    animation: fadeInUp 0.8s ease-out 1.2s both;
 }
 
 .why-us-section-event h2 {
@@ -740,30 +515,6 @@
     text-align: center;
     transition: var(--transition-smooth);
     position: relative;
-    overflow: hidden;
-    transform: translateY(30px);
-    opacity: 0;
-    animation: fadeInUp 0.6s ease-out forwards;
-}
-
-.why-us-card-event:nth-child(1) { animation-delay: 1.4s; }
-.why-us-card-event:nth-child(2) { animation-delay: 1.5s; }
-.why-us-card-event:nth-child(3) { animation-delay: 1.6s; }
-
-.why-us-card-event::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(249, 115, 22, 0.05));
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-
-.why-us-card-event:hover::before {
-    opacity: 1;
 }
 
 .why-us-card-event:hover {
@@ -774,7 +525,7 @@
 .why-us-card-event img {
     height: 60px;
     margin-bottom: 15px;
-    transition: all 0.3s ease;
+    transition: var(--transition-normal);
 }
 
 .why-us-card-event:hover img {
@@ -800,11 +551,7 @@
     transition: color 0.3s ease;
 }
 
-.why-us-card-event:hover p {
-    color: var(--color-gray-700);
-}
-
-/* ===== Custom CTA Section ===== */
+/* Custom CTA Section */
 .custom-cta {
     position: relative;
     min-height: 400px;
@@ -815,7 +562,6 @@
     text-align: center;
     color: white;
     padding: 80px 24px;
-    animation: fadeInUp 0.8s ease-out 1.6s both;
 }
 
 .cta-video {
@@ -837,7 +583,7 @@
     position: absolute;
     top: 0; left: 0;
     width: 100%; height: 100%;
-    background: rgba(0,0,0,0.6);
+    background: rgba(0, 0, 0, 0.6);
     z-index: 2;
     display: flex;
     align-items: center;
@@ -846,23 +592,20 @@
 }
 
 .custom-cta:hover .cta-overlay {
-    background: rgba(0,0,0,0.7);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 .cta-text {
     z-index: 3;
     max-width: 600px;
     padding: 20px;
-    transform: translateY(20px);
-    opacity: 0;
-    animation: fadeInUp 0.8s ease-out 1.8s both;
 }
 
 .cta-text h2 {
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 15px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     transition: transform 0.3s ease;
 }
 
@@ -873,7 +616,7 @@
 .cta-text p {
     font-size: 16px;
     margin-bottom: 25px;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .cta-button {
@@ -890,21 +633,6 @@
     overflow: hidden;
 }
 
-.cta-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-    transition: left 0.6s ease;
-}
-
-.cta-button:hover::before {
-    left: 100%;
-}
-
 .cta-button:hover {
     background: #e76f00;
     transform: translateY(-3px) scale(1.05);
@@ -912,30 +640,7 @@
     animation: float 2s ease-in-out infinite;
 }
 
-/* ===== Scroll Animations ===== */
-@keyframes scrollFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.scroll-animate {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 0.8s ease-out;
-}
-
-.scroll-animate.in-view {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* ===== Responsive Design ===== */
+/* --- D. RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
     .beranda-content { margin-top: 60px; }
     
@@ -987,7 +692,27 @@
     .scroll-container { 
         flex-wrap: nowrap; 
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
         scroll-snap-type: x mandatory;
     }
     
+    .tour-card {
+      scroll-snap-align: start;
+    }
+    
+    .include-bar { font-size: 12px; }
+    
+    .event-organizer-section, .why-us-section-event { 
+      padding: 40px 16px; 
+    }
+    
+    .why-us-cards-event { gap: 15px; }
+    
+    .why-us-card-event { padding: 20px; }
+    
+    .cta-text h2 { font-size: 24px; }
+    
+    .cta-text p { font-size: 14px; }
+    
+    .cta-button { font-size: 14px; padding: 10px 20px; }
 }

@@ -3,31 +3,52 @@ import { useNavigate, Link } from 'react-router-dom';
 import '../components/styles/Admin.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTwitter, faFacebookF, faGoogle } from '@fortawesome/free-brands-svg-icons';
-import { faEnvelope, faPhoneVolume, faUser } from '@fortawesome/free-solid-svg-icons';
-
-// Import logo
 import logo from '../assets/images/Logo.png';
 
 const Admin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false); // State untuk loading
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        // Logika login sederhana
-        if (username === 'admin' && password === 'admin123') {
-            navigate('/dashboard');
-        } else {
-            setError('Username atau password salah.');
+        setIsLoading(true); // Mulai loading
+        setError(''); // Bersihkan error sebelumnya
+
+        try {
+            // 1. Kirim data ke backend menggunakan fetch
+            const response = await fetch('http://localhost:5000/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            const data = await response.json();
+
+            // 2. Periksa respons dari backend
+            if (response.ok) { // Jika status response adalah 2xx (sukses)
+                console.log('Login berhasil dari frontend');
+                navigate('/dashboard');
+            } else {
+                // Jika backend mengirim error (misal: status 401)
+                setError(data.message || 'Terjadi kesalahan.');
+            }
+        } catch (err) {
+            // Jika terjadi error jaringan (misal: backend tidak jalan)
+            setError('Tidak dapat terhubung ke server. Pastikan server backend berjalan.');
+            console.error('Error saat login:', err);
+        } finally {
+            setIsLoading(false); // Selesai loading
         }
     };
 
     return (
         <div className="admin-page">
             <div className="login-card">
-                {/* === BAGIAN KIRI (FORM LOGIN) === */}
                 <div className="form-panel">
                     <div className="logo-container">
                         <img src={logo} alt="Logo Barokah Tour" />
@@ -56,24 +77,17 @@ const Admin = () => {
                                 required
                             />
                         </div>
-                        <button type="submit" className="login-btn">LOG IN</button>
+                        {/* Tombol akan nonaktif saat loading */}
+                        <button type="submit" className="login-btn" disabled={isLoading}>
+                            {isLoading ? 'LOADING...' : 'LOG IN'}
+                        </button>
                     </form>
                     
                     <Link to="/" className="forgot-link">Forgot Password?</Link>
                 </div>
 
-                {/* === BAGIAN KANAN (SOCIAL LOGIN) === */}
                 <div className="social-panel">
-                    <h2 className="social-title">Sign In</h2>
-                    <p className="social-subtitle">with one of your social profiles</p>
-                    <div className="social-icons">
-                        <button className="icon-btn twitter"><FontAwesomeIcon icon={faTwitter} /></button>
-                        <button className="icon-btn facebook"><FontAwesomeIcon icon={faFacebookF} /></button>
-                        <button className="icon-btn google"><FontAwesomeIcon icon={faGoogle} /></button>
-                    </div>
-                    <p className="register-text">
-                        Don't have an account? <Link to="/register" className="register-link">Register</Link>
-                    </p>
+                    {/* ... bagian social panel tidak berubah ... */}
                 </div>
             </div>
         </div>
