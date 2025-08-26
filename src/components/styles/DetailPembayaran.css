@@ -7,11 +7,8 @@
 
 .payment-page {
   min-height: 100vh;
-<<<<<<< HEAD
   background: linear-gradient(135deg,#fefefe 100%);
-=======
   background: whitesmoke;
->>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px 0;
 }
