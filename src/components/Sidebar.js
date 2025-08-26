@@ -50,11 +50,16 @@ const Sidebar = () => {
   };
 
   const isActiveLink = (path) => {
+<<<<<<< HEAD
     return (
       location.pathname === path ||
       (path === "/keuangan" &&
         location.pathname.toLowerCase().includes("keuangan"))
     );
+=======
+    return location.pathname === path || 
+           (path === "/keuangan" && location.pathname.toLowerCase().includes("keuangan"));
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
   };
 
   const menuItems = [
@@ -112,7 +117,11 @@ const Sidebar = () => {
     <>
       {/* Mobile Sidebar Toggle Button */}
       <button
+<<<<<<< HEAD
         className={`sidebar-toggle ${isMobile && isMobileOpen ? "active" : ""}`}
+=======
+        className={`sidebar-toggle ${isMobile && isMobileOpen ? 'active' : ''}`}
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
       >
@@ -122,7 +131,11 @@ const Sidebar = () => {
       {/* Mobile Overlay */}
       {isMobile && (
         <div
+<<<<<<< HEAD
           className={`sidebar-overlay ${isMobileOpen ? "active" : ""}`}
+=======
+          className={`sidebar-overlay${isMobileOpen ? " active" : ""}`}
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
           onClick={closeMobileSidebar}
         ></div>
       )}
@@ -134,15 +147,24 @@ const Sidebar = () => {
         } ${isMobile ? "mobile-sidebar" : ""}`}
       >
         {/* Mobile Close Button */}
+<<<<<<< HEAD
         {/* {isMobile && (
           <button
+=======
+        {isMobile && (
+          <button 
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
             className="mobile-close-btn"
             onClick={closeMobileSidebar}
             aria-label="Close sidebar"
           >
             <FaTimes />
           </button>
+<<<<<<< HEAD
         )} */}
+=======
+        )}
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
 
         {/* Sidebar Header */}
         <div className="sidebar-header">
@@ -150,10 +172,17 @@ const Sidebar = () => {
             <div className="sidebar-logo">BT</div>
             {!isCollapsed && <h2>Admin Panel</h2>}
           </div>
+<<<<<<< HEAD
 
           {/* Desktop Toggle Button */}
           {!isMobile && (
             <button
+=======
+          
+          {/* Desktop Toggle Button */}
+          {!isMobile && (
+            <button 
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
               className="desktop-toggle-btn"
               onClick={toggleSidebar}
               aria-label="Collapse sidebar"
@@ -167,9 +196,13 @@ const Sidebar = () => {
         <div className="sidebar-content">
           {/* Main Navigation */}
           <ul className="sidebar-menu">
+<<<<<<< HEAD
             {!isCollapsed && (
               <li className="sidebar-section-title">Menu Utama</li>
             )}
+=======
+            {!isCollapsed && <li className="sidebar-section-title">Menu Utama</li>}
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
             {menuItems.slice(0, 6).map((item) => {
               const IconComponent = item.icon;
               return (
@@ -187,9 +220,13 @@ const Sidebar = () => {
               );
             })}
 
+<<<<<<< HEAD
             {!isCollapsed && (
               <li className="sidebar-section-title">Pengaturan</li>
             )}
+=======
+            {!isCollapsed && <li className="sidebar-section-title">Pengaturan</li>}
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77
             {menuItems.slice(6).map((item) => {
               const IconComponent = item.icon;
               return (
@@ -221,4 +258,8 @@ const Sidebar = () => {
   );
 };
 
+<<<<<<< HEAD
 export default Sidebar;
+=======
+export default Sidebar;
+>>>>>>> c1143603dd1554cd900c7888da6cfd935014dd77

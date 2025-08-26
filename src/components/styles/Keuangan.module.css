@@ -48,6 +48,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .addButton {
@@ -189,6 +190,7 @@
   border-radius: 8px;
   font-size: 0.9rem;
   transition: border-color 0.2s ease;
+  box-sizing: border-box;
 }
 
 .searchBox input:focus {
@@ -230,7 +232,7 @@
   cursor: not-allowed;
 }
 
-/* Table */
+/* Table Container with Horizontal Scroll */
 .tableContainer {
   background: white;
   border-radius: 12px;
@@ -238,8 +240,14 @@
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
 .table {
   width: 100%;
+  min-width: 800px; /* Minimum width to ensure all columns are visible */
   border-collapse: collapse;
 }
 
@@ -251,12 +259,14 @@
   color: #374151;
   border-bottom: 2px solid #e5e7eb;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 .table td {
   padding: 1rem;
   border-bottom: 1px solid #f3f4f6;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .table tr:hover {
@@ -278,6 +288,7 @@
   color: #64748b;
   font-style: italic;
   padding: 3rem;
+  white-space: normal;
 }
 
 /* Personal Info */
@@ -285,6 +296,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  max-width: 200px;
 }
 
 .birthInfo, .addressInfo {
@@ -298,6 +310,7 @@
 .infoIcon {
   font-size: 0.7rem;
   opacity: 0.7;
+  flex-shrink: 0;
 }
 
 /* Status Badge */
@@ -308,6 +321,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  display: inline-block;
 }
 
 .lunas {
@@ -335,6 +349,7 @@
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  min-width: 120px;
 }
 
 .viewButton, .editButton, .deleteButton {
@@ -348,6 +363,7 @@
   justify-content: center;
   width: 32px;
   height: 32px;
+  flex-shrink: 0;
 }
 
 .viewButton {
@@ -782,6 +798,18 @@
   background: #b91c1c;
 }
 
+/* Scroll Hint for Mobile Tables */
+.scrollHint {
+  display: none;
+  padding: 0.5rem 1rem;
+  background: #f8fafc;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.8rem;
+  color: #64748b;
+  text-align: center;
+  font-style: italic;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .container {
@@ -794,39 +822,84 @@
     align-items: stretch;
   }
   
+  .title {
+    font-size: 1.5rem;
+  }
+  
   .headerActions {
     justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .addButton, .exportButton {
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
   }
   
   .summaryGrid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .summaryCard {
+    padding: 1rem;
+  }
+  
+  .cardValue {
+    font-size: 1.5rem;
   }
   
   .filtersSection {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
   }
   
   .searchBox {
     min-width: auto;
   }
   
+  .searchBox input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  /* Show scroll hint on mobile */
+  .scrollHint {
+    display: block;
+  }
+  
   .table {
-    font-size: 0.8rem;
+    min-width: 1000px; /* Ensure enough space for all columns */
   }
   
   .table th,
   .table td {
-    padding: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.8rem;
   }
   
-  .actionButtons {
-    flex-direction: column;
+  /* Allow text wrapping in specific columns on mobile */
+  .table td:nth-child(2) { /* Customer column */
+    max-width: 200px;
+    white-space: normal;
+  }
+  
+  .personalInfo {
+    max-width: 180px;
   }
   
   .detailModal,
   .formModal {
     margin: 0.5rem;
+    max-height: 95vh;
+  }
+  
+  .modalHeader {
+    padding: 1rem;
+  }
+  
+  .modalHeader h2 {
+    font-size: 1.2rem;
   }
   
   .modalBody,
@@ -835,6 +908,10 @@
   }
   
   .infoGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .participantsList {
     grid-template-columns: 1fr;
   }
   
@@ -849,5 +926,54 @@
   .tableInfo {
     flex-direction: column;
     gap: 1rem;
+    text-align: center;
+  }
+  
+  .actionButtons {
+    min-width: 100px;
   }
 }
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0.5rem;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 1.3rem;
+  }
+  
+  .addButton, .exportButton {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.7rem;
+    gap: 0.25rem;
+  }
+  
+  .summaryCard {
+    padding: 0.75rem;
+  }
+  
+  .cardIcon {
+    font-size: 1.5rem;
+  }
+  
+  .cardValue {
+    font-size: 1.3rem;
+  }
+  
+  .table th,
+  .table td {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+  
+  .viewButton, .editButton, .deleteButton {
+    width: 28px;
+    height: 28px;
+  }
+}
+

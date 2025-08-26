@@ -15,8 +15,11 @@ import {
   FaMapMarkerAlt,
   FaBirthdayCake,
   FaExclamationTriangle,
+  FaArrowsAltH,
+  FaWhatsapp, 
 } from "react-icons/fa";
 import styles from "../components/styles/Keuangan.module.css";
+
 
 // Komponen untuk Badge Status
 const StatusBadge = ({ status }) => {
@@ -71,6 +74,13 @@ const ErrorMessage = ({ message, onRetry }) => (
         Coba Lagi
       </button>
     )}
+  </div>
+);
+
+// Komponen untuk hint scroll horizontal pada mobile
+const ScrollHint = () => (
+  <div className={styles.scrollHint}>
+    <FaArrowsAltH /> Geser ke kiri/kanan untuk melihat seluruh data
   </div>
 );
 
@@ -257,6 +267,7 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
   };
 
   return (
+
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.formModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
@@ -471,6 +482,8 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
     </div>
   );
 };
+
+
 
 function Keuangan() {
   const [bookings, setBookings] = useState([]);
@@ -803,96 +816,101 @@ function Keuangan() {
         ) : error ? (
           <ErrorMessage message={error} onRetry={fetchData} />
         ) : (
-          <table className={styles.table}>
-            <thead>
-              <tr>
-                <th>ID Booking</th>
-                <th>Pelanggan</th>
-                <th>Paket Tour</th>
-                <th>Total Tagihan</th>
-                <th>Status Pembayaran</th>
-                <th>Tanggal</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item) => {
-                  const mainParticipant =
-                    item.participants && item.participants.length > 0
-                      ? item.participants[0]
-                      : {};
-                  return (
-                    <tr key={item.id}>
-                      <td>
-                        <strong>{item.booking_id || "N/A"}</strong>
-                      </td>
-                      <td>
-                        <strong>{item.customer_name || "N/A"}</strong>
-                        <br />
-                        <small>{item.customer_email || "N/A"}</small>
-                        {mainParticipant.name && (
-                          <div className={styles.personalInfo}>
-                            <div className={styles.birthInfo}>
-                              <FaBirthdayCake className={styles.infoIcon} />
-                              <span>Peserta utama: {mainParticipant.name}</span>
+          <>
+            <ScrollHint />
+            <div className={styles.tableWrapper}>
+              <table className={styles.table}>
+                <thead>
+                  <tr>
+                    <th>ID Booking</th>
+                    <th>Pelanggan</th>
+                    <th>Paket Tour</th>
+                    <th>Total Tagihan</th>
+                    <th>Status Pembayaran</th>
+                    <th>Tanggal</th>
+                    <th>Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredData.length > 0 ? (
+                    filteredData.map((item) => {
+                      const mainParticipant =
+                        item.participants && item.participants.length > 0
+                          ? item.participants[0]
+                          : {};
+                      return (
+                        <tr key={item.id}>
+                          <td>
+                            <strong>{item.booking_id || "N/A"}</strong>
+                          </td>
+                          <td>
+                            <strong>{item.customer_name || "N/A"}</strong>
+                            <br />
+                            <small>{item.customer_email || "N/A"}</small>
+                            {mainParticipant.name && (
+                              <div className={styles.personalInfo}>
+                                <div className={styles.birthInfo}>
+                                  <FaBirthdayCake className={styles.infoIcon} />
+                                  <span>Peserta utama: {mainParticipant.name}</span>
+                                </div>
+                              </div>
+                            )}
+                          </td>
+                          <td>{item.package_name || "N/A"}</td>
+                          <td className={styles.amount}>
+                            Rp{" "}
+                            {(parseFloat(item.total_price) || 0).toLocaleString(
+                              "id-ID"
+                            )}
+                          </td>
+                          <td>
+                            <StatusBadge status={item.payment_status} />
+                          </td>
+                          <td>{formatDate(item.booking_date)}</td>
+                          <td>
+                            <div className={styles.actionButtons}>
+                              <button
+                                className={styles.viewButton}
+                                title="Lihat Detail"
+                                onClick={() => handleViewDetail(item)}
+                              >
+                                <FaEye />
+                              </button>
+                              <button
+                                className={styles.editButton}
+                                title="Edit"
+                                onClick={() => handleOpenEditModal(item)}
+                              >
+                                <FaEdit />
+                              </button>
+                              <button
+                                className={styles.deleteButton}
+                                title="Hapus"
+                                onClick={() => handleDelete(item.id)}
+                              >
+                                <FaTrash />
+                              </button>
                             </div>
-                          </div>
-                        )}
-                      </td>
-                      <td>{item.package_name || "N/A"}</td>
-                      <td className={styles.amount}>
-                        Rp{" "}
-                        {(parseFloat(item.total_price) || 0).toLocaleString(
-                          "id-ID"
-                        )}
-                      </td>
-                      <td>
-                        <StatusBadge status={item.payment_status} />
-                      </td>
-                      <td>{formatDate(item.booking_date)}</td>
-                      <td>
-                        <div className={styles.actionButtons}>
-                          <button
-                            className={styles.viewButton}
-                            title="Lihat Detail"
-                            onClick={() => handleViewDetail(item)}
-                          >
-                            <FaEye />
-                          </button>
-                          <button
-                            className={styles.editButton}
-                            title="Edit"
-                            onClick={() => handleOpenEditModal(item)}
-                          >
-                            <FaEdit />
-                          </button>
-                          <button
-                            className={styles.deleteButton}
-                            title="Hapus"
-                            onClick={() => handleDelete(item.id)}
-                          >
-                            <FaTrash />
-                          </button>
-                        </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td colSpan="7" className={styles.emptyMessage}>
+                        {searchTerm || filterStatus !== "Semua"
+                          ? "Tidak ada data yang sesuai dengan filter."
+                          : "Belum ada data booking."}
                       </td>
                     </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="7" className={styles.emptyMessage}>
-                    {searchTerm || filterStatus !== "Semua"
-                      ? "Tidak ada data yang sesuai dengan filter."
-                      : "Belum ada data booking."}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
-
+            
       {/* Info tambahan */}
       {!isLoading && !error && filteredData.length > 0 && (
         <div className={styles.tableInfo}>
