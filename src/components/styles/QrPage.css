@@ -9,7 +9,7 @@
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #f8fafc;
+  background-color: #ffffff;
   color: #334155;
   line-height: 1.6;
 }
@@ -17,13 +17,13 @@ body {
 /* Main Container */
 .qr-page-container {
   min-height: 100vh;
-  background: #f8fafc;
+  background: #ffffff;
 }
 
 /* Header */
 .content-header {
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f1f5f9;
   padding: 1.5rem 2rem;
   display: flex;
   align-items: center;
@@ -31,7 +31,7 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .header-left {
@@ -103,8 +103,8 @@ body {
   background: #ffffff;
   border-radius: 1rem;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -125,7 +125,7 @@ body {
 
 .summary-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
 }
 
 .summary-clickable {
@@ -263,9 +263,9 @@ body {
 .table-wrapper {
   background: #ffffff;
   border-radius: 1rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #f1f5f9;
   overflow: hidden;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .data-table {
@@ -288,7 +288,7 @@ body {
 
 .data-table td {
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #f8fafc;
   font-size: 0.875rem;
 }
 
@@ -331,23 +331,27 @@ body {
 }
 
 .status-valid {
-  background: #dcfce7;
+  background: #f0fdf4;
   color: #166534;
+  border: 1px solid #dcfce7;
 }
 
 .status-used {
-  background: #dbeafe;
+  background: #eff6ff;
   color: #1e40af;
+  border: 1px solid #dbeafe;
 }
 
 .status-voided {
-  background: #fee2e2;
+  background: #fef2f2;
   color: #dc2626;
+  border: 1px solid #fee2e2;
 }
 
 .status-pending {
-  background: #fef3c7;
+  background: #fffbeb;
   color: #92400e;
+  border: 1px solid #fef3c7;
 }
 
 /* Action Buttons */
@@ -365,26 +369,32 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #f8fafc;
+  color: #64748b;
+  border: 1px solid #e2e8f0;
+}
+
+.action-btn:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
 }
 
 .action-view {
-  background: #eff6ff;
   color: #3b82f6;
 }
 
 .action-view:hover {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: #eff6ff;
+  border-color: #dbeafe;
 }
 
 .action-ticket {
-  background: #f0fdf4;
   color: #10b981;
 }
 
 .action-ticket:hover {
-  background: #dcfce7;
-  color: #047857;
+  background: #f0fdf4;
+  border-color: #dcfce7;
 }
 
 /* Empty State */
@@ -428,7 +438,7 @@ body {
 .modal {
   background: #ffffff;
   border-radius: 1rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
@@ -448,7 +458,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem 2rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .modal-header h2 {
@@ -469,7 +479,7 @@ body {
 }
 
 .modal-close:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
   color: #374151;
 }
 
@@ -479,7 +489,7 @@ body {
 
 .modal-footer {
   padding: 1.5rem 2rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid #f1f5f9;
   display: flex;
   gap: 0.75rem;
   justify-content: flex-end;
@@ -516,10 +526,253 @@ body {
   margin-bottom: 0.5rem;
   font-size: 0.875rem;
   color: #374151;
+  border: 1px solid #e2e8f0;
 }
 
 .peserta-item:last-child {
   margin-bottom: 0;
+}
+
+/* ========================================
+   HORIZONTAL SCROLL STYLES - PARTICIPANT SCROLLER
+   Tambahkan CSS ini ke bagian bawah file QrPage.css Anda
+   ======================================== */
+
+/* Participant Scroller Styles */
+.participant-scroller {
+  position: relative;
+  width: 100%;
+}
+
+.scroll-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.peserta-list-horizontal {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  flex: 1;
+  /* Hide scrollbar but keep functionality */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.peserta-list-horizontal::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+.peserta-item-horizontal {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-width: 250px;
+  max-width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.peserta-item-horizontal:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.peserta-info-horizontal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.peserta-number {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.peserta-details-horizontal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.peserta-name {
+  color: #1e293b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.peserta-phone {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.peserta-id {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: #f9fafb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+  width: fit-content;
+}
+
+.peserta-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scroll-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #64748b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.scroll-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #374151;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-btn:active {
+  transform: scale(0.95);
+}
+
+.scroll-btn-left {
+  order: -1;
+}
+
+.scroll-btn-right {
+  order: 1;
+}
+
+.scroll-indicator {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px dashed #e2e8f0;
+}
+
+.scroll-text {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.empty-participants {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  border: 1px dashed #e2e8f0;
+}
+
+.empty-participants p {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* Summary Red Color (untuk tombol scanner) */
+.summary-red {
+  --accent-color: #ef4444;
+}
+
+.summary-red .summary-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Responsive untuk Horizontal Scroll */
+@media (max-width: 768px) {
+  .peserta-item-horizontal {
+    min-width: 200px;
+    max-width: 250px;
+    padding: 0.75rem;
+  }
+
+  .scroll-btn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .peserta-details-horizontal .peserta-name {
+    font-size: 0.8rem;
+  }
+
+  .peserta-details-horizontal .peserta-phone,
+  .peserta-details-horizontal .peserta-id {
+    font-size: 0.7rem;
+  }
+
+  .scroll-indicator {
+    padding: 0.5rem;
+  }
+
+  .scroll-text {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .peserta-item-horizontal {
+    min-width: 180px;
+    max-width: 220px;
+    padding: 0.6rem;
+  }
+
+  .peserta-number {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.7rem;
+  }
+
+  .scroll-container {
+    gap: 0.5rem;
+  }
+
+  .scroll-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+  }
 }
 
 /* Buttons */
@@ -527,7 +780,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 1.25rem;
   border: none;
   border-radius: 0.75rem;
   font-size: 0.875rem;
@@ -535,6 +788,7 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
 .btn-primary {
@@ -544,6 +798,17 @@ body {
 
 .btn-primary:hover {
   background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #f8fafc;
+  color: #374151;
+  border: 1px solid #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #f1f5f9;
   transform: translateY(-1px);
 }
 
@@ -580,7 +845,7 @@ body {
   border-radius: 1rem;
   padding: 1.5rem;
   color: white;
-  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -750,16 +1015,25 @@ body {
   display: flex;
   align-items: center;
   gap: 1rem;
+  border: 1px solid;
 }
 
 .scan-result.success {
   background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  border-color: #bbf7d0;
+  color: #166534;
 }
 
 .scan-result.error {
   background: #fef2f2;
-  border: 1px solid #fecaca;
+  border-color: #fecaca;
+  color: #dc2626;
+}
+
+.scan-result.warning {
+  background: #fffbeb;
+  border-color: #fed7aa;
+  color: #ea580c;
 }
 
 .result-icon {
@@ -773,13 +1047,11 @@ body {
 
 .result-message {
   font-weight: 600;
-  color: #374151;
   margin-bottom: 0.25rem;
 }
 
 .result-details {
   font-size: 0.875rem;
-  color: #64748b;
   white-space: pre-line;
 }
 
@@ -788,6 +1060,86 @@ body {
   margin-bottom: 2rem;
   text-align: center;
   font-style: italic;
+}
+
+/* Manual Input Section */
+.manual-input-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.manual-input-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.manual-input-form {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.manual-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  transition: all 0.2s;
+}
+
+.manual-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.manual-input-btn {
+  padding: 0.75rem 1.25rem;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.manual-input-btn:hover {
+  background: #2563eb;
+}
+
+/* Scanner Toggle */
+.scanner-toggle {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  padding: 0.25rem;
+}
+
+.toggle-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #64748b;
+}
+
+.toggle-btn.active {
+  background: #ffffff;
+  color: #3b82f6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive Design */
@@ -880,6 +1232,10 @@ body {
 
   .ticket-right {
     align-self: center;
+  }
+
+  .manual-input-form {
+    flex-direction: column;
   }
 }
 
@@ -1024,7 +1380,7 @@ body {
 
 /* Loading States */
 .loading-skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, #f8fafc 25%, #f1f5f9 50%, #f8fafc 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
 }
@@ -1043,7 +1399,10 @@ body {
 .filter-select:focus,
 .btn:focus,
 .action-btn:focus,
-.modal-close:focus {
+.modal-close:focus,
+.manual-input:focus,
+.manual-input-btn:focus,
+.toggle-btn:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
@@ -1077,15 +1436,3 @@ body {
     animation: none;
   }
 }
-  .scanner-corners {
-    display: none;
-  }
-  
-  .scanner-instruction {
-    display: none;
-  }
-    .scanner-frame {
-        width: 100%;
-        height: 100%;
-        border-radius: 0.5rem;
-    }

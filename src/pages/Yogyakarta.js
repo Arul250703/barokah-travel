@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+// import '../components/styles/Yogyakarta.css';
+import '../components/styles/yogyakarta.css';
+// import '../components/yles/Yogyakarta.css';
+import '../components/styles/yogyakarta.css';
+
 // import '../components/yles/Yogyakarta.css';
 import '../components/styles/yogyakarta.css';
 

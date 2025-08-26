@@ -1,34 +1,13 @@
-// src/components/Tiket.js
+// src/pages/Tiket.js
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import "../components/styles/Tiket.css";
 
-const Tiket = ({ nama, namaPaket, telepon }) => {
-  // Generate unique trip ID based on data
-  const generateTripId = () => {
-    const timestamp = Date.now();
-    const nameHash = nama.split("").reduce((a, b) => {
-      a = (a << 5) - a + b.charCodeAt(0);
-      return a & a;
-    }, 0);
-    return `TRP${Math.abs(nameHash).toString().slice(-3)}${timestamp
-      .toString()
-      .slice(-4)}`;
-  };
-
-  const tripId = generateTripId();
-
-  // Enhanced QR data with structured format
-  const qrData = {
-    ticketId: tripId,
-    nama: nama,
-    paket: namaPaket,
-    telepon: telepon,
-    timestamp: Date.now(),
-    type: "wisata",
-  };
-
-  const qrValue = JSON.stringify(qrData);
+const Tiket = ({ participantId, bookingId, nama, namaPaket, telepon }) => {
+  // --- PERUBAHAN UTAMA ---
+  // Hapus fungsi generateTripId(). ID sekarang didapat dari props.
+  // Isi QR code HANYA ID unik peserta, sesuai desain backend kita.
+  const qrValue = JSON.stringify({ participant_id: participantId });
 
   return (
     <div className="tiket-container">
@@ -36,7 +15,8 @@ const Tiket = ({ nama, namaPaket, telepon }) => {
         <div className="tiket-kiri">
           <div className="info-atas">
             <span className="kategori-tiket">WISATA</span>
-            <span className="trip-id">ID: {tripId}</span>
+            {/* Tampilkan ID Booking sebagai referensi */}
+            <span className="trip-id">Booking: {bookingId}</span>
           </div>
           <div className="info-tengah">
             <span className="nama-paket">{namaPaket}</span>
@@ -66,13 +46,13 @@ const Tiket = ({ nama, namaPaket, telepon }) => {
         </div>
       </div>
 
-      {/* Trip ID Display for Manual Input */}
       <div className="trip-id-display">
-        <span className="trip-id-label">ID untuk Input Manual:</span>
-        <span className="trip-id-code">{tripId}</span>
+        <span className="trip-id-label">ID Tiket Peserta:</span>
+        {/* Tampilkan ID Peserta yang unik */}
+        <span className="trip-id-code">{participantId}</span>
         <button
           className="copy-id-btn"
-          onClick={() => navigator.clipboard.writeText(tripId)}
+          onClick={() => navigator.clipboard.writeText(participantId)}
           title="Copy ID"
         >
           📋

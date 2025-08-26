@@ -1,216 +1,255 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   FaQrcode,
   FaSearch,
   FaCheckCircle,
   FaTicketAlt,
   FaEye,
-  FaUndo,
-  FaBan,
   FaCamera,
   FaTimes,
   FaChevronDown,
+  FaKeyboard,
+  FaCheck,
+  FaExclamationTriangle,
+  FaUsers,
+  FaSpinner,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
-import { QRCodeSVG } from "qrcode.react";
 import "../components/styles/QrPage.css";
-import "../components/styles/ScannerPage.css";
-
-// Simulasi data tiket awal
-const initialTickets = [
-  {
-    id: "TRX001",
-    namaPelanggan: "Budi Santoso",
-    email: "budi.s@example.com",
-    paket: "Sukabumi 2H1M",
-    status: "valid",
-    tanggal: "2025-08-15T09:00:00Z",
-    peserta: [{ nama: "Budi Santoso", telepon: "081234567890" }],
-  },
-  {
-    id: "TRX002",
-    namaPelanggan: "Ani Lestari",
-    email: "ani.l@example.com",
-    paket: "Yogyakarta 3H2M",
-    status: "sudah_digunakan",
-    tanggal: "2025-08-15T09:05:12Z",
-    peserta: [
-      { nama: "Ani Lestari", telepon: "081234567891" },
-      { nama: "Rudi Hartono", telepon: "081234567892" },
-    ],
-  },
-  {
-    id: "TRX003",
-    namaPelanggan: "Sari Indah",
-    email: "sari.i@example.com",
-    paket: "Bali 5H4M",
-    status: "hangus",
-    tanggal: "2025-08-10T14:30:00Z",
-    peserta: [{ nama: "Sari Indah", telepon: "081234567893" }],
-  },
-  {
-    id: "TRX004",
-    namaPelanggan: "Ahmad Rahman",
-    email: "ahmad.r@example.com",
-    paket: "Jakarta City Tour",
-    status: "valid",
-    tanggal: "2025-08-16T10:30:00Z",
-    peserta: [
-      { nama: "Ahmad Rahman", telepon: "081234567894" },
-      { nama: "Siti Nurhaliza", telepon: "081234567895" },
-    ],
-  },
-];
-
-// Komponen Tiket dengan QR Code berisi JSON
-const Tiket = ({ ticketId, nama, namaPaket, telepon }) => {
-  const qrValue = JSON.stringify({ ticketId: ticketId, nama: nama });
-
-  return (
-    <div className="ticket-card">
-      <div className="ticket-left">
-        <div className="ticket-header">
-          <span className="ticket-category">WISATA</span>
-          <span className="ticket-package">{namaPaket}</span>
-        </div>
-        <div className="ticket-info">
-          <span className="participant-name">{nama}</span>
-          <span className="participant-phone">{telepon}</span>
-        </div>
-      </div>
-      <div className="ticket-right">
-        <QRCodeSVG
-          value={qrValue}
-          size={80}
-          bgColor="#ffffff"
-          fgColor="#000000"
-        />
-        <span className="scan-label">{ticketId}</span>
-      </div>
-    </div>
-  );
-};
 
 // Komponen Scanner Modal yang menerima callback
 const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
   const [scanResult, setScanResult] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [activeTab, setActiveTab] = useState("scan");
+  const [manualInput, setManualInput] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     let scannerInstance = null;
-    if (isOpen && isScanning) {
-      import("html5-qrcode").then(({ Html5QrcodeScanner }) => {
-        scannerInstance = new Html5QrcodeScanner(
-          "qr-reader-container-modal",
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          false
-        );
-
-        const onScanSuccess = (decodedText) => {
-          setIsScanning(false);
-          validateTicket(decodedText);
-        };
-
-        scannerInstance.render(onScanSuccess, () => {});
-      });
+    if (isOpen && isScanning && activeTab === "scan") {
+      import("html5-qrcode")
+        .then(({ Html5QrcodeScanner }) => {
+          scannerInstance = new Html5QrcodeScanner(
+            "qr-reader-container-modal",
+            { fps: 10, qrbox: { width: 250, height: 250 } },
+            false
+          );
+          const onScanSuccess = (decodedText) => {
+            console.log("QR Code berhasil dipindai:", decodedText);
+            setIsScanning(false);
+            validateTicket(decodedText);
+          };
+          const onScanError = (errorMessage) => {
+            // Tidak perlu console.error untuk error scanning normal
+          };
+          scannerInstance.render(onScanSuccess, onScanError);
+        })
+        .catch((err) => {
+          console.error("Error loading QR scanner:", err);
+          setScanResult({
+            type: "error",
+            message: "Gagal memuat scanner. Pastikan browser mendukung kamera.",
+          });
+        });
     }
-
     return () => {
       if (scannerInstance && typeof scannerInstance.clear === "function") {
-        scannerInstance.clear().catch(() => {});
+        scannerInstance.clear().catch((err) => {
+          console.log("Error clearing scanner:", err);
+        });
       }
     };
-  }, [isOpen, isScanning]);
+  }, [isOpen, isScanning, activeTab]);
 
   useEffect(() => {
     if (isOpen) {
+      setActiveTab("scan");
       setScanResult(null);
+      setManualInput("");
       setIsScanning(true);
+      setIsProcessing(false);
     } else {
       setIsScanning(false);
-      setScanResult(null);
+      setIsProcessing(false);
     }
   }, [isOpen]);
 
-  const validateTicket = (decodedText) => {
-    setScanResult({
-      type: "loading",
-      message: "MEMPROSES...",
-      name: "Memvalidasi data tiket...",
-    });
+  const validateTicket = async (scannedData) => {
+    if (isProcessing) return; // Prevent multiple simultaneous validations
+
+    setIsProcessing(true);
+    setScanResult({ type: "loading", message: "MEMPROSES...", name: "" });
+
     try {
-      let ticketId;
+      let idToValidate;
+
+      // Try to parse as JSON first (QR code format)
       try {
-        const ticketData = JSON.parse(decodedText);
-        ticketId = ticketData.ticketId || decodedText;
+        const ticketData = JSON.parse(scannedData);
+        idToValidate = ticketData.participant_id || ticketData.id;
+        console.log("Parsed QR data:", ticketData);
       } catch {
-        ticketId = decodedText;
+        // If not JSON, treat as plain text ID
+        idToValidate = scannedData.toString().trim();
+        console.log("Using raw scan data:", idToValidate);
       }
-      const result = onScanValidate(ticketId);
+
+      if (!idToValidate) {
+        throw new Error("QR Code tidak berisi ID peserta yang valid.");
+      }
+
+      console.log("Validating participant ID:", idToValidate);
+      const result = await onScanValidate(idToValidate);
       setScanResult(result);
-    } catch {
+    } catch (err) {
+      console.error("Validation error:", err);
       setScanResult({
         type: "error",
-        message: "QR CODE TIDAK VALID",
-        name: "Format data tidak dikenali.",
+        message: err.message || "QR Code tidak valid atau terjadi kesalahan.",
+        name: "",
       });
+    } finally {
+      setIsProcessing(false);
     }
+  };
+
+  const handleManualSubmit = (e) => {
+    e.preventDefault();
+    if (!manualInput.trim() || isProcessing) return;
+    validateTicket(manualInput.trim());
   };
 
   const getResultCardClassName = () =>
     `scan-result ${scanResult ? scanResult.type : ""}`;
+
   const getIcon = () => {
     if (!scanResult) return null;
     switch (scanResult.type) {
       case "success":
-        return "✅";
+        return <FaCheck className="result-icon" />;
       case "error":
-        return "❌";
+        return <FaTimes className="result-icon" />;
       case "warning":
-        return "⚠️";
+        return <FaExclamationTriangle className="result-icon" />;
+      case "loading":
+        return <FaSpinner className="result-icon spinning" />;
       default:
         return null;
     }
   };
+
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal modal-scanner" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Pindai Tiket QR Code</h2>
+          <h2>Validasi Tiket</h2>
           <button className="modal-close" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
         <div className="modal-body">
-          {isScanning && <div id="qr-reader-container-modal"></div>}
-          {!isScanning && (
+          <div className="scanner-toggle">
             <button
-              className="start-scan-btn"
+              className={`toggle-btn ${activeTab === "scan" ? "active" : ""}`}
               onClick={() => {
+                setActiveTab("scan");
                 setScanResult(null);
-                setIsScanning(true);
+                setManualInput("");
               }}
+              disabled={isProcessing}
             >
-              {scanResult ? "Pindai Lagi" : "Mulai Memindai"}
+              <FaCamera /> Scan QR Code
             </button>
+            <button
+              className={`toggle-btn ${activeTab === "manual" ? "active" : ""}`}
+              onClick={() => {
+                setActiveTab("manual");
+                setScanResult(null);
+                setIsScanning(false);
+              }}
+              disabled={isProcessing}
+            >
+              <FaKeyboard /> Input Manual
+            </button>
+          </div>
+
+          {activeTab === "scan" ? (
+            <>
+              <div className="scanner-container">
+                {isScanning && <div id="qr-reader-container-modal"></div>}
+                {!isScanning && !isProcessing && (
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setScanResult(null);
+                      setIsScanning(true);
+                    }}
+                  >
+                    {scanResult ? "Pindai Lagi" : "Mulai Memindai"}
+                  </button>
+                )}
+              </div>
+              <p className="scanner-instruction">
+                Arahkan kamera ke QR Code pada tiket untuk memindai
+              </p>
+            </>
+          ) : (
+            <div className="manual-input-section">
+              <p className="manual-input-title">Masukkan ID Tiket Peserta</p>
+              <form onSubmit={handleManualSubmit} className="manual-input-form">
+                <input
+                  type="text"
+                  placeholder="Masukkan ID tiket..."
+                  value={manualInput}
+                  onChange={(e) => setManualInput(e.target.value)}
+                  className="manual-input"
+                  disabled={isProcessing}
+                />
+                <button
+                  type="submit"
+                  className="manual-input-btn"
+                  disabled={isProcessing || !manualInput.trim()}
+                >
+                  {isProcessing ? "Validasi..." : "Validasi"}
+                </button>
+              </form>
+            </div>
           )}
+
           {scanResult && (
             <div className={getResultCardClassName()}>
               {scanResult.type === "loading" ? (
                 <>
+                  {getIcon()}
                   <div className="result-message">{scanResult.message}</div>
-                  <div className="result-details">{scanResult.name}</div>
                 </>
               ) : (
                 <>
-                  <div className="result-icon">{getIcon()}</div>
-                  <div className="result-message">{scanResult.message}</div>
-                  <div className="result-details">{scanResult.name}</div>
+                  {getIcon()}
+                  <div className="result-content">
+                    <div className="result-message">{scanResult.message}</div>
+                    {scanResult.name && (
+                      <div className="result-details">{scanResult.name}</div>
+                    )}
+                  </div>
                 </>
               )}
             </div>
           )}
+        </div>
+        <div className="modal-footer">
+          <button
+            className="btn btn-secondary"
+            onClick={onClose}
+            disabled={isProcessing}
+          >
+            Tutup
+          </button>
         </div>
       </div>
     </div>
@@ -220,13 +259,19 @@ const ScannerModal = ({ isOpen, onClose, onScanValidate }) => {
 // Komponen StatusBadge
 const StatusBadge = ({ status }) => {
   const statusConfig = {
+    selesai: { class: "status-valid", label: "Lunas" },
+    menunggu_pembayaran: { class: "status-pending", label: "Pending" },
+    dibatalkan: { class: "status-voided", label: "Batal" },
+    gagal: { class: "status-error", label: "Gagal" },
     valid: { class: "status-valid", label: "Valid" },
     sudah_digunakan: { class: "status-used", label: "Used" },
-    hangus: { class: "status-voided", label: "Voided" },
+    hangus: { class: "status-voided", label: "Hangus" },
+    DP: { class: "status-dp", label: "DP" },
+    Lunas: { class: "status-lunas", label: "Lunas" },
   };
   const config = statusConfig[status] || {
     class: "status-pending",
-    label: "Pending",
+    label: status,
   };
   return <span className={`status-badge ${config.class}`}>{config.label}</span>;
 };
@@ -249,102 +294,191 @@ const SummaryCard = ({ title, value, icon: Icon, color, onClick }) => (
   </div>
 );
 
-// Komponen TicketDetailModal
-const TicketDetailModal = ({
-  ticket,
-  isOpen,
-  onClose,
-  onReset,
-  onVoid,
-  onViewTicket,
-}) => {
-  if (!isOpen || !ticket) return null;
-  return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal modal-detail" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <h2>Detail Tiket #{ticket.id}</h2>
-          <button className="modal-close" onClick={onClose}>
-            <FaTimes />
-          </button>
-        </div>
-        <div className="modal-body">
-          <div className="detail-row">
-            <span className="detail-label">Nama Pelanggan:</span>
-            <span className="detail-value">{ticket.namaPelanggan}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Email:</span>
-            <span className="detail-value">{ticket.email}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Paket Wisata:</span>
-            <span className="detail-value">{ticket.paket}</span>
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Status:</span>
-            <StatusBadge status={ticket.status} />
-          </div>
-          <div className="detail-row">
-            <span className="detail-label">Peserta:</span>
-            <div className="peserta-list">
-              {ticket.peserta.map((p, index) => (
-                <div key={index} className="peserta-item">
-                  {p.nama} - {p.telepon}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="modal-footer">
-          <button
-            className="btn btn-primary"
-            onClick={() => onViewTicket(ticket)}
-          >
-            <FaTicketAlt /> Lihat Tiket
-          </button>
-          <button
-            className="btn btn-warning"
-            onClick={() => onReset(ticket.id)}
-          >
-            <FaUndo /> Reset Status
-          </button>
-          <button className="btn btn-danger" onClick={() => onVoid(ticket.id)}>
-            <FaBan /> Batalkan Tiket
-          </button>
-        </div>
+// Komponen ParticipantScroller untuk scroll horizontal
+const ParticipantScroller = ({ participants }) => {
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+  const scrollContainerRef = useRef(null);
+
+  const updateScrollButtons = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      const { scrollLeft, scrollWidth, clientWidth } = container;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+      setScrollPosition(scrollLeft);
+    }
+  };
+
+  useEffect(() => {
+    updateScrollButtons();
+  }, [participants]);
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.addEventListener("scroll", updateScrollButtons);
+      return () => container.removeEventListener("scroll", updateScrollButtons);
+    }
+  }, []);
+
+  const scrollLeft = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: -200, behavior: "smooth" });
+    }
+  };
+
+  const scrollRight = () => {
+    const container = scrollContainerRef.current;
+    if (container) {
+      container.scrollBy({ left: 200, behavior: "smooth" });
+    }
+  };
+
+  if (!participants || participants.length === 0) {
+    return (
+      <div className="empty-participants">
+        <p>Tidak ada data peserta</p>
       </div>
+    );
+  }
+
+  return (
+    <div className="participant-scroller">
+      <div className="scroll-container">
+        {canScrollLeft && (
+          <button
+            className="scroll-btn scroll-btn-left"
+            onClick={scrollLeft}
+            aria-label="Scroll ke kiri"
+          >
+            <FaChevronLeft />
+          </button>
+        )}
+
+        <div ref={scrollContainerRef} className="peserta-list-horizontal">
+          {participants.map((participant, index) => (
+            <div
+              key={participant.participant_id || index}
+              className="peserta-item-horizontal"
+            >
+              <div className="peserta-info-horizontal">
+                <span className="peserta-number">#{index + 1}</span>
+                <div className="peserta-details-horizontal">
+                  <strong className="peserta-name">{participant.name}</strong>
+                  <span className="peserta-phone">{participant.phone}</span>
+                  <span className="peserta-id">
+                    ID: {participant.participant_id}
+                  </span>
+                </div>
+              </div>
+              <div className="peserta-status">
+                <StatusBadge status={participant.ticket_status} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {canScrollRight && (
+          <button
+            className="scroll-btn scroll-btn-right"
+            onClick={scrollRight}
+            aria-label="Scroll ke kanan"
+          >
+            <FaChevronRight />
+          </button>
+        )}
+      </div>
+
+      {participants.length > 3 && (
+        <div className="scroll-indicator">
+          <span className="scroll-text">
+            Geser untuk melihat peserta lainnya ({participants.length} total)
+          </span>
+        </div>
+      )}
     </div>
   );
 };
 
-// Komponen TicketPreviewModal
-const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
-  if (!isOpen || !ticket) return null;
+// Komponen TicketDetailModal dengan scroll horizontal
+const TicketDetailModal = ({ booking, isOpen, onClose }) => {
+  if (!isOpen || !booking) return null;
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal modal-wide" onClick={(e) => e.stopPropagation()}>
+      <div className="modal modal-detail" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
-          <h2>Pratinjau E-Ticket #{ticket.id}</h2>
+          <h2>Detail Booking #{booking.booking_id}</h2>
           <button className="modal-close" onClick={onClose}>
             <FaTimes />
           </button>
         </div>
         <div className="modal-body">
-          <p className="preview-subtitle">
-            Ini adalah tampilan tiket yang akan diterima oleh pelanggan.
-          </p>
-          <div className="tickets-preview">
-            {ticket.peserta.map((p, index) => (
-              <Tiket
-                key={index}
-                ticketId={ticket.id}
-                nama={p.nama}
-                telepon={p.telepon}
-                namaPaket={ticket.paket}
-              />
-            ))}
+          <div className="detail-section">
+            <h3>Informasi Booking</h3>
+            <div className="detail-row">
+              <span className="detail-label">ID Booking:</span>
+              <span className="detail-value booking-id">
+                {booking.booking_id}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Nama Pelanggan:</span>
+              <span className="detail-value">{booking.customer_name}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Email:</span>
+              <span className="detail-value">{booking.customer_email}</span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Paket Wisata:</span>
+              <span className="detail-value">
+                {booking.package_name || "N/A"}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Tgl. Booking:</span>
+              <span className="detail-value">
+                {new Date(booking.booking_date).toLocaleDateString("id-ID", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                })}
+              </span>
+            </div>
+            <div className="detail-row">
+              <span className="detail-label">Status Pembayaran:</span>
+              <StatusBadge status={booking.payment_status} />
+            </div>
+            {booking.total_price && (
+              <div className="detail-row">
+                <span className="detail-label">Total Harga:</span>
+                <span className="detail-value">
+                  {new Intl.NumberFormat("id-ID", {
+                    style: "currency",
+                    currency: "IDR",
+                  }).format(booking.total_price)}
+                </span>
+              </div>
+            )}
           </div>
+
+          <hr />
+
+          <div className="detail-section">
+            <h3>Daftar Peserta ({booking.participants?.length || 0} orang)</h3>
+            <ParticipantScroller participants={booking.participants || []} />
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn btn-secondary" onClick={onClose}>
+            Tutup
+          </button>
         </div>
       </div>
     </div>
@@ -353,117 +487,178 @@ const TicketPreviewModal = ({ ticket, isOpen, onClose }) => {
 
 // Komponen Utama Halaman Admin
 function QrPage() {
-  const [tickets, setTickets] = useState(() => {
-    const savedTickets = localStorage.getItem("allTickets");
-    return savedTickets ? JSON.parse(savedTickets) : initialTickets;
-  });
-
-  useEffect(() => {
-    localStorage.setItem("allTickets", JSON.stringify(tickets));
-  }, [tickets]);
-
+  const [bookings, setBookings] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
-  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
-  const [isTicketPreviewOpen, setIsTicketPreviewOpen] = useState(false);
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const filteredTickets = useMemo(
+  const fetchBookings = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      console.log("Fetching bookings from API...");
+
+      const response = await fetch("http://localhost:5000/api/bookings");
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("API Response:", data);
+
+      // Pastikan data yang diterima dari backend adalah array
+      if (data.success && Array.isArray(data.data)) {
+        setBookings(data.data);
+        console.log("Bookings loaded successfully:", data.data.length, "items");
+      } else if (Array.isArray(data)) {
+        // Fallback jika response langsung array
+        setBookings(data);
+      } else {
+        console.warn("Unexpected API response format:", data);
+        setBookings([]);
+      }
+    } catch (error) {
+      console.error("Error fetching bookings:", error);
+      setError(`Gagal mengambil data: ${error.message}`);
+      setBookings([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  // Fixed handleScanValidation function
+  const handleScanValidation = async (participantId) => {
+    try {
+      console.log("Validating participant:", participantId);
+
+      // PERBAIKAN: Ganti ini di fungsi handleScanValidation
+      const response = await fetch("http://localhost:5000/api/validate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ participantId: participantId }),
+      });
+
+      console.log("Validation response status:", response.status);
+
+      let result;
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        console.error("Error parsing response:", parseError);
+        throw new Error("Response tidak valid dari server");
+      }
+
+      console.log("Validation result:", result);
+
+      if (response.ok) {
+        // Refresh data setelah validasi berhasil
+        await fetchBookings();
+        return {
+          type: "success",
+          message: result.message || "VALIDASI BERHASIL",
+          name: result.name || "",
+        };
+      } else {
+        // Handle different error types berdasarkan HTTP status code
+        let type = "error";
+        if (response.status === 409) {
+          type = "warning"; // Tiket sudah digunakan (conflict)
+        } else if (response.status === 410) {
+          type = "error"; // Tiket hangus (gone)
+        } else if (response.status === 404) {
+          type = "error"; // Tiket tidak ditemukan (not found)
+        } else if (response.status >= 500) {
+          type = "error"; // Server error
+        }
+
+        return {
+          type: type,
+          message: result.message || "VALIDASI GAGAL",
+          name: result.name || "",
+        };
+      }
+    } catch (error) {
+      console.error("Network error during validation:", error);
+
+      // Cek apakah error adalah network error
+      if (error.name === "TypeError" && error.message.includes("fetch")) {
+        return {
+          type: "error",
+          message: "KONEKSI GAGAL",
+          name: "Tidak dapat terhubung ke server. Periksa koneksi internet dan pastikan server berjalan.",
+        };
+      }
+
+      return {
+        type: "error",
+        message: "KESALAHAN SISTEM",
+        name: error.message || "Terjadi kesalahan tidak terduga",
+      };
+    }
+  };
+
+  const filteredBookings = useMemo(
     () =>
-      tickets.filter(
-        (t) =>
-          (t.namaPelanggan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            t.id.toLowerCase().includes(searchTerm.toLowerCase())) &&
-          (filterStatus === "Semua" || t.status === filterStatus)
+      bookings.filter(
+        (booking) =>
+          (booking.customer_name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+            booking.booking_id
+              ?.toLowerCase()
+              .includes(searchTerm.toLowerCase())) &&
+          (filterStatus === "Semua" || booking.payment_status === filterStatus)
       ),
-    [tickets, searchTerm, filterStatus]
+    [bookings, searchTerm, filterStatus]
   );
 
-  const summaryStats = useMemo(
-    () => ({
-      checkedIn: tickets.filter((t) => t.status === "sudah_digunakan").length,
-      valid: tickets.filter((t) => t.status === "valid").length,
-      total: tickets.length,
-      voided: tickets.filter((t) => t.status === "hangus").length,
-    }),
-    [tickets]
-  );
+  const summaryStats = useMemo(() => {
+    let checkedIn = 0;
+    let valid = 0;
+    let totalParticipants = 0;
 
-  const handleViewDetail = (ticket) => {
-    setSelectedTicket(ticket);
+    bookings.forEach((booking) => {
+      if (booking.participants && Array.isArray(booking.participants)) {
+        totalParticipants += booking.participants.length;
+        booking.participants.forEach((participant) => {
+          if (participant.ticket_status === "valid") valid++;
+          if (participant.ticket_status === "sudah_digunakan") checkedIn++;
+        });
+      }
+    });
+
+    return {
+      totalBookings: bookings.length,
+      totalParticipants: totalParticipants,
+      checkedIn: checkedIn,
+      valid: valid,
+    };
+  }, [bookings]);
+
+  const handleViewDetail = (booking) => {
+    setSelectedBooking(booking);
     setIsDetailModalOpen(true);
   };
 
-  const handleViewTicket = (ticket) => {
-    setSelectedTicket(ticket);
-    setIsDetailModalOpen(false);
-    setIsTicketPreviewOpen(true);
+  const handleViewTicket = (booking) => {
+    navigate(`/tiket/${booking.booking_id}`);
   };
 
-  const handleResetStatus = (ticketId) => {
-    if (window.confirm('Reset status tiket ini menjadi "valid"?')) {
-      setTickets(
-        tickets.map((t) => (t.id === ticketId ? { ...t, status: "valid" } : t))
-      );
-      setIsDetailModalOpen(false);
-    }
-  };
-
-  const handleVoidTicket = (ticketId) => {
-    if (window.confirm("Batalkan (void) tiket ini?")) {
-      setTickets(
-        tickets.map((t) => (t.id === ticketId ? { ...t, status: "hangus" } : t))
-      );
-      setIsDetailModalOpen(false);
-    }
-  };
-
-  const handleScanValidation = (ticketId) => {
-    const targetTicket = tickets.find((t) => t.id === ticketId);
-
-    if (!targetTicket) {
-      return {
-        type: "error",
-        message: "TIKET TIDAK DITEMUKAN",
-        name: `ID Tiket: ${ticketId}`,
-      };
-    }
-
-    if (targetTicket.status === "sudah_digunakan") {
-      return {
-        type: "warning",
-        message: "TIKET SUDAH DIGUNAKAN",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    if (targetTicket.status === "hangus") {
-      return {
-        type: "error",
-        message: "TIKET HANGUS/BATAL",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    if (targetTicket.status === "valid") {
-      setTickets(
-        tickets.map((t) =>
-          t.id === ticketId ? { ...t, status: "sudah_digunakan" } : t
-        )
-      );
-      return {
-        type: "success",
-        message: "VALIDASI BERHASIL",
-        name: `Atas nama: ${targetTicket.namaPelanggan}`,
-      };
-    }
-
-    return {
-      type: "error",
-      message: "STATUS TIKET TIDAK DIKENALI",
-      name: `Atas nama: ${targetTicket.namaPelanggan}`,
-    };
+  const handleRefresh = () => {
+    fetchBookings();
   };
 
   return (
@@ -471,18 +666,25 @@ function QrPage() {
       <div className="content-header">
         <div className="header-left">
           <div className="page-title">
-            <h1>Manajemen Tiket QR Code</h1>
-            <p>Monitor, kelola, dan lihat riwayat pemindaian tiket</p>
+            <h1>Manajemen Tiket</h1>
+            <p>Monitor, kelani, dan validasi tiket pelanggan</p>
           </div>
         </div>
         <div className="header-right">
+          {error && (
+            <div className="error-banner">
+              <FaExclamationTriangle />
+              <span>{error}</span>
+              <button onClick={handleRefresh} className="retry-btn">
+                Coba Lagi
+              </button>
+            </div>
+          )}
           <div className="user-profile">
-            <img
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face&auto=format"
-              alt="Profile"
-              className="profile-avatar"
-            />
-            <span className="profile-name">Admin User</span>
+            <div className="profile-avatar">
+              <FaUsers />
+            </div>
+            <span className="profile-name">Admin</span>
             <FaChevronDown className="profile-dropdown" />
           </div>
         </div>
@@ -490,10 +692,16 @@ function QrPage() {
 
       <div className="summary-grid">
         <SummaryCard
-          title="Total Tiket"
-          value={summaryStats.total}
+          title="Total Booking"
+          value={summaryStats.totalBookings}
           icon={FaTicketAlt}
           color="blue"
+        />
+        <SummaryCard
+          title="Total Peserta"
+          value={summaryStats.totalParticipants}
+          icon={FaUsers}
+          color="purple"
         />
         <SummaryCard
           title="Sudah Check-in"
@@ -502,7 +710,7 @@ function QrPage() {
           color="green"
         />
         <SummaryCard
-          title="Menunggu Check-in"
+          title="Tiket Valid"
           value={summaryStats.valid}
           icon={FaQrcode}
           color="orange"
@@ -511,7 +719,7 @@ function QrPage() {
           title="Buka Pemindai"
           value="Scan"
           icon={FaCamera}
-          color="purple"
+          color="red"
           onClick={() => setIsScannerOpen(true)}
         />
       </div>
@@ -521,7 +729,7 @@ function QrPage() {
           <FaSearch className="search-icon" />
           <input
             type="text"
-            placeholder="Cari nama atau ID tiket..."
+            placeholder="Cari nama atau ID booking..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -533,11 +741,15 @@ function QrPage() {
             onChange={(e) => setFilterStatus(e.target.value)}
             className="filter-select"
           >
-            <option value="Semua">Semua Status</option>
-            <option value="valid">Valid</option>
-            <option value="sudah_digunakan">Sudah Digunakan</option>
-            <option value="hangus">Hangus</option>
+            <option value="Semua">Semua Status Pembayaran</option>
+            <option value="selesai">Lunas</option>
+            <option value="menunggu_pembayaran">Pending</option>
+            <option value="dibatalkan">Batal</option>
+            <option value="gagal">Gagal</option>
+            <option value="DP">DP</option>
+            <option value="Lunas">Lunas</option>
           </select>
+          <FaChevronDown className="filter-icon" />
         </div>
       </div>
 
@@ -546,56 +758,86 @@ function QrPage() {
           <table className="data-table">
             <thead>
               <tr>
-                <th>ID Tiket</th>
+                <th>ID Booking</th>
                 <th>Nama Pelanggan</th>
                 <th>Paket Wisata</th>
-                <th>Status</th>
-                <th>Tanggal</th>
+                <th>Status Pembayaran</th>
+                <th>Peserta (Check-in/Total)</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {filteredTickets.length > 0 ? (
-                filteredTickets.map((ticket) => (
-                  <tr key={ticket.id}>
-                    <td>
-                      <strong className="ticket-id">{ticket.id}</strong>
-                    </td>
-                    <td className="customer-name">{ticket.namaPelanggan}</td>
-                    <td className="package-name">{ticket.paket}</td>
-                    <td>
-                      <StatusBadge status={ticket.status} />
-                    </td>
-                    <td className="ticket-date">
-                      {new Date(ticket.tanggal).toLocaleDateString("id-ID")}
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="action-btn action-view"
-                          onClick={() => handleViewDetail(ticket)}
-                          title="Lihat Detail"
+              {isLoading ? (
+                <tr>
+                  <td colSpan="6" className="empty-state">
+                    <FaSpinner className="spinning" />
+                    <p>Memuat data...</p>
+                  </td>
+                </tr>
+              ) : filteredBookings.length > 0 ? (
+                filteredBookings.map((booking) => {
+                  const checkedInCount =
+                    booking.participants?.filter(
+                      (p) => p.ticket_status === "sudah_digunakan"
+                    ).length || 0;
+                  const totalCount = booking.participants?.length || 0;
+
+                  return (
+                    <tr key={booking.id || booking.booking_id}>
+                      <td>
+                        <strong className="ticket-id">
+                          {booking.booking_id}
+                        </strong>
+                      </td>
+                      <td className="customer-name">{booking.customer_name}</td>
+                      <td className="package-name">
+                        {booking.package_name || "N/A"}
+                      </td>
+                      <td>
+                        <StatusBadge status={booking.payment_status} />
+                      </td>
+                      <td className="participant-count">
+                        <span
+                          className={
+                            checkedInCount === totalCount && totalCount > 0
+                              ? "all-checked"
+                              : ""
+                          }
                         >
-                          <FaEye />
-                        </button>
-                        <button
-                          className="action-btn action-ticket"
-                          onClick={() => handleViewTicket(ticket)}
-                          title="Lihat Tiket"
-                        >
-                          <FaTicketAlt />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {checkedInCount} / {totalCount}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <button
+                            className="action-btn action-view"
+                            onClick={() => handleViewDetail(booking)}
+                            title="Lihat Detail"
+                          >
+                            <FaEye />
+                          </button>
+                          <button
+                            className="action-btn action-ticket"
+                            onClick={() => handleViewTicket(booking)}
+                            title="Lihat Tiket"
+                          >
+                            <FaTicketAlt />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="6" className="empty-state">
-                    <div className="empty-content">
-                      <FaTicketAlt className="empty-icon" />
-                      <p>Tidak ada data tiket yang cocok dengan pencarian</p>
-                    </div>
+                    <FaTicketAlt />
+                    <p>Tidak ada data booking ditemukan</p>
+                    <p className="empty-subtitle">
+                      {searchTerm || filterStatus !== "Semua"
+                        ? "Coba ubah filter pencarian"
+                        : "Belum ada booking yang tersedia"}
+                    </p>
                   </td>
                 </tr>
               )}
@@ -604,23 +846,21 @@ function QrPage() {
         </div>
       </div>
 
-      <TicketDetailModal
-        ticket={selectedTicket}
-        isOpen={isDetailModalOpen}
-        onClose={() => setIsDetailModalOpen(false)}
-        onReset={handleResetStatus}
-        onVoid={handleVoidTicket}
-        onViewTicket={handleViewTicket}
-      />
-      <TicketPreviewModal
-        ticket={selectedTicket}
-        isOpen={isTicketPreviewOpen}
-        onClose={() => setIsTicketPreviewOpen(false)}
-      />
+      {/* Scanner Modal */}
       <ScannerModal
         isOpen={isScannerOpen}
         onClose={() => setIsScannerOpen(false)}
         onScanValidate={handleScanValidation}
+      />
+
+      {/* Detail Modal */}
+      <TicketDetailModal
+        booking={selectedBooking}
+        isOpen={isDetailModalOpen}
+        onClose={() => {
+          setIsDetailModalOpen(false);
+          setSelectedBooking(null);
+        }}
       />
     </div>
   );

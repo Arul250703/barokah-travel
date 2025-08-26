@@ -2,10 +2,11 @@
           padding: 20px;
           max-width: 1400px;
           margin: 0 auto;
+          background-color: white;
         }
         
         .header-section {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: white;
           backdrop-filter: blur(10px);
           border-radius: 20px;
           padding: 30px;
@@ -82,7 +83,7 @@
         }
         
         .btn-modern {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: white;
           border: none;
           border-radius: 15px;
           padding: 15px 30px;
