@@ -87,24 +87,22 @@ function App() {
         <Route path="/payment-status" element={<PaymentStatus />} />
         <Route path="/tiket" element={<Tiket />} />
         <Route path="/scanner" element={<ScannerPage />} />
-<<<<<<< Updated upstream
+
 <Route path="/tiket-page" element={<TiketPage />} />
-<Route path="/qr-page" element={<QrPage />} />
+
 <Route path="/admin" element={<Admin />} />
 
 {/* Grup 3: Halaman Admin (dengan Sidebar) */}
 <Route element={<AdminLayoutWrapper />}>
   <Route path="/dashboard" element={<Dashboard />} />
   <Route path="/keuangan" element={<Keuangan />} />
+  <Route path="/qr-page" element={<QrPage />} />
+  
   {/* Tambahan halaman admin */}
   <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
   <Route
     path="/bookings"
     element={<div>Bookings Page (Coming Soon)</div>}
-  />
-  <Route
-    path="/buku-tamu"
-    element={<div>Buku Tamu Page (Coming Soon)</div>}
   />
   <Route
     path="/reports"
@@ -115,11 +113,9 @@ function App() {
     path="/settings"
     element={<div>Settings Page (Coming Soon)</div>}
   />
-</Route>
-=======
-        <Route path="/tiket-page" element={<TiketPage />} />
-                  <Route path="/admin" element={<Admin />} />
-
+  </Route>
+  <Route path="/tiket-page" element={<TiketPage />} />
+  <Route path="/admin" element={<Admin />} />
 
         {/* Grup 3: Halaman Admin (dengan Sidebar) */}
         <Route element={<AdminLayoutWrapper />}>
@@ -131,12 +127,11 @@ function App() {
           {/* Tambahan halaman admin */}
           <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
           <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
-          {/* <Route path="/bukutamu" element={<div>Buku Tamu Page (Coming Soon)</div>} /> */}
           <Route path="/reports" element={<div>Reports Page (Coming Soon)</div>} />
           <Route path="/users" element={<div>Users Page (Coming Soon)</div>} />
           <Route path="/settings" element={<div>Settings Page (Coming Soon)</div>} />
         </Route>
->>>>>>> Stashed changes
+
 
         {/* Fallback 404 */}
         <Route
