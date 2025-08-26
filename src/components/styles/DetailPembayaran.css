@@ -7,7 +7,7 @@
 
 .payment-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg,#fefefe 100%);
   font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 20px 0;
 }
@@ -63,12 +63,14 @@
 .package-name {
   font-size: 1.5rem;
   font-weight: 600;
+  color: #f3f4f6;
   margin-bottom: 8px;
 }
 
 .package-price {
   font-size: 1.1rem;
   opacity: 0.9;
+  color: #e0e7ff;
 }
 
 /* Form Styles */
@@ -219,7 +221,7 @@
 
 /* Add Button */
 .add-btn {
-  background: linear-gradient(135deg, #10b981, #34d399);
+  background: linear-gradient(135deg, #207ebd, #307bc1);
   color: white;
   border: none;
   padding: 15px 25px;
@@ -237,7 +239,7 @@
 .add-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-  background: linear-gradient(135deg, #059669, #10b981);
+  background: linear-gradient(135deg, #136696, #137ec1);
 }
 
 .add-icon {

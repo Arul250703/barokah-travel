@@ -5,17 +5,22 @@ const controller = require("../controllers/mainController");
 // Rute Login
 router.post("/login", controller.loginUser);
 
-// Rute Booking
+// Rute untuk mendapatkan SEMUA booking
+router.get("/bookings", controller.getAllBookings);
+
+// Rute untuk mendapatkan SATU booking spesifik
+router.get("/bookings/:bookingId", controller.getBookingById);
+
+// Rute untuk MEMBUAT booking baru
 router.post("/bookings", controller.createBooking);
-// ... tambahkan rute GET, PUT, DELETE untuk bookings di sini ...
+
+// Rute untuk MENGUBAH status pembayaran (DP/Lunas)
+router.put("/bookings/:id/status", controller.updatePaymentStatus);
 
 // Rute Validasi Scanner
 router.post("/scan/validate", controller.validateParticipant);
 
-// Tambahkan rute ini di file allRoutes.js Anda
-router.get('/bookings/:bookingId', controller.getBookingById);
-
-// Rute Laporan
+// Rute untuk Laporan Keuangan (dinonaktifkan sementara karena fungsinya belum ada di controller)
 // router.get('/laporan-keuangan', controller.getLaporanKeuangan);
 
 module.exports = router;
