@@ -9,6 +9,8 @@ import {
   FaHome,
   FaUsers,
   FaCog,
+  FaBars,
+  FaTimes,
 } from "react-icons/fa";
 import "./styles/Sidebar.css";
 import { FaQrcode } from "react-icons/fa";
@@ -48,7 +50,6 @@ const Sidebar = () => {
   };
 
   const isActiveLink = (path) => {
-    // Perbaikan untuk matching path yang lebih fleksibel
     return location.pathname === path || 
            (path === "/keuangan" && location.pathname.toLowerCase().includes("keuangan"));
   };
@@ -73,7 +74,6 @@ const Sidebar = () => {
       tooltip: "Pemesanan",
     },
     {
-      // Perbaikan: gunakan lowercase untuk konsistensi
       path: "/keuangan",
       icon: FaFileInvoiceDollar,
       text: "Keuangan / Invoice",
@@ -107,6 +107,15 @@ const Sidebar = () => {
 
   return (
     <>
+      {/* Mobile Sidebar Toggle Button */}
+      <button
+        className={`sidebar-toggle ${isMobile && isMobileOpen ? 'active' : ''}`}
+        onClick={toggleSidebar}
+        aria-label="Toggle sidebar"
+      >
+        {isMobile && isMobileOpen ? <FaTimes /> : <FaBars />}
+      </button>
+
       {/* Mobile Overlay */}
       {isMobile && (
         <div
@@ -115,71 +124,83 @@ const Sidebar = () => {
         ></div>
       )}
 
-      {/* Sidebar Toggle Button */}
-      {/* <button
-        className="sidebar-toggle"
-        onClick={toggleSidebar}
-        aria-label="Toggle sidebar"
-      >
-        <div className="hamburger">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </button> */}
-
       {/* Sidebar */}
       <div
         className={`sidebar ${isCollapsed ? "collapsed" : ""} ${
           isMobile && isMobileOpen ? "mobile-open" : ""
-        }`}
+        } ${isMobile ? "mobile-sidebar" : ""}`}
       >
+        {/* Mobile Close Button */}
+        {isMobile && (
+          <button 
+            className="mobile-close-btn"
+            onClick={closeMobileSidebar}
+            aria-label="Close sidebar"
+          >
+            <FaTimes />
+          </button>
+        )}
+
         {/* Sidebar Header */}
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <div className="sidebar-logo">BT</div>
-            <h2>Admin Panel</h2>
+            {!isCollapsed && <h2>Admin Panel</h2>}
           </div>
+          
+          {/* Desktop Toggle Button */}
+          {!isMobile && (
+            <button 
+              className="desktop-toggle-btn"
+              onClick={toggleSidebar}
+              aria-label="Collapse sidebar"
+            >
+              <FaBars />
+            </button>
+          )}
         </div>
 
-        {/* Main Navigation */}
-        <ul className="sidebar-menu">
-          <li className="sidebar-section-title">Menu Utama</li>
-          {menuItems.slice(0, 6).map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={isActiveLink(item.path) ? "active" : ""}
-                  data-tooltip={item.tooltip}
-                  onClick={closeMobileSidebar}
-                >
-                  <IconComponent className="icon" />
-                  <span className="menu-text">{item.text}</span>
-                </Link>
-              </li>
-            );
-          })}
+        {/* Sidebar Content */}
+        <div className="sidebar-content">
+          {/* Main Navigation */}
+          <ul className="sidebar-menu">
+            {!isCollapsed && <li className="sidebar-section-title">Menu Utama</li>}
+            {menuItems.slice(0, 6).map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={isActiveLink(item.path) ? "active" : ""}
+                    data-tooltip={item.tooltip}
+                    onClick={closeMobileSidebar}
+                  >
+                    <IconComponent className="icon" />
+                    <span className="menu-text">{item.text}</span>
+                  </Link>
+                </li>
+              );
+            })}
 
-          <li className="sidebar-section-title">Pengaturan</li>
-          {menuItems.slice(6).map((item) => {
-            const IconComponent = item.icon;
-            return (
-              <li key={item.path}>
-                <Link
-                  to={item.path}
-                  className={isActiveLink(item.path) ? "active" : ""}
-                  data-tooltip={item.tooltip}
-                  onClick={closeMobileSidebar}
-                >
-                  <IconComponent className="icon" />
-                  <span className="menu-text">{item.text}</span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+            {!isCollapsed && <li className="sidebar-section-title">Pengaturan</li>}
+            {menuItems.slice(6).map((item) => {
+              const IconComponent = item.icon;
+              return (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={isActiveLink(item.path) ? "active" : ""}
+                    data-tooltip={item.tooltip}
+                    onClick={closeMobileSidebar}
+                  >
+                    <IconComponent className="icon" />
+                    <span className="menu-text">{item.text}</span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
 
         {/* Sidebar Footer */}
         <div className="sidebar-footer">
@@ -193,4 +214,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar;

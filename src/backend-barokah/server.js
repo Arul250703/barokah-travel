@@ -1,41 +1,26 @@
+// file: server.js (di folder utama)
+
 const express = require('express');
 const cors = require('cors');
-const db = require('./src/config/db'); // Impor koneksi database kita
+require('dotenv').config();
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 3001;
 
-app.use(express.json());
+// Middleware
 app.use(cors());
+app.use(express.json());
 
-// Endpoint untuk login
-app.post('/api/login', (req, res) => {
-    const { username, password } = req.body;
+// Memuat dan menggunakan file rute
+const packageRoutes = require('./src/routes/packageRoutes');
+// const postRoutes = require('./src/routes/postRoutes'); // (jika Anda sudah membuatnya)
+// const pageRoutes = require('./src/routes/pageRoutes');   // (jika Anda sudah membuatnya)
 
-    // Buat query SQL untuk mencari user
-    const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+app.use('/api', packageRoutes); // Semua rute di packageRoutes akan diawali dengan /api
+// app.use('/api', postRoutes);
+// app.use('/api', pageRoutes);
 
-    // Jalankan query ke database
-    db.query(sql, [username, password], (err, results) => {
-        if (err) {
-            // Jika ada error pada database
-            console.error("Error pada database:", err);
-            return res.status(500).json({ success: false, message: "Terjadi kesalahan pada server." });
-        }
-
-        // Periksa hasil query
-        if (results.length > 0) {
-            // Jika user ditemukan (panjang hasil lebih dari 0)
-            console.log(`Login berhasil untuk user: ${username}`);
-            res.status(200).json({ success: true, message: 'Login berhasil!' });
-        } else {
-            // Jika user tidak ditemukan
-            console.log(`Login gagal untuk user: ${username}`);
-            res.status(401).json({ success: false, message: 'Username atau password salah.' });
-        }
-    });
-});
-
+// Jalankan Server
 app.listen(port, () => {
-  console.log(`Server backend berjalan di http://localhost:${port}`);
+    console.log(`🚀 Server berjalan di http://localhost:${port}`);
 });

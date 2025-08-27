@@ -1,216 +1,118 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import "../components/styles/Dashboard.css";
-import Sidebar from "../components/Sidebar"; // Pastikan Sidebar.js ada
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import '../components/styles/Dashboard.css'; // Pastikan path CSS ini benar
+import { FaBoxOpen, FaPlus, FaChartBar, FaCog, FaFileInvoice, FaUsers, FaMoneyBillWave } from 'react-icons/fa';
 
 const Dashboard = () => {
-  // Data dummy untuk dashboard
-  const [stats] = useState({
-    totalBookings: 154,
-    newBookingsToday: 5,
-    totalRevenue: 25000000,
+  // State untuk menyimpan data dari backend
+  const [dashboardData, setDashboardData] = useState({
+    stats: { totalBookings: 0, newBookingsToday: 0, totalRevenue: 0 },
+    recentBookings: []
   });
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [recentBookings] = useState([
-    {
-      id: 1,
-      name: "Paket Wisata Sukabumi",
-      client: "Joko Widodo",
-      status: "Confirmed",
-      date: "2025-01-15",
-    },
-    {
-      id: 2,
-      name: "Paket Tour Lombok 3 Hari 2 Malam (A)",
-      client: "Sri Mulyani",
-      status: "Pending",
-      date: "2025-01-14",
-    },
-    {
-      id: 3,
-      name: "WISATA LABUAN BAJO 3H2M",
-      client: "Budi Santoso",
-      status: "Confirmed",
-      date: "2025-01-13",
-    },
-    {
-      id: 4,
-      name: "Paket Wisata Raja Ampat",
-      client: "Siti Nurhaliza",
-      status: "Processing",
-      date: "2025-01-12",
-    },
-    {
-      id: 5,
-      name: "Tour Bromo Tengger Semeru",
-      client: "Ahmad Dhani",
-      status: "Pending",
-      date: "2025-01-11",
-    },
-  ]);
+  // Mengambil data dari backend saat komponen dimuat
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://localhost:5000/api/dashboard-stats');
+        const result = await response.json();
+        if (result.success) {
+          setDashboardData(result.data);
+        }
+      } catch (error) {
+        console.error("Gagal mengambil data dasbor:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const getStatusIcon = (status) => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-        return "✓";
-      case "pending":
-        return "⏳";
-      case "processing":
-        return "⚡";
-      case "cancelled":
-        return "✕";
-      default:
-        return "●";
-    }
-  };
+  const formatCurrency = (amount) => 
+    new Intl.NumberFormat("id-ID", {
+      style: "currency", currency: "IDR", minimumFractionDigits: 0,
+    }).format(amount || 0);
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
-  };
+  if (isLoading) {
+    return <div className="loading-container">Memuat data dasbor...</div>;
+  }
 
   return (
-    <div className="dashboard-layout">
-      <Sidebar />
-      <div className="main-content">
-        <div className="dashboard-container">
-          {/* Header Section */}
-          <div className="dashboard-header">
-            <h1 className="dashboard-title">Dashboard Admin</h1>
-            <p className="dashboard-subtitle">
-              Selamat datang di panel admin Anda. Kelola bisnis tour & travel
-              dengan mudah dan efisien.
-            </p>
+    <div className="dashboard-container">
+      {/* Header */}
+      <div className="dashboard-header">
+        <div>
+          <h1 className="dashboard-title">Dashboard</h1>
+          <p className="dashboard-subtitle">Selamat datang kembali, Admin!</p>
+        </div>
+        <Link to="/keuangan/new" className="add-booking-btn">
+          <FaPlus /> Tambah Booking
+        </Link>
+      </div>
+
+      {/* Kartu Statistik */}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-icon primary"><FaFileInvoice /></div>
+          <div className="stat-info">
+            <span className="stat-title">Total Pemesanan</span>
+            <span className="stat-value">{dashboardData.stats.totalBookings}</span>
           </div>
-
-          {/* Stats Grid */}
-          <div className="stats-grid">
-            <div className="stat-card stat-card-primary">
-              <div className="stat-icon">
-                <span role="img" aria-label="analytics">📊</span>
-              </div>
-              <h3>Total Pemesanan</h3>
-              <p className="stat-value">{stats.totalBookings}</p>
-              <div className="stat-trend">
-                <span className="trend-up">↗ +12% dari bulan lalu</span>
-              </div>
-            </div>
-
-            <div className="stat-card stat-card-success">
-              <div className="stat-icon">
-                <span role="img" aria-label="growth">📈</span>
-              </div>
-              <h3>Pemesanan Hari Ini</h3>
-              <p className="stat-value">{stats.newBookingsToday}</p>
-              <div className="stat-trend">
-                <span className="trend-up">↗ +2 dari kemarin</span>
-              </div>
-            </div>
-
-            <div className="stat-card stat-card-purple">
-              <div className="stat-icon">
-                <span role="img" aria-label="money">💰</span>
-              </div>
-              <h3>Total Pendapatan</h3>
-              <p className="stat-value">{formatCurrency(stats.totalRevenue)}</p>
-              <div className="stat-trend">
-                <span className="trend-up">↗ +8% dari bulan lalu</span>
-              </div>
-            </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon success"><FaUsers /></div>
+          <div className="stat-info">
+            <span className="stat-title">Pemesanan Hari Ini</span>
+            <span className="stat-value">{dashboardData.stats.newBookingsToday}</span>
           </div>
-
-          {/* Recent Bookings Section */}
-          <div className="recent-bookings-section">
-            <div className="section-header">
-              <h2 className="section-title">Pemesanan Terbaru</h2>
-              <Link to="/bookings" className="view-all-link">
-                Lihat Semua
-              </Link>
-            </div>
-
-            <div className="recent-bookings-list">
-              <ul>
-                {recentBookings.map((booking, index) => (
-                  <li key={booking.id} className="booking-item">
-                    <div className="booking-details">
-                      <div className="booking-number">{index + 1}</div>
-                      <div className="booking-info">
-                        <h4>{booking.name}</h4>
-                        <div className="booking-meta">
-                          <span className="booking-meta-item">
-                            <span role="img" aria-label="person">👤</span> {booking.client}
-                          </span>
-                          <span className="booking-meta-item">
-                            <span role="img" aria-label="calendar">📅</span> {formatDate(booking.date)}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="booking-status-container">
-                      <span
-                        className={`booking-status ${booking.status.toLowerCase()}`}
-                      >
-                        {getStatusIcon(booking.status)}
-                        <span>{booking.status}</span>
-                      </span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        </div>
+        <div className="stat-card">
+          <div className="stat-icon warning"><FaMoneyBillWave /></div>
+          <div className="stat-info">
+            <span className="stat-title">Total Pendapatan</span>
+            <span className="stat-value">{formatCurrency(dashboardData.stats.totalRevenue)}</span>
           </div>
+        </div>
+      </div>
 
-          {/* Quick Actions */}
-          <div className="quick-actions-section">
-            <h2 className="section-title">Aksi Cepat</h2>
-            <div className="quick-actions-grid">
-              <Link to="/bookings/new" className="action-card action-card-primary">
-                <div className="action-icon">
-                  <span role="img" aria-label="plus">➕</span>
+      <div className="dashboard-main-content">
+        {/* Kolom Kiri: Booking Terbaru */}
+        <div className="recent-bookings">
+          <h2 className="section-title">Aktivitas Booking Terbaru</h2>
+          <ul className="booking-list">
+            {dashboardData.recentBookings.map(booking => (
+              <li key={booking.id} className="booking-item">
+                <div className="booking-details">
+                  <span className="booking-client">{booking.client}</span>
+                  <span className="booking-package">memesan "{booking.name}"</span>
                 </div>
-                <h3 className="action-title">Tambah Pemesanan</h3>
-              </Link>
+                <span className={`booking-status status-${booking.status.toLowerCase()}`}>{booking.status}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
 
-              <Link to="/packages" className="action-card action-card-success">
-                <div className="action-icon">
-                  <span role="img" aria-label="package">📦</span>
-                </div>
-                <h3 className="action-title">Kelola Paket</h3>
-              </Link>
-
-              <Link to="/reports" className="action-card action-card-purple">
-                <div className="action-icon">
-                  <span role="img" aria-label="reports">📊</span>
-                </div>
-                <h3 className="action-title">Laporan</h3>
-              </Link>
-
-              <Link to="/settings" className="action-card action-card-slate">
-                <div className="action-icon">
-                  <span role="img" aria-label="settings">⚙️</span>
-                </div>
-                <h3 className="action-title">Pengaturan</h3>
-              </Link>
-            </div>
-          </div>
-
-          {/* Back to Home Link */}
-          <div className="dashboard-footer">
-            <Link to="/" className="back-link">
-              <span>←</span>
-              <span>Kembali ke Beranda</span>
+        {/* Kolom Kanan: Aksi Cepat */}
+        <div className="quick-actions">
+          <h2 className="section-title">Aksi Cepat</h2>
+          <div className="action-grid">
+            <Link to="/keuangan" className="action-card">
+              <FaFileInvoice />
+              <span>Laporan Keuangan</span>
+            </Link>
+            <Link to="/users" className="action-card">
+              <FaUsers />
+              <span>Kelola Pengguna</span>
+            </Link>
+            <Link to="/packages" className="action-card">
+              <FaBoxOpen />
+              <span>Kelola Paket</span>
+            </Link>
+            <Link to="/settings" className="action-card">
+              <FaCog />
+              <span>Pengaturan</span>
             </Link>
           </div>
         </div>

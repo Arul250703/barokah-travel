@@ -6,22 +6,24 @@ const DetailPembayaran = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const { namaPaket, harga } = location.state || {
+  const { package_id, namaPaket, harga } = location.state || {
+    package_id: null,
     namaPaket: "Paket tidak ditemukan",
     harga: 0,
   };
 
   const [peserta, setPeserta] = useState([
-    { 
-      id: 1, 
-      nama: "", 
-      telepon: "", 
+    {
+      id: 1,
+      nama: "",
+      telepon: "",
       alamat: "",
       tempatLahir: "",
-      tanggalLahir: ""
-    }
+      tanggalLahir: "",
+    },
   ]);
   const [emailKontak, setEmailKontak] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handlePesertaChange = (index, event) => {
     const values = [...peserta];
@@ -31,15 +33,15 @@ const DetailPembayaran = () => {
 
   const tambahPeserta = () => {
     setPeserta([
-      ...peserta, 
-      { 
-        id: peserta.length + 1, 
-        nama: "", 
-        telepon: "", 
+      ...peserta,
+      {
+        id: peserta.length + 1,
+        nama: "",
+        telepon: "",
         alamat: "",
         tempatLahir: "",
-        tanggalLahir: ""
-      }
+        tanggalLahir: "",
+      },
     ]);
   };
 
@@ -60,46 +62,81 @@ const DetailPembayaran = () => {
       minimumFractionDigits: 0,
     }).format(angka);
 
-  // === FUNGSI INI YANG DIPERBAIKI ===
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const isDataLengkap = peserta.every(p => 
-      p.nama && p.telepon && p.alamat && p.tempatLahir && p.tanggalLahir
+
+    // Validasi yang lebih lengkap sesuai dengan data yang dikirim
+    const isDataLengkap = peserta.every(
+      (p) => p.nama && p.telepon && p.alamat && p.tempatLahir && p.tanggalLahir
     );
 
     if (!isDataLengkap || !emailKontak) {
-      alert("Harap lengkapi semua data peserta dan email kontak.");
+      alert(
+        "Harap lengkapi semua data peserta (nama, telepon, alamat, tempat lahir, tanggal lahir) dan email kontak."
+      );
       return;
     }
 
+    if (!package_id) {
+      alert("ID Paket tidak ditemukan. Silakan kembali dan pilih paket lagi.");
+      return;
+    }
 
-    // Siapkan SEMUA data yang akan dikirim
-    const paymentData = {
-      // Data dari halaman ini
-      namaPaket,
-      harga,
-      peserta,
-      emailKontak,
-      totalHarga,
-      // Data untuk VA
-      methodName: "BCA Virtual Account", // Asumsi default
-      vaNumber: '8808 ' + Math.floor(1000000000 + Math.random() * 9000000000),
-      expiry: new Date(Date.now() + 24 * 60 * 60 * 1000) // Kirim sebagai objek Date
+    setIsSubmitting(true);
+
+    // Perbaiki struktur data yang dikirim ke backend
+    const dataToSubmit = {
+      package_id: package_id,
+      customer_name: peserta[0].nama,
+      customer_email: emailKontak,
+      participants: peserta.map((p) => ({
+        name: p.nama,
+        phone: p.telepon,
+        address: p.alamat, // Tambahkan field yang dibutuhkan backend
+        birth_place: p.tempatLahir, // Tambahkan field yang dibutuhkan backend
+        birth_date: p.tanggalLahir, // Tambahkan field yang dibutuhkan backend
+      })),
+      total_price: totalHarga,
     };
 
-    // Navigasi ke halaman Virtual Account dengan membawa SEMUA data
-    navigate("/virtual-account", { state: paymentData });
-    // Navigasi ke halaman Invoice dengan membawa data
-    navigate("/invoice  ", {
-      state: {
-        namaPaket,
-        harga,
-        peserta,
-        emailKontak,
-        totalHarga,
-      },
-    });
+    console.log("Data yang dikirim:", dataToSubmit); // Debug log
+
+    try {
+      const response = await fetch("http://localhost:5000/api/bookings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToSubmit),
+      });
+
+      const result = await response.json();
+      console.log("Response dari server:", result); // Debug log
+
+      if (response.ok) {
+        const vaDetails = {
+          namaPaket,
+          harga,
+          peserta,
+          emailKontak,
+          totalHarga,
+          bookingId: result.bookingId,
+          methodName: "BCA Virtual Account",
+          vaNumber:
+            "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
+          expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        };
+        navigate("/virtual-account", { state: vaDetails });
+      } else {
+        alert(`Gagal menyimpan pemesanan: ${result.message}`);
+        console.error("Error response:", result); // Debug log
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(
+        "Tidak dapat terhubung ke server. Pastikan server backend berjalan."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,7 +151,6 @@ const DetailPembayaran = () => {
         </div>
 
         <form className="payment-form" onSubmit={handleSubmit}>
-          {/* ... sisa form tidak berubah ... */}
           <div className="contact-section">
             <h3 className="section-title">
               <span className="section-icon">📧</span>
@@ -126,18 +162,15 @@ const DetailPembayaran = () => {
                 type="email"
                 value={emailKontak}
                 onChange={(e) => setEmailKontak(e.target.value)}
-                placeholder="contoh@email.com"
                 required
               />
             </div>
           </div>
-
           <div className="participants-section">
             <h3 className="section-title">
               <span className="section-icon">👥</span>
               Data Peserta
             </h3>
-            
             {peserta.map((data, index) => (
               <div key={index} className="peserta-card">
                 <div className="peserta-header">
@@ -152,42 +185,64 @@ const DetailPembayaran = () => {
                     </button>
                   )}
                 </div>
-                
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Nama Lengkap *</label>
-                    <input type="text" name="nama" value={data.nama} onChange={(e) => handlePesertaChange(index, e)} required />
+                    <input
+                      type="text"
+                      name="nama"
+                      value={data.nama}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
                   </div>
-                  
                   <div className="form-group">
                     <label>Nomor Telepon *</label>
-                    <input type="tel" name="telepon" value={data.telepon} onChange={(e) => handlePesertaChange(index, e)} required />
+                    <input
+                      type="tel"
+                      name="telepon"
+                      value={data.telepon}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
                   </div>
-
                   <div className="form-group full-width">
                     <label>Alamat Lengkap *</label>
-                    <textarea name="alamat" value={data.alamat} onChange={(e) => handlePesertaChange(index, e)} rows="3" required />
+                    <textarea
+                      name="alamat"
+                      value={data.alamat}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      rows="3"
+                      required
+                    />
                   </div>
-
                   <div className="form-group">
                     <label>Tempat Lahir *</label>
-                    <input type="text" name="tempatLahir" value={data.tempatLahir} onChange={(e) => handlePesertaChange(index, e)} required />
+                    <input
+                      type="text"
+                      name="tempatLahir"
+                      value={data.tempatLahir}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
                   </div>
-
                   <div className="form-group">
                     <label>Tanggal Lahir *</label>
-                    <input type="date" name="tanggalLahir" value={data.tanggalLahir} onChange={(e) => handlePesertaChange(index, e)} required />
+                    <input
+                      type="date"
+                      name="tanggalLahir"
+                      value={data.tanggalLahir}
+                      onChange={(e) => handlePesertaChange(index, e)}
+                      required
+                    />
                   </div>
                 </div>
               </div>
             ))}
-
             <button type="button" onClick={tambahPeserta} className="add-btn">
-              <span className="add-icon">+</span>
-              Tambah Peserta
+              <span className="add-icon">+</span> Tambah Peserta
             </button>
           </div>
-
           <div className="summary-section">
             <h3 className="section-title">
               <span className="section-icon">💰</span>
@@ -209,13 +264,20 @@ const DetailPembayaran = () => {
               </div>
             </div>
           </div>
-
           <div className="action-buttons">
-            <button type="submit" className="submit-btn">
-              <span>🚀</span>
-              Lanjut ke Pembayaran
+            <button
+              type="submit"
+              className="submit-btn"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                "Menyimpan..."
+              ) : (
+                <>
+                  <span>🚀</span> Lanjut ke Pembayaran
+                </>
+              )}
             </button>
-            
             <Link to="/sukabumi" className="back-link">
               <span>←</span> Kembali ke Detail Paket
             </Link>

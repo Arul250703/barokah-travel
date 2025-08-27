@@ -1,31 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../components/styles/Yogyakarta.css'; 
+import '../components/styles/yogyakarta.css';
 
-// Import Aset Gambar yang relevan untuk halaman ini
-import situ from '../assets/images/situ.jpeg';
-import plara from '../assets/images/plara.jpeg';
-import dreamland from '../assets/images/dreamland.jpeg';
-import lot from '../assets/images/lot.jpeg';
-import jeram from '../assets/images/jeram.jpeg';
-import rj from '../assets/images/rj.jpeg';
+// Import Aset Gambar (pastikan path ini benar)
 import pinus from '../assets/images/pinus.jpeg';
 import yogya from '../assets/images/yogya.jpeg';
 import bro from '../assets/images/bro.jpeg';
 import pram from '../assets/images/pram.jpeg';
-import tanjung from '../assets/images/tanjung.jpeg';
-import songo from '../assets/images/songo.jpeg';
-import dusun from '../assets/images/dusun.jpeg';
-import pink from '../assets/images/pink.jpeg';
-import gili from '../assets/images/gili.jpeg';
-import bali from '../assets/images/bali.jpeg';
-
-// Perbaikan: Ganti foto yang eror dengan foto yang sudah ada
-import museumAmbarawa from '../assets/images/yogya.jpeg';
-import goaKreo from '../assets/images/pinus.jpeg';
-
+import jeram from '../assets/images/jeram.jpeg';
+import rj from '../assets/images/rj.jpeg';
+import dreamland from '../assets/images/dreamland.jpeg';
+import lot from '../assets/images/lot.jpeg';
 import videoSection from '../assets/videos/video-section.mp4';
-import servicesBg from '../assets/images/services-bg.jpg';
 
 // Data statis untuk semua paket wisata Yogyakarta
 const yogyakartaData = {
@@ -63,14 +49,21 @@ const eventData = {
     ]
 };
 
+// Fungsi untuk mengubah harga dari string ke angka
+function parsePrice(priceStr) {
+    if (!priceStr || typeof priceStr !== "string") return 0;
+    const numberString = priceStr.replace(/[^0-9]/g, "");
+    return parseInt(numberString, 10) || 0;
+}
+
 const Yogyakarta = () => {
     const [currentFilter, setCurrentFilter] = useState('all');
     
+    // Logika filter tidak berubah
+    const allWisataPackages = yogyakartaData.packages;
     let filteredPackages = [];
     let isEventPackage = false;
     
-    const allWisataPackages = [...yogyakartaData.packages];
-
     if (currentFilter === 'paket') {
         filteredPackages = [...eventData.capacityBuilding, ...eventData.eoWo];
         isEventPackage = true;
@@ -121,7 +114,7 @@ const Yogyakarta = () => {
                         className={`filter-btn ${currentFilter === 'paket' ? 'active' : ''}`}
                         onClick={() => setCurrentFilter('paket')}
                     >
-                        Paket
+                        Paket Event
                     </button>
                 </div>
                 
@@ -133,55 +126,52 @@ const Yogyakarta = () => {
                                 <div className="package-grid">
                                     {eventData.capacityBuilding.map(pkg => (
                                         <div className="package-box" key={pkg.id}>
-                                            <h4 className="gold">{pkg.name}<br/>{pkg.duration}</h4>
+                                            <h4>{pkg.name}<br/>{pkg.duration}</h4>
                                             <div className="price">{pkg.price}</div>
                                             <ul>
                                                 {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
                                             </ul>
-                                            <a 
-                                                href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket ${pkg.name}.`} 
+                                            {/* --- PERBAIKAN DI SINI --- */}
+                                            <Link 
+                                                to="/pembayaran"
+                                                state={{
+                                                    package_id: pkg.id,
+                                                    namaPaket: pkg.name,
+                                                    harga: parsePrice(pkg.price),
+                                                }}
                                                 className="detail-btn"
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
                                             >
                                                 Pesan Sekarang
-                                            </a>
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
-                                <p className="note">
-                                    • Harga paket untuk <b>Minimal Order 20 Orang</b><br/>
-                                    • Untuk Reservasi paket lebih dari 20 orang konfirmasi kepada admin barokah tour & travel<br/>
-                                    • Pembayaran melalui rekening bank mandiri : <b>1820001975030 AN PT BINA BAROKAH SEJAHTERA</b>
-                                </p>
                             </section>
                             <section className="section">
                                 <div className="section-title yellow-bg">EVENT PACKAGE : EO/WO/DLL</div>
                                 <div className="package-grid">
                                     {eventData.eoWo.map(pkg => (
                                         <div className="package-box" key={pkg.id}>
-                                            <h4 className="silver">{pkg.name}</h4>
+                                            <h4>{pkg.name}</h4>
                                             <div className="price">{pkg.price}</div>
                                             <ul>
                                                 {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
                                             </ul>
-                                            <a 
-                                                href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket ${pkg.name}.`} 
+                                            {/* --- PERBAIKAN DI SINI --- */}
+                                            <Link 
+                                                to="/pembayaran"
+                                                state={{
+                                                    package_id: pkg.id,
+                                                    namaPaket: pkg.name,
+                                                    harga: parsePrice(pkg.price),
+                                                }}
                                                 className="detail-btn"
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
                                             >
                                                 Pesan Sekarang
-                                            </a>
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
-                                <p className="note">
-                                    • Harga untuk <b>Durasi 1 Hari</b><br/>
-                                    • Harga area kota Sukabumi (lebih dari 25 km charges: 25% - 40%, tergantung lokasi)<br/>
-                                    • Free crew + konsumsi crew, tiket objek wisata, org mineral, P3K Standar, Asuransi peserta, driver guide<br/>
-                                    • Pembayaran melalui rekening bank mandiri : <b>1820001975030 AN PT BINA BAROKAH SEJAHTERA</b>
-                                </p>
                             </section>
                         </>
                     ) : (
@@ -193,11 +183,17 @@ const Yogyakarta = () => {
                                         <h3>{pkg.name}</h3>
                                         <p className="subjudul">{pkg.subtitle}</p>
                                         <p className="harga">{pkg.price} <span className="min">{pkg.minPax}</span></p>
+                                        {/* --- PERBAIKAN DI SINI --- */}
                                         <Link 
-                                            to={`/detail/yogyakarta/${pkg.id}`}
+                                            to="/pembayaran"
+                                            state={{
+                                                package_id: pkg.id,
+                                                namaPaket: pkg.name,
+                                                harga: parsePrice(pkg.price),
+                                            }}
                                             className="detail-btn"
                                         >
-                                            Lihat Detail
+                                            Pesan Sekarang
                                         </Link>
                                     </div>
                                 </div>

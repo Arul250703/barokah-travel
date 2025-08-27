@@ -186,7 +186,7 @@ const Semarang = () => {
                                             }}
                                             className="detail-btn"
                                         >
-                                            Lihat Detail
+                                            Pesan Sekarang
                                         </Link>
                                     </div>
                                 </div>
