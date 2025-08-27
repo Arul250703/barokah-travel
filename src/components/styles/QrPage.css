@@ -533,6 +533,248 @@ body {
   margin-bottom: 0;
 }
 
+/* ========================================
+   HORIZONTAL SCROLL STYLES - PARTICIPANT SCROLLER
+   Tambahkan CSS ini ke bagian bawah file QrPage.css Anda
+   ======================================== */
+
+/* Participant Scroller Styles */
+.participant-scroller {
+  position: relative;
+  width: 100%;
+}
+
+.scroll-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.peserta-list-horizontal {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 0.5rem 0;
+  flex: 1;
+  /* Hide scrollbar but keep functionality */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+.peserta-list-horizontal::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari, Opera */
+}
+
+.peserta-item-horizontal {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  min-width: 250px;
+  max-width: 300px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  transition: all 0.2s;
+  position: relative;
+}
+
+.peserta-item-horizontal:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.peserta-info-horizontal {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.peserta-number {
+  background: #3b82f6;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.peserta-details-horizontal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.peserta-name {
+  color: #1e293b;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.peserta-phone {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.peserta-id {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  background: #f9fafb;
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+  border: 1px solid #e5e7eb;
+  width: fit-content;
+}
+
+.peserta-status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.scroll-btn {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #64748b;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.scroll-btn:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  color: #374151;
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-btn:active {
+  transform: scale(0.95);
+}
+
+.scroll-btn-left {
+  order: -1;
+}
+
+.scroll-btn-right {
+  order: 1;
+}
+
+.scroll-indicator {
+  text-align: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 0.5rem;
+  border: 1px dashed #e2e8f0;
+}
+
+.scroll-text {
+  color: #64748b;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+.empty-participants {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 0.75rem;
+  border: 1px dashed #e2e8f0;
+}
+
+.empty-participants p {
+  font-size: 0.875rem;
+  color: #9ca3af;
+}
+
+/* Summary Red Color (untuk tombol scanner) */
+.summary-red {
+  --accent-color: #ef4444;
+}
+
+.summary-red .summary-icon {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+/* Responsive untuk Horizontal Scroll */
+@media (max-width: 768px) {
+  .peserta-item-horizontal {
+    min-width: 200px;
+    max-width: 250px;
+    padding: 0.75rem;
+  }
+
+  .scroll-btn {
+    width: 2rem;
+    height: 2rem;
+    font-size: 0.875rem;
+  }
+
+  .peserta-details-horizontal .peserta-name {
+    font-size: 0.8rem;
+  }
+
+  .peserta-details-horizontal .peserta-phone,
+  .peserta-details-horizontal .peserta-id {
+    font-size: 0.7rem;
+  }
+
+  .scroll-indicator {
+    padding: 0.5rem;
+  }
+
+  .scroll-text {
+    font-size: 0.7rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .peserta-item-horizontal {
+    min-width: 180px;
+    max-width: 220px;
+    padding: 0.6rem;
+  }
+
+  .peserta-number {
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 0.7rem;
+  }
+
+  .scroll-container {
+    gap: 0.5rem;
+  }
+
+  .scroll-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+  }
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;

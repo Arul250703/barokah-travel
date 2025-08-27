@@ -1,7 +1,7 @@
 const db = require("../config/db");
-const { v4: uuidv4 } = require("uuid"); // Ingat: npm install uuid
+const { v4: uuidv4 } = require("uuid");
 
-// Fungsi Login (dari kode teman Anda)
+// Fungsi Login
 const loginUser = (req, res) => {
   const { username, password } = req.body;
   const sql = "SELECT * FROM users WHERE username = ? AND password = ?";
@@ -21,11 +21,6 @@ const loginUser = (req, res) => {
 };
 
 // Fungsi Membuat Booking
-// JavaScript;
-
-// const db = require("../config/db");
-// const { v4: uuidv4 } = require("uuid");
-
 const createBooking = (req, res) => {
   console.log("1. Menerima permintaan di /api/bookings...");
   const {
@@ -170,9 +165,39 @@ const createBooking = (req, res) => {
     });
   });
 };
-// --- FUNGSI BARU UNTUK MENGAMBIL DETAIL BOOKING ---
+
+// Fungsi untuk mendapatkan semua booking
+const getAllBookings = (req, res) => {
+  const sql = `
+    SELECT 
+      b.id, 
+      b.booking_id, 
+      b.customer_name, 
+      b.customer_email, 
+      b.total_price,
+      b.status,
+      b.created_at,
+      p.name AS package_name
+    FROM bookings AS b
+    LEFT JOIN packages AS p ON b.package_id = p.id
+    ORDER BY b.created_at DESC
+  `;
+  
+  db.query(sql, (err, results) => {
+    if (err) {
+      console.error("Error fetching bookings:", err);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil data booking." 
+      });
+    }
+    res.status(200).json({ success: true, data: results });
+  });
+};
+
+// Fungsi untuk mendapatkan detail booking berdasarkan ID
 const getBookingById = (req, res) => {
-  const { bookingId } = req.params; // Mengambil ID dari parameter URL
+  const { bookingId } = req.params;
 
   const query = `
     SELECT 
@@ -202,7 +227,6 @@ const getBookingById = (req, res) => {
     const participantsQuery =
       "SELECT id AS participant_id, name, phone, status AS ticket_status FROM participants WHERE booking_id = ?";
 
-    // Gunakan primary key (booking.id) untuk mencari peserta
     db.query(participantsQuery, [booking.id], (err, participants) => {
       if (err) {
         return res
@@ -237,21 +261,17 @@ const validateParticipant = (req, res) => {
         .json({ success: false, message: "TIKET TIDAK DITEMUKAN" });
 
     if (participant.status === "sudah_digunakan")
-      return res
-        .status(409)
-        .json({
-          success: false,
-          message: "TIKET SUDAH DIGUNAKAN",
-          name: participant.name,
-        });
+      return res.status(409).json({
+        success: false,
+        message: "TIKET SUDAH DIGUNAKAN",
+        name: participant.name,
+      });
     if (participant.status === "hangus")
-      return res
-        .status(410)
-        .json({
-          success: false,
-          message: "TIKET HANGUS/BATAL",
-          name: participant.name,
-        });
+      return res.status(410).json({
+        success: false,
+        message: "TIKET HANGUS/BATAL",
+        name: participant.name,
+      });
 
     if (participant.status === "valid") {
       const updateSql =
@@ -261,29 +281,66 @@ const validateParticipant = (req, res) => {
           return res
             .status(500)
             .json({ success: false, message: "Gagal update status tiket." });
-        res
-          .status(200)
-          .json({
-            success: true,
-            message: "VALIDASI BERHASIL",
-            name: participant.name,
-          });
+        res.status(200).json({
+          success: true,
+          message: "VALIDASI BERHASIL",
+          name: participant.name,
+        });
       });
     } else {
-      res
-        .status(400)
-        .json({
-          success: false,
-          message: "Status tiket tidak valid untuk check-in.",
-        });
+      res.status(400).json({
+        success: false,
+        message: "Status tiket tidak valid untuk check-in.",
+      });
     }
   });
 };
 
-// --- PASTIKAN SEMUA FUNGSI DIEKSPOR ---
+// Fungsi untuk konfirmasi pembayaran
+const confirmPayment = (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  const allowedStatus = ['dp_lunas', 'selesai', 'dibatalkan'];
+  if (!status || !allowedStatus.includes(status)) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Nilai status tidak valid." 
+    });
+  }
+
+  const sql = "UPDATE bookings SET status = ? WHERE id = ?";
+  db.query(sql, [status, id], (err, result) => {
+    if (err) {
+      console.error("Error updating payment status:", err);
+      return res.status(500).json({ 
+        success: false, 
+        message: "Gagal memperbarui status pembayaran." 
+      });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "Booking dengan ID tersebut tidak ditemukan." 
+      });
+    }
+    res.status(200).json({ 
+      success: true, 
+      message: `Status booking berhasil diubah menjadi '${status}'` 
+    });
+  });
+};
+
+// Fungsi untuk update status pembayaran (alias untuk confirmPayment)
+const updatePaymentStatus = confirmPayment;
+
+// Ekspor semua fungsi
 module.exports = {
   loginUser,
   createBooking,
-  getBookingById, // <-- Tambahkan ini
+  getAllBookings,
+  getBookingById,
   validateParticipant,
+  confirmPayment,
+  updatePaymentStatus
 };

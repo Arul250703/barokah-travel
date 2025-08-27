@@ -50,8 +50,11 @@ const Sidebar = () => {
   };
 
   const isActiveLink = (path) => {
-    return location.pathname === path || 
-           (path === "/keuangan" && location.pathname.toLowerCase().includes("keuangan"));
+    return (
+      location.pathname === path ||
+      (path === "/keuangan" &&
+        location.pathname.toLowerCase().includes("keuangan"))
+    );
   };
 
   const menuItems = [
@@ -109,7 +112,7 @@ const Sidebar = () => {
     <>
       {/* Mobile Sidebar Toggle Button */}
       <button
-        className={`sidebar-toggle ${isMobile && isMobileOpen ? 'active' : ''}`}
+        className={`sidebar-toggle ${isMobile && isMobileOpen ? "active" : ""}`}
         onClick={toggleSidebar}
         aria-label="Toggle sidebar"
       >
@@ -119,7 +122,7 @@ const Sidebar = () => {
       {/* Mobile Overlay */}
       {isMobile && (
         <div
-          className={`sidebar-overlay${isMobileOpen ? " active" : ""}`}
+          className={`sidebar-overlay ${isMobileOpen ? "active" : ""}`}
           onClick={closeMobileSidebar}
         ></div>
       )}
@@ -130,27 +133,16 @@ const Sidebar = () => {
           isMobile && isMobileOpen ? "mobile-open" : ""
         } ${isMobile ? "mobile-sidebar" : ""}`}
       >
-        {/* Mobile Close Button */}
-        {isMobile && (
-          <button 
-            className="mobile-close-btn"
-            onClick={closeMobileSidebar}
-            aria-label="Close sidebar"
-          >
-            <FaTimes />
-          </button>
-        )}
-
         {/* Sidebar Header */}
         <div className="sidebar-header">
           <div className="sidebar-brand">
             <div className="sidebar-logo">BT</div>
             {!isCollapsed && <h2>Admin Panel</h2>}
           </div>
-          
+
           {/* Desktop Toggle Button */}
           {!isMobile && (
-            <button 
+            <button
               className="desktop-toggle-btn"
               onClick={toggleSidebar}
               aria-label="Collapse sidebar"
@@ -164,7 +156,9 @@ const Sidebar = () => {
         <div className="sidebar-content">
           {/* Main Navigation */}
           <ul className="sidebar-menu">
-            {!isCollapsed && <li className="sidebar-section-title">Menu Utama</li>}
+            {!isCollapsed && (
+              <li className="sidebar-section-title">Menu Utama</li>
+            )}
             {menuItems.slice(0, 6).map((item) => {
               const IconComponent = item.icon;
               return (
@@ -181,8 +175,9 @@ const Sidebar = () => {
                 </li>
               );
             })}
-
-            {!isCollapsed && <li className="sidebar-section-title">Pengaturan</li>}
+            {!isCollapsed && (
+              <li className="sidebar-section-title">Pengaturan</li>
+            )}
             {menuItems.slice(6).map((item) => {
               const IconComponent = item.icon;
               return (
