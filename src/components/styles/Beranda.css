@@ -1,6 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
-
-<<<<<<< HEAD
         :root {
             --color-primary-500: #3b82f6;
             --color-primary-600: #2563eb;
@@ -1534,7 +1532,6 @@
         animation: none !important;
         transition: none !important;
         }
-=======
 :root {
     --color-primary-500: #3b82f6;
     --color-primary-600: #2563eb;
@@ -2766,4 +2763,4 @@
     outline: 3px solid var(--color-primary-500);
     outline-offset: 2px;
 }
->>>>>>> 0debf6f0044b4c91f398c5242aad5345bde088fc
+
