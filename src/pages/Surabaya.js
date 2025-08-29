@@ -1,89 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import '../components/styles/surabaya.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import "../components/styles/Sukabumi.css"; // Menggunakan CSS yang sama untuk konsistensi
 
-// Import Aset Gambar yang relevan untuk halaman ini
-import situ from '../assets/images/situ.jpeg';
-import plara from '../assets/images/plara.jpeg';
-import dreamland from '../assets/images/dreamland.jpeg';
-import lot from '../assets/images/lot.jpeg';
-import jeram from '../assets/images/jeram.jpeg';
-import rj from '../assets/images/rj.jpeg';
-import pinus from '../assets/images/pinus.jpeg';
-import yogya from '../assets/images/yogya.jpeg';
-import bro from '../assets/images/bro.jpeg';
-import pram from '../assets/images/pram.jpeg';
-import tanjung from '../assets/images/tanjung.jpeg';
-import songo from '../assets/images/songo.jpeg';
-import dusun from '../assets/images/dusun.jpeg';
-import pink from '../assets/images/pink.jpeg';
-import gili from '../assets/images/gili.jpeg';
-import bali from '../assets/images/bali.jpeg';
-import museum from '../assets/images/museum ambarawa.jpeg';
-import goa from '../assets/images/Goa Kreo.jpeg';
-import videoSection from '../assets/videos/video-section.mp4';
+// Import Aset Gambar yang relevan (pastikan path ini benar)
+import situ from "../assets/images/situ.jpeg";
+import plara from "../assets/images/plara.jpeg";
+import dreamland from "../assets/images/dreamland.jpeg";
+import lot from "../assets/images/lot.jpeg";
+import bali from "../assets/images/bali.jpeg";
 import servicesBg from '../assets/images/services-bg.jpg';
+import videoSection from "../assets/videos/video-section.mp4";
 
-// Data statis untuk semua paket wisata Surabaya
+// Data statis untuk semua paket wisata
 const surabayaData = {
     title: "Paket Wisata Surabaya",
     description: "Jawa Timur",
     bgImage: servicesBg,
     packages: [
-        { 
-            id: "1", 
-            name: "PAKET WISATA SURABAYA 3H2M", 
-            subtitle: "Monumen Kapal Selam - Kebun Binatang Surabaya - Tunjungan Plaza - Jembatan Suramadu - Monumen Tugu Pahlawan - Pasar Turi", 
-            price: "IDR 823.000", 
-            minPax: "min. 2–10pax", 
-            image: servicesBg, 
-            group: "paket-wisata"
-        },
-        { 
-            id: "2", 
-            name: "PAKET A : SURABAYA ONE DAY", 
-            subtitle: "Taman Bungkul - House of Sampoerna - Monumen Kapal Selam - Jembatan Suramadu", 
-            price: "IDR 520.000", 
-            minPax: "min. 2-10pax", 
-            image: bali, 
-            group: "one-day-trip" 
-        },
-        { 
-            id: "3", 
-            name: "PAKET B : SURABAYA ONE DAY", 
-            subtitle: "Kebun Binatang Surabaya - Masjid Al Akbar - Tunjungan Plaza - Pasar Atom", 
-            price: "IDR 530.000", 
-            minPax: "min. 2-10pax", 
-            image: bali, 
-            group: "one-day-trip" 
-        },
-        { 
-            id: "4", 
-            name: "Paket Tour Bali 2H1M", 
-            subtitle: "Tanah Lot - Pantai Dreamland - Pantai Jimbaran - Tanjung Benoa - Krisna Shoping Center", 
-            price: "IDR 837.000", 
-            minPax: "min. 2–55pax", 
-            image: dreamland, 
-            group: "overland" 
-        },
-        { 
-            id: "5", 
-            name: "Paket Tour Bali 3H2M", 
-            subtitle: "Pure Ulun Danu Bedugul - Blossom Garden - Tanah Lot - Tanjung Benoa - Pura Luhur Uluwatu - Pantai Melasti - Pantai Jimbaran - Pantai Kuta - Krisna Shoping Center", 
-            price: "IDR 1.260.000", 
-            minPax: "min. 2–50pax", 
-            image: lot, 
-            group: "overland" 
-        },
-        { 
-            id: "6", 
-            name: "Paket Tour Bali 4H3M", 
-            subtitle: "Kintamani - Tirta Empul - Gusto Gelato - Blossom Garden - Pura Ulun Danu Bedugul - Tanah Lot - Tanjung Benoa - GWK - Pantai Melasti - Pantai Jimbaran - Pantai Kute - Krisna Shoping Center", 
-            price: "IDR 1.891.000", 
-            minPax: "min. 2–55pax", 
-            image: dreamland, 
-            group: "overland" 
-        }
+        { id: "1", name: "PAKET WISATA SURABAYA 3H2M", subtitle: "Monumen Kapal Selam - Kebun Binatang Surabaya - Tunjungan Plaza - Jembatan Suramadu - Monumen Tugu Pahlawan - Pasar Turi", price: "IDR 823.000", minPax: "min. 2–10pax", image: servicesBg, group: "paket-wisata"},
+        { id: "2", name: "PAKET A : SURABAYA ONE DAY", subtitle: "Taman Bungkul - House of Sampoerna - Monumen Kapal Selam - Jembatan Suramadu", price: "IDR 520.000", minPax: "min. 2-10pax", image: bali, group: "one-day-trip" },
+        { id: "3", name: "PAKET B : SURABAYA ONE DAY", subtitle: "Kebun Binatang Surabaya - Masjid Al Akbar - Tunjungan Plaza - Pasar Atom", price: "IDR 530.000", minPax: "min. 2-10pax", image: bali, group: "one-day-trip" },
+        { id: "4", name: "Paket Tour Bali 2H1M", subtitle: "Tanah Lot - Pantai Dreamland - Pantai Jimbaran - Tanjung Benoa - Krisna Shoping Center", price: "IDR 837.000", minPax: "min. 2–55pax", image: dreamland, group: "overland" },
+        { id: "5", name: "Paket Tour Bali 3H2M", subtitle: "Pure Ulun Danu Bedugul - Blossom Garden - Tanah Lot - Tanjung Benoa - Pura Luhur Uluwatu - Pantai Melasti - Pantai Jimbaran - Pantai Kuta - Krisna Shoping Center", price: "IDR 1.260.000", minPax: "min. 2–50pax", image: lot, group: "overland" },
+        { id: "6", name: "Paket Tour Bali 4H3M", subtitle: "Kintamani - Tirta Empul - Gusto Gelato - Blossom Garden - Pura Ulun Danu Bedugul - Tanah Lot - Tanjung Benoa - GWK - Pantai Melasti - Pantai Jimbaran - Pantai Kute - Krisna Shoping Center", price: "IDR 1.891.000", minPax: "min. 2–55pax", image: dreamland, group: "overland" }
     ]
 };
 
@@ -100,15 +39,21 @@ const eventData = {
     ]
 };
 
+// Fungsi untuk mengubah harga dari string ke angka
+function parsePrice(priceStr) {
+    if (!priceStr || typeof priceStr !== "string") return 0;
+    const numberString = priceStr.replace(/[^0-9]/g, "");
+    return parseInt(numberString, 10) || 0;
+}
+
 const Surabaya = () => {
-    const [currentFilter, setCurrentFilter] = useState('all');
-    
-    // Logika filter untuk menentukan paket yang akan ditampilkan
+    const [currentFilter, setCurrentFilter] = useState("all");
+
+    // Logika filter tidak berubah
+    const allWisataPackages = surabayaData.packages;
     let filteredPackages = [];
     let isEventPackage = false;
     
-    const allWisataPackages = [...surabayaData.packages];
-
     if (currentFilter === 'paket') {
         filteredPackages = [...eventData.capacityBuilding, ...eventData.eoWo];
         isEventPackage = true;
@@ -117,11 +62,11 @@ const Surabaya = () => {
     }
         
     const heroBgStyle = {
-        backgroundImage: `url(${surabayaData.bgImage})`
+        backgroundImage: `url(${surabayaData.bgImage})`,
     };
 
     return (
-        <div className="surabaya-page">
+        <div className="sukabumi-page"> {/* Menggunakan class yang sama untuk konsistensi */}
             <header className="detail-hero-section" style={heroBgStyle}>
                 <div className="detail-hero-overlay">
                     <h1 className="detail-hero-title">{surabayaData.title}</h1>
@@ -131,111 +76,85 @@ const Surabaya = () => {
 
             <section id="destination-menu" className="destination-menu-section">
                 <div className="filter-buttons">
-                    <button 
-                        className={`filter-btn ${currentFilter === 'all' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('all')}
-                    >
-                        Semua
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'paket-wisata' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('paket-wisata')}
-                    >
-                        Paket Wisata
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'overland' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('overland')}
-                    >
-                        Overland | UMUM
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'one-day-trip' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('one-day-trip')}
-                    >
-                        One Day Trip
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'paket' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('paket')}
-                    >
-                        Paket
-                    </button>
+                    <button className={`filter-btn ${currentFilter === "all" ? "active" : ""}`} onClick={() => setCurrentFilter("all")}>Semua</button>
+                    <button className={`filter-btn ${currentFilter === "paket-wisata" ? "active" : ""}`} onClick={() => setCurrentFilter("paket-wisata")}>Paket Wisata</button>
+                    <button className={`filter-btn ${currentFilter === "overland" ? "active" : ""}`} onClick={() => setCurrentFilter("overland")}>Overland | UMUM</button>
+                    <button className={`filter-btn ${currentFilter === "one-day-trip" ? "active" : ""}`} onClick={() => setCurrentFilter("one-day-trip")}>One Day Trip</button>
+                    <button className={`filter-btn ${currentFilter === "paket" ? "active" : ""}`} onClick={() => setCurrentFilter("paket")}>Paket Event</button>
                 </div>
-                
+
                 <div className="destination-groups">
                     {isEventPackage ? (
                         <>
                             <section className="section">
                                 <div className="section-title yellow-bg">CAPACITY BUILDING PACKAGE</div>
                                 <div className="package-grid">
-                                    {eventData.capacityBuilding.map(pkg => (
+                                    {eventData.capacityBuilding.map((pkg) => (
                                         <div className="package-box" key={pkg.id}>
                                             <h4 className="gold">{pkg.name}<br/>{pkg.duration}</h4>
                                             <div className="price">{pkg.price}</div>
-                                            <ul>
-                                                {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
-                                            </ul>
-                                            <a 
-                                                href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket ${pkg.name}.`} 
+                                            <ul>{pkg.details.map((detail, index) => (<li key={index}>{detail}</li>))}</ul>
+                                            {/* --- PERBAIKAN DI SINI --- */}
+                                            <Link
+                                                to="/pembayaran"
+                                                state={{
+                                                    package_id: pkg.id,
+                                                    namaPaket: pkg.name,
+                                                    harga: parsePrice(pkg.price),
+                                                }}
                                                 className="detail-btn"
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
                                             >
                                                 Pesan Sekarang
-                                            </a>
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
-                                <p className="note">
-                                    • Harga paket untuk <b>Minimal Order 20 Orang</b><br/>
-                                    • Untuk Reservasi paket lebih dari 20 orang konfirmasi kepada admin barokah tour & travel<br/>
-                                    • Pembayaran melalui rekening bank mandiri : <b>1820001975030 AN PT BINA BAROKAH SEJAHTERA</b>
-                                </p>
                             </section>
                             <section className="section">
                                 <div className="section-title yellow-bg">EVENT PACKAGE : EO/WO/DLL</div>
                                 <div className="package-grid">
-                                    {eventData.eoWo.map(pkg => (
+                                    {eventData.eoWo.map((pkg) => (
                                         <div className="package-box" key={pkg.id}>
                                             <h4 className="silver">{pkg.name}</h4>
                                             <div className="price">{pkg.price}</div>
-                                            <ul>
-                                                {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
-                                            </ul>
-                                            <a 
-                                                href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket ${pkg.name}.`} 
+                                            <ul>{pkg.details.map((detail, index) => (<li key={index}>{detail}</li>))}</ul>
+                                            {/* --- PERBAIKAN DI SINI --- */}
+                                            <Link
+                                                to="/pembayaran"
+                                                state={{
+                                                    package_id: pkg.id,
+                                                    namaPaket: pkg.name,
+                                                    harga: parsePrice(pkg.price),
+                                                }}
                                                 className="detail-btn"
-                                                target="_blank" 
-                                                rel="noopener noreferrer"
                                             >
                                                 Pesan Sekarang
-                                            </a>
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>
-                                <p className="note">
-                                    • Harga untuk <b>Durasi 1 Hari</b><br/>
-                                    • Harga area kota Sukabumi (lebih dari 25 km charges: 25% - 40%, tergantung lokasi)<br/>
-                                    • Free crew + konsumsi crew, tiket objek wisata, org mineral, P3K Standar, Asuransi peserta, driver guide<br/>
-                                    • Pembayaran melalui rekening bank mandiri : <b>1820001975030 AN PT BINA BAROKAH SEJAHTERA</b>
-                                </p>
                             </section>
                         </>
                     ) : (
                         <div className="tour-cards-grid">
-                            {filteredPackages.map(pkg => (
+                            {filteredPackages.map((pkg) => (
                                 <div className="paket-card" key={pkg.id}>
                                     <img src={pkg.image} alt={pkg.name} />
                                     <div className="paket-info">
                                         <h3>{pkg.name}</h3>
                                         <p className="subjudul">{pkg.subtitle}</p>
                                         <p className="harga">{pkg.price} <span className="min">{pkg.minPax}</span></p>
-                                        <Link 
-                                            to={`/detail/surabaya/${pkg.id}`}
+                                        {/* --- PERBAIKAN DI SINI --- */}
+                                        <Link
+                                            to="/pembayaran"
+                                            state={{
+                                                package_id: pkg.id,
+                                                namaPaket: pkg.name,
+                                                harga: parsePrice(pkg.price),
+                                            }}
                                             className="detail-btn"
                                         >
-                                            Lihat Detail
+                                            Pesan Sekarang
                                         </Link>
                                     </div>
                                 </div>

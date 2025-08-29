@@ -104,14 +104,14 @@ function App() {
           </Route>
 
           {/* Grup 2: Halaman tanpa Header & Footer (Proses Pembayaran, dll) */}
-          <Route path="/pembayaran" element={<DetailPembayaran />} />
-          <Route path="/invoice" element={<Invoice />} />
-          <Route path="/virtual-account" element={<VirtualAccountPage />} />
-          <Route path="/payment-status" element={<PaymentStatus />} />
-          <Route path="/tiket" element={<Tiket />} />
-          <Route path="/tiket/:bookingId" element={<TiketPage />} />
-          <Route path="/scanner" element={<ScannerPage />} />
-          <Route path="/admin" element={<Admin />} />
+            <Route path="/pembayaran" element={<DetailPembayaran />} />
+            <Route path="/invoice" element={<Invoice />} />
+            <Route path="/virtual-account" element={<VirtualAccountPage />} />
+            <Route path="/payment-status" element={<PaymentStatus />} />
+            <Route path="/tiket" element={<Tiket />} />
+            <Route path="/tiket/:bookingId" element={<TiketPage />} />
+            <Route path="/scanner" element={<ScannerPage />} />
+            <Route path="/admin" element={<Admin />} />
           
           {/* Grup 3: Halaman Admin (dengan Sidebar) */}
           <Route element={<AdminLayoutWrapper />}>
@@ -136,5 +136,3 @@ function App() {
 }
 
 export default App;
-
-
