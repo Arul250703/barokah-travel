@@ -251,7 +251,7 @@ const HalamanBukuTamu = () => {
         }
         
         .header-section {
-          background: pink;
+          background: #4e73df;;
           backdrop-filter: blur(10px);
           border-radius: 20px;
           padding: 30px;
@@ -288,7 +288,7 @@ const HalamanBukuTamu = () => {
         }
         
         .card-header-modern {
-          background: pink;
+          background: #4e73df;;
           color: white;
           padding: 20px 30px;
           border-bottom: none;
@@ -320,7 +320,7 @@ const HalamanBukuTamu = () => {
         }
         
         .btn-modern {
-          background: pink;
+          background: #4e73df;
           border: none;
           border-radius: 15px;
           padding: 15px 30px;
@@ -338,11 +338,11 @@ const HalamanBukuTamu = () => {
         }
         
         .btn-primary-modern {
-          background: pink;
+          background: #9cb1eeff;
         }
         
         .stats-card {
-          background: pink;
+          background: #6f8de9ff;
           color: white;
           border-radius: 20px;
           padding: 25px;

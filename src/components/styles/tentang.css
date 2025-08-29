@@ -78,7 +78,7 @@ body {
 
 /* Main Container */
 .tentang-page {
-    margin-top: 80px;
+    margin-top: -10px;
     background: var(--color-white);
     box-shadow: var(--shadow-xl);
     overflow: hidden;

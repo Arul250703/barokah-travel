@@ -14,36 +14,32 @@
     border-bottom: 1px solid #e9ecef;
     padding: 8px 0;
     min-height: 45px;
+    height: 50px;
 }
 
 .top-bar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 15px;
-    height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* ini otomatis pisahin kiri & kanan */
+  padding: 10px 20px;
 }
 
 /* Contact Info - Left Side */
 .contact-info {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: center;
-    flex: 1;
+  display: flex;
+  gap: 30px;
+  align-items: center;
 }
 
 .contact-info a {
-    color: #ffffff;
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 400;
-    transition: color 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 400;
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .contact-info a:hover {
@@ -58,9 +54,11 @@
 
 /* Social Icons - Right Side */
 .social-icons {
-    display: flex;
-    gap: 12px;
-    align-items: center;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: 600px;  /* 🔑 kunci supaya selalu ke kanan */
+  top: 11px;
 }
 
 .social-icons a {
@@ -82,6 +80,24 @@
     background: #ffffff;
     transform: translateY(-2px);
 }
+
+@media (max-width: 768px) {
+  .top-bar-container {
+    flex-direction: column; /* stack jadi atas-bawah */
+    gap: 8px;
+  }
+
+  .contact-info {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .social-icons {
+    justify-content: center; /* ikon di tengah kalau layar kecil */
+  }
+}
+
 
 /* Main Navigation */
 .main-navbar {

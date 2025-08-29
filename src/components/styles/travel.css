@@ -19,7 +19,7 @@
 .travel-page {
     font-family: 'Poppins', sans-serif;
     color: var(--color-gray-700);
-    margin-top: 80px; /* Offset for fixed header */
+    margin-top: -10px; /* Offset for fixed header */
     padding-bottom: 60px; /* Tambahan padding di bawah agar tidak menempel footer */
 }
 

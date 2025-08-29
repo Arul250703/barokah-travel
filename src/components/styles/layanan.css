@@ -17,7 +17,7 @@
 .layanan-page {
     font-family: 'Poppins', sans-serif;
     color: var(--color-gray-700);
-    margin-top: 80px;
+    margin-top: -10px;
     background: var(--color-light-gray);
     min-height: 100vh;
 }

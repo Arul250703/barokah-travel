@@ -138,7 +138,7 @@
 
 /* ===== Main Content ===== */
 .beranda-content {
-    margin-top: 80px;
+    margin-top: -10px;
     overflow-x: hidden;
     animation: fadeInUp 0.8s ease-out;
 }

@@ -54,7 +54,6 @@ const Semarang = () => {
 
     return (
         <div className="semarang-page">
-            <Header />
 
             <header className="detail-hero-section" style={heroBgStyle}>
                 <div className="detail-hero-overlay">
@@ -190,7 +189,6 @@ const Semarang = () => {
                 </div>
             </section>
             
-            <Footer />
         </div>
     );
 };
