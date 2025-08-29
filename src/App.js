@@ -104,7 +104,6 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/halamanbukutamu" element={<HalamanBukuTamu />} />
           </Route>
-
           {/* Grup 2: Halaman tanpa Header & Footer */}
           <Route path="/pembayaran" element={<DetailPembayaran />} />
           <Route path="/invoice" element={<Invoice />} />
