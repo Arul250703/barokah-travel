@@ -193,7 +193,7 @@
 /* Right Section - Much smaller */
 .tiket-kanan {
   background: var(--white);
-  width: 55px; /* Much smaller width */
+  width: 70px; /* Much smaller width */
   min-width: 55px;
   display: flex;
   flex-direction: column;

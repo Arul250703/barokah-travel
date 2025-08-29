@@ -107,7 +107,7 @@ const Beranda = () => {
             <section className="tour-cards-section">
                 <h3 className="tour-section-title">
                     PAKET WISATA SUKABUMI
-                    <Link to="/Yogyakartta" className="lihat-semua-link">Lihat Semua</Link>
+                    <Link to="/Yogyakarta" className="lihat-semua-link">Lihat Semua</Link>
                 </h3>
                 <div className="scroll-container">
                     <div className="tour-card">
