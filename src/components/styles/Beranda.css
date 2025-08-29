@@ -1630,7 +1630,7 @@
 
 /* Enhanced Main Content */
 .beranda-content {
-    margin-top: 80px;
+    margin-top: -10px;
     overflow-x: hidden;
     font-family: 'Poppins', sans-serif;
     color: var(--color-gray-700);

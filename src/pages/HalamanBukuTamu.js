@@ -1,86 +1,70 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const BukuTamu = () => {
-  const [currentView, setCurrentView] = useState('peserta'); // 'peserta' or 'marketing'
+const HalamanBukuTamu = () => {
+  const [currentView, setCurrentView] = useState('peserta');
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({});
   const [stats, setStats] = useState({
-    today: 15,
-    yesterday: 12,
-    week: 87,
-    month: 342,
-    total: 2543
+    today: 0,
+    yesterday: 0,
+    week: 0,
+    month: 0,
+    total: 0
   });
   const [marketingStats, setMarketingStats] = useState({
-    today: 5,
-    yesterday: 3,
-    week: 18,
-    month: 67,
-    total: 432
+    today: 0,
+    yesterday: 0,
+    week: 0,
+    month: 0,
+    total: 0
   });
-
-  // Mock data untuk demo
   const [pesertaData, setPesertaData] = useState([]);
   const [marketingData, setMarketingData] = useState([]);
+  const [totalPesertaPages, setTotalPesertaPages] = useState(1);
+  const [totalMarketingPages, setTotalMarketingPages] = useState(1);
 
-  // Generate mock data
+  // API base URL
+  const API_BASE = 'http://localhost:5000';
+
+  // Fetch data dari API
   useEffect(() => {
-    const generateMockPesertaData = () => {
-      const data = [];
-      const today = new Date();
-      
-      for (let i = 1; i <= 50; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() - Math.floor(Math.random() * 30));
-        
-        data.push({
-          id: i,
-          tanggal: `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`,
-          nama: `Pengunjung ${i}`,
-          alamat: `Alamat ${i}, Kota ${i}`,
-          tempat_lahir: `Kota ${i}`,
-          tanggal_lahir: `${String(Math.floor(Math.random() * 28) + 1).padStart(2, '0')}-${String(Math.floor(Math.random() * 12) + 1).padStart(2, '0')}-${Math.floor(Math.random() * 30) + 1980}`,
-          telepon: `08${Math.floor(100000000 + Math.random() * 900000000)}`,
-          tujuan: `Tujuan kunjungan ${i}`
-        });
-      }
-      return data;
-    };
+    fetchPesertaData();
+    fetchMarketingData();
+    fetchStats();
+  }, [currentPage, currentView]);
 
-    const generateMockMarketingData = () => {
-      const data = [];
-      const today = new Date();
-      const tripTypes = ['One Day', 'Overland'];
-      
-      for (let i = 1; i <= 30; i++) {
-        const date = new Date();
-        date.setDate(today.getDate() - Math.floor(Math.random() * 30));
-        const departureDate = new Date();
-        departureDate.setDate(today.getDate() + Math.floor(Math.random() * 60));
-        
-        data.push({
-          id: i,
-          tanggal: `${String(date.getDate()).padStart(2, '0')}-${String(date.getMonth() + 1).padStart(2, '0')}-${date.getFullYear()}`,
-          nama: `Marketing ${i}`,
-          perusahaan: `Perusahaan ${i}`,
-          alamat: `Alamat perusahaan ${i}`,
-          nama_kordinator: `Koordinator ${i}`,
-          kota_kordinator: `Kota ${i}`,
-          rencana_wisata: `Paket wisata ${i}`,
-          rencana_pemberangkatan: `${String(departureDate.getDate()).padStart(2, '0')}-${String(departureDate.getMonth() + 1).padStart(2, '0')}-${departureDate.getFullYear()}`,
-          destinasi_tujuan: `Destinasi ${i}`,
-          jenis_trip: tripTypes[Math.floor(Math.random() * tripTypes.length)],
-          telepon: `08${Math.floor(100000000 + Math.random() * 900000000)}`,
-          foto_kunjungan: i % 3 === 0 ? `marketing${i}.jpg` : null,
-          catatan: i % 2 === 0 ? `Catatan untuk marketing ${i}` : null
-        });
-      }
-      return data;
-    };
+  const fetchPesertaData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/peserta?page=${currentPage}`);
+      setPesertaData(response.data.data);
+      setTotalPesertaPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching peserta data:', error);
+    }
+  };
 
-    setPesertaData(generateMockPesertaData());
-    setMarketingData(generateMockMarketingData());
-  }, []);
+  const fetchMarketingData = async () => {
+    try {
+      const response = await axios.get(`${API_BASE}/api/marketing?page=${currentPage}`);
+      setMarketingData(response.data.data);
+      setTotalMarketingPages(response.data.totalPages);
+    } catch (error) {
+      console.error('Error fetching marketing data:', error);
+    }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const pesertaResponse = await axios.get(`${API_BASE}/api/stats/peserta`);
+      setStats(pesertaResponse.data);
+      
+      const marketingResponse = await axios.get(`${API_BASE}/api/stats/marketing`);
+      setMarketingStats(marketingResponse.data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -90,14 +74,39 @@ const BukuTamu = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formType = currentView;
     
-    // Simulasi penyimpanan data
-    alert(`Data ${formType} berhasil disimpan!`);
-    setFormData({});
-    e.target.reset();
+    try {
+      if (formType === 'peserta') {
+        await axios.post(`${API_BASE}/api/peserta`, formData);
+        alert('Data peserta berhasil disimpan!');
+      } else {
+        const marketingFormData = new FormData();
+        for (const key in formData) {
+          marketingFormData.append(key, formData[key]);
+        }
+        
+        await axios.post(`${API_BASE}/api/marketing`, marketingFormData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        alert('Data marketing berhasil disimpan!');
+      }
+      
+      setFormData({});
+      e.target.reset();
+      
+      // Refresh data
+      fetchPesertaData();
+      fetchMarketingData();
+      fetchStats();
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert('Terjadi kesalahan saat menyimpan data');
+    }
   };
 
   const getCurrentDate = () => {
@@ -109,10 +118,7 @@ const BukuTamu = () => {
     return new Date().getFullYear();
   };
 
-  const renderPagination = (data, onPageChange) => {
-    const itemsPerPage = 10;
-    const totalPages = Math.ceil(data.length / itemsPerPage);
-    
+  const renderPagination = (totalPages, onPageChange) => {
     if (totalPages <= 1) return null;
 
     return (
@@ -138,13 +144,7 @@ const BukuTamu = () => {
   };
 
   const renderTable = () => {
-    const itemsPerPage = 10;
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    
     if (currentView === 'peserta') {
-      const paginatedData = pesertaData.slice(startIndex, endIndex);
-      
       return (
         <div className="data-table-container">
           <div className="table-responsive">
@@ -161,13 +161,13 @@ const BukuTamu = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((item, index) => (
+                {pesertaData.map((item, index) => (
                   <tr key={item.id}>
-                    <td><strong>{startIndex + index + 1}</strong></td>
+                    <td><strong>{(currentPage - 1) * 10 + index + 1}</strong></td>
                     <td>{item.tanggal}</td>
                     <td><strong>{item.nama}</strong></td>
                     <td>{item.alamat}</td>
-                    <td>{item.tempat_lahir}, {item.tanggal_lahir}</td>
+                    <td>{item.tempat_lahir}, {new Date(item.tanggal_lahir).toLocaleDateString('id-ID')}</td>
                     <td>{item.tujuan}</td>
                     <td>{item.telepon}</td>
                   </tr>
@@ -175,12 +175,10 @@ const BukuTamu = () => {
               </tbody>
             </table>
           </div>
-          {renderPagination(pesertaData, setCurrentPage)}
+          {renderPagination(totalPesertaPages, setCurrentPage)}
         </div>
       );
     } else {
-      const paginatedData = marketingData.slice(startIndex, endIndex);
-      
       return (
         <div className="data-table-container">
           <div className="table-responsive">
@@ -204,9 +202,9 @@ const BukuTamu = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((item, index) => (
+                {marketingData.map((item, index) => (
                   <tr key={item.id}>
-                    <td><strong>{startIndex + index + 1}</strong></td>
+                    <td><strong>{(currentPage - 1) * 10 + index + 1}</strong></td>
                     <td>{item.tanggal}</td>
                     <td><strong>{item.nama}</strong></td>
                     <td>{item.perusahaan}</td>
@@ -214,18 +212,20 @@ const BukuTamu = () => {
                     <td>{item.nama_kordinator}</td>
                     <td>{item.kota_kordinator}</td>
                     <td>{item.rencana_wisata}</td>
-                    <td>{item.rencana_pemberangkatan}</td>
+                    <td>{new Date(item.rencana_pemberangkatan).toLocaleDateString('id-ID')}</td>
                     <td>{item.destinasi_tujuan}</td>
                     <td>{item.jenis_trip}</td>
                     <td>{item.telepon}</td>
-                    <td>{item.foto_kunjungan ? <img src={`uploads/${item.foto_kunjungan}`} style={{width:'80px'}} alt="Foto" /> : '-'}</td>
+                    <td>{item.foto_kunjungan ? (
+                      <img src={`${API_BASE}/uploads/${item.foto_kunjungan}`} style={{width:'80px'}} alt="Foto" />
+                    ) : '-'}</td>
                     <td>{item.catatan || '-'}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-          {renderPagination(marketingData, setCurrentPage)}
+          {renderPagination(totalMarketingPages, setCurrentPage)}
         </div>
       );
     }
@@ -239,7 +239,7 @@ const BukuTamu = () => {
 
   return (
     <div style={{
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      background: '#ffffff',
       minHeight: '100vh',
       fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
     }}>
@@ -248,11 +248,10 @@ const BukuTamu = () => {
           padding: 30px;
           max-width: 1400px;
           margin: 0 auto;
-          margin-top: 94px;
         }
         
         .header-section {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #4e73df;;
           backdrop-filter: blur(10px);
           border-radius: 20px;
           padding: 30px;
@@ -260,14 +259,6 @@ const BukuTamu = () => {
           text-align: center;
           border: 1px solid rgba(255, 255, 255, 0.2);
           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
-        .logo {
-          width: 250px;
-          height: 120px;
-          border-radius: 15px;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-          margin-bottom: 20px;
         }
         
         .header-title {
@@ -297,7 +288,7 @@ const BukuTamu = () => {
         }
         
         .card-header-modern {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #4e73df;;
           color: white;
           padding: 20px 30px;
           border-bottom: none;
@@ -312,7 +303,7 @@ const BukuTamu = () => {
         .form-control-modern {
           border: 2px solid #e3f2fd;
           border-radius: 15px;
-          padding: 20px 20px;
+          padding: 15px;
           font-size: 16px;
           transition: all 0.3s ease;
           background: rgba(255, 255, 255, 0.9);
@@ -329,7 +320,7 @@ const BukuTamu = () => {
         }
         
         .btn-modern {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #4e73df;
           border: none;
           border-radius: 15px;
           padding: 15px 30px;
@@ -344,19 +335,14 @@ const BukuTamu = () => {
         .btn-modern:hover {
           transform: translateY(-3px);
           box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-          color: white;
         }
         
         .btn-primary-modern {
-          background: linear-gradient(135deg, #4facfe 0%, #764ba2 100%);
-        }
-        
-        .btn-danger-modern {
-          background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+          background: #9cb1eeff;
         }
         
         .stats-card {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #6f8de9ff;
           color: white;
           border-radius: 20px;
           padding: 25px;
@@ -400,7 +386,7 @@ const BukuTamu = () => {
           background: linear-gradient(135deg, #764ba2 0%, #764ba2 100%);
           color: white;
           border: none;
-          padding: 20px 15px;
+          padding: 15px;
           font-weight: 600;
           text-align: center;
         }
@@ -414,18 +400,11 @@ const BukuTamu = () => {
         }
         
         .table-modern td {
-          padding: 15px;
+          padding: 12px;
           vertical-align: middle;
           border: none;
           border-bottom: 1px solid #f0f0f0;
           text-align: center;
-        }
-        
-        .action-buttons {
-          margin-bottom: 25px;
-          display: flex;
-          gap: 15px;
-          flex-wrap: wrap;
         }
         
         .footer-text {
@@ -502,7 +481,7 @@ const BukuTamu = () => {
         }
         
         .page-item {
-          margin: 0 2px;
+          margin: 0 5px;
         }
         
         .page-link {
@@ -539,16 +518,7 @@ const BukuTamu = () => {
             padding: 20px;
           }
           
-          .action-buttons {
-            flex-direction: column;
-          }
-          
           .col-lg-6, .col-lg-7, .col-lg-5 {
-            flex: 0 0 100%;
-            max-width: 100%;
-          }
-          
-          .col-md-6 {
             flex: 0 0 100%;
             max-width: 100%;
           }
@@ -568,7 +538,7 @@ const BukuTamu = () => {
               className={`btn-modern w-100 ${currentView === 'peserta' ? 'btn-primary-modern' : ''}`}
               onClick={() => switchView('peserta')}
             >
-              <i className="fas fa-user-edit me-2"></i> Pengunjung
+              Pengunjung
             </button>
           </div>
           <div className="col-lg-6 mb-4">
@@ -577,7 +547,7 @@ const BukuTamu = () => {
               className={`btn-modern w-100 ${currentView === 'marketing' ? 'btn-primary-modern' : ''}`}
               onClick={() => switchView('marketing')}
             >
-              <i className="fas fa-user-edit me-2"></i> Marketing
+              Marketing
             </button>
           </div>
         </div>
@@ -587,7 +557,6 @@ const BukuTamu = () => {
           <div className="col-lg-7 mb-4">
             <div className="modern-card">
               <div className="card-header-modern">
-                <i className="fas fa-user-edit me-2"></i> 
                 {currentView === 'peserta' ? 'Identitas Pengunjung' : 'Identitas Marketing'}
               </div>
               <div className="card-body-modern">
@@ -616,7 +585,6 @@ const BukuTamu = () => {
                         />
                       </div>
                       <div className="mb-3">
-                        <div className="row g-2">
                           <div className="col-md-6">
                             <input 
                               type="text" 
@@ -636,7 +604,6 @@ const BukuTamu = () => {
                               required 
                             />
                           </div>
-                        </div>
                       </div>
                       <div className="mb-3">
                         <input 
@@ -659,7 +626,7 @@ const BukuTamu = () => {
                         />
                       </div>
                       <button type="submit" className="btn-modern w-100">
-                        <i className="fas fa-save me-2"></i> Simpan Data
+                        Simpan Data
                       </button>
                     </>
                   ) : (
@@ -670,7 +637,7 @@ const BukuTamu = () => {
                           type="text" 
                           className="form-control-modern" 
                           placeholder="Nama Marketing" 
-                          name="nama_marketing" 
+                          name="nama" 
                           onChange={handleInputChange}
                           required 
                         />
@@ -679,7 +646,7 @@ const BukuTamu = () => {
                         <input 
                           type="text" 
                           className="form-control-modern" 
-                          placeholder="Instansi / Perusahaan" 
+                          placeholder="Perusahaan" 
                           name="perusahaan" 
                           onChange={handleInputChange}
                           required 
@@ -689,7 +656,7 @@ const BukuTamu = () => {
                         <textarea 
                           className="form-control-modern" 
                           placeholder="Alamat Instansi" 
-                          name="alamat_marketing" 
+                          name="alamat" 
                           onChange={handleInputChange}
                           required
                         ></textarea>
@@ -760,7 +727,7 @@ const BukuTamu = () => {
                           type="text" 
                           className="form-control-modern" 
                           placeholder="Nomor Telepon" 
-                          name="telepon_marketing" 
+                          name="telepon" 
                           onChange={handleInputChange}
                           required 
                         />
@@ -783,7 +750,7 @@ const BukuTamu = () => {
                         ></textarea>
                       </div>
                       <button type="submit" className="btn-modern w-100">
-                        <i className="fas fa-save me-2"></i> Simpan Data Marketing
+                        Simpan Data Marketing
                       </button>
                     </>
                   )}
@@ -799,34 +766,43 @@ const BukuTamu = () => {
           <div className="col-lg-5 mb-4">
             <div className="stats-card">
               <h4 className="text-center mb-4">
-                <i className="fas fa-chart-bar me-2"></i> 
                 {currentView === 'peserta' ? 'Statistik Pengunjung' : 'Statistik Marketing'}
               </h4>
               <table className="stats-table">
                 <tbody>
                   <tr>
-                    <td><i className="fas fa-calendar-day me-2"></i> Hari ini</td>
+                    <td>Hari ini</td>
                     <td><strong>{currentView === 'peserta' ? stats.today : marketingStats.today}</strong></td>
                   </tr>
                   <tr>
-                    <td><i className="fas fa-calendar-minus me-2"></i> Kemarin</td>
+                    <td>Kemarin</td>
                     <td><strong>{currentView === 'peserta' ? stats.yesterday : marketingStats.yesterday}</strong></td>
                   </tr>
                   <tr>
-                    <td><i className="fas fa-calendar-week me-2"></i> Minggu ini</td>
+                    <td>Minggu ini</td>
                     <td><strong>{currentView === 'peserta' ? stats.week : marketingStats.week}</strong></td>
                   </tr>
                   <tr>
-                    <td><i className="fas fa-calendar-alt me-2"></i> Bulan ini</td>
+                    <td>Bulan ini</td>
                     <td><strong>{currentView === 'peserta' ? stats.month : marketingStats.month}</strong></td>
                   </tr>
                   <tr>
-                    <td><i className="fas fa-users me-2"></i> Keseluruhan</td>
+                    <td>Keseluruhan</td>
                     <td><strong>{currentView === 'peserta' ? stats.total : marketingStats.total}</strong></td>
                   </tr>
                 </tbody>
               </table>
             </div>
+
+            {/* Data Table Section */}
+            {/* <div className="modern-card">
+              <div className="card-header-modern">
+                {currentView === 'peserta' ? 'Data Pengunjung' : 'Data Marketing'}
+              </div>
+              <div className="card-body-modern">
+                {renderTable()}
+              </div>
+            </div> */}
           </div>
         </div>
       </div>
@@ -834,4 +810,4 @@ const BukuTamu = () => {
   );
 };
 
-export default BukuTamu;
+export default HalamanBukuTamu;

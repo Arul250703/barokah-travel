@@ -36,23 +36,24 @@ const Header = () => {
                 <div className="top-bar-container">
                     <div className="contact-info">
                         <a href="https://wa.me/6285930005544" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faWhatsapp} /> 
-                            <span className="contact-text">+62 859 3000 5544</span>
+                        <FontAwesomeIcon icon={faWhatsapp} /> 
+                        <span className="contact-text">+62 859 3000 5544</span>
                         </a>
                         <a href="mailto:barokahtour.travel@gmail.com" className="email-link">
-                            <FontAwesomeIcon icon={faEnvelope} /> 
-                            <span className="contact-text">barokahtour.travel@gmail.com</span>
+                        <FontAwesomeIcon icon={faEnvelope} /> 
+                        <span className="contact-text">barokahtour.travel@gmail.com</span>
                         </a>
                     </div>
+
                     <div className="social-icons">
                         <a href="https://www.instagram.com/barokahtourindonesia_/" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faInstagram} />
+                        <FontAwesomeIcon icon={faInstagram} />
                         </a>
                         <a href="https://www.tiktok.com/@barokahtour_?is_from_webapp=1&sender_device=pc" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faTiktok} />
+                        <FontAwesomeIcon icon={faTiktok} />
                         </a>
                         <a href="https://youtube.com/@barokahtoursmi?si=-yRfaFEfKaC-lelk" target="_blank" rel="noopener noreferrer">
-                            <FontAwesomeIcon icon={faYoutube} />
+                        <FontAwesomeIcon icon={faYoutube} />
                         </a>
                     </div>
                 </div>
