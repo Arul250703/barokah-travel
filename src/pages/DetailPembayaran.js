@@ -119,6 +119,7 @@ const DetailPembayaran = () => {
           emailKontak,
           totalHarga,
           bookingId: result.bookingId,
+          bookingDbId: result.bookingDbId,
           methodName: "BCA Virtual Account",
           vaNumber:
             "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
