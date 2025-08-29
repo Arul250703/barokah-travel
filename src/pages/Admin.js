@@ -9,16 +9,15 @@ const Admin = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const [isLoading, setIsLoading] = useState(false); // State untuk loading
+    const [isLoading, setIsLoading] = useState(false); 
     const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setIsLoading(true); // Mulai loading
-        setError(''); // Bersihkan error sebelumnya
+        setIsLoading(true);
+        setError('');
 
         try {
-            // 1. Kirim data ke backend menggunakan fetch
             const response = await fetch('http://localhost:5000/api/login', {
                 method: 'POST',
                 headers: {
@@ -29,20 +28,21 @@ const Admin = () => {
 
             const data = await response.json();
 
-            // 2. Periksa respons dari backend
-            if (response.ok) { // Jika status response adalah 2xx (sukses)
+            if (response.ok) {
                 console.log('Login berhasil dari frontend');
+
+                // ✅ Simpan status login di localStorage
+                localStorage.setItem("auth", "true");
+
                 navigate('/dashboard');
             } else {
-                // Jika backend mengirim error (misal: status 401)
                 setError(data.message || 'Terjadi kesalahan.');
             }
         } catch (err) {
-            // Jika terjadi error jaringan (misal: backend tidak jalan)
             setError('Tidak dapat terhubung ke server. Pastikan server backend berjalan.');
             console.error('Error saat login:', err);
         } finally {
-            setIsLoading(false); // Selesai loading
+            setIsLoading(false);
         }
     };
 
@@ -77,7 +77,6 @@ const Admin = () => {
                                 required
                             />
                         </div>
-                        {/* Tombol akan nonaktif saat loading */}
                         <button type="submit" className="login-btn" disabled={isLoading}>
                             {isLoading ? 'LOADING...' : 'LOG IN'}
                         </button>
@@ -87,7 +86,7 @@ const Admin = () => {
                 </div>
 
                 <div className="social-panel">
-                    {/* ... bagian social panel tidak berubah ... */}
+                    {/* ... bagian social panel tetap ... */}
                 </div>
             </div>
         </div>

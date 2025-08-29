@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet, useLocation } from 'react-router-dom';
+
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { ThemeProvider } from './context/ThemeContext';
 import AdminLayout from './components/AdminLayout';
+import ProtectedRoute from './utils/ProtectedRoutes'; 
 
 // Pages
 import Beranda from './pages/Beranda';
@@ -103,7 +105,7 @@ function App() {
             <Route path="/halamanbukutamu" element={<HalamanBukuTamu />} />
           </Route>
 
-          {/* Grup 2: Halaman tanpa Header & Footer (Proses Pembayaran, dll) */}
+          {/* Grup 2: Halaman tanpa Header & Footer */}
           <Route path="/pembayaran" element={<DetailPembayaran />} />
           <Route path="/invoice" element={<Invoice />} />
           <Route path="/virtual-account" element={<VirtualAccountPage />} />
@@ -112,19 +114,21 @@ function App() {
           <Route path="/tiket/:bookingId" element={<TiketPage />} />
           <Route path="/scanner" element={<ScannerPage />} />
           <Route path="/admin" element={<Admin />} />
-          
-          {/* Grup 3: Halaman Admin (dengan Sidebar) */}
-          <Route element={<AdminLayoutWrapper />}>
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/keuangan" element={<Keuangan />} />
-            <Route path="/qr-page" element={<QrPage />} />
-            <Route path="/settings" element={<SettingsPage />} />
-            <Route path="/bukutamu" element={<BukuTamu />} />
-            <Route path="/users" element={<UsersPage />} />
-            {/* Tambahan halaman admin placeholder */}
-            <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
-            <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
-            <Route path="/reports" element={<div>Reports Page (Coming Soon)</div>} />
+
+          {/* Grup 3: Halaman Admin (Proteksi + Sidebar) */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<AdminLayoutWrapper />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/keuangan" element={<Keuangan />} />
+              <Route path="/qr-page" element={<QrPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/bukutamu" element={<BukuTamu />} />
+              <Route path="/users" element={<UsersPage />} />
+              {/* Tambahan halaman admin */}
+              <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
+              <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />
+              <Route path="/reports" element={<div>Reports Page (Coming Soon)</div>} />
+            </Route>
           </Route>
 
           {/* Fallback 404 */}
@@ -135,6 +139,5 @@ function App() {
   );
 }
 
-export default App;
-
-
+export default App;
+    
