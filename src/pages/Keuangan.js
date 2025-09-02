@@ -22,26 +22,43 @@ import styles from "../components/styles/Keuangan.module.css";
 
 
 // Komponen untuk Badge Status
+// Komponen untuk Badge Status
 const StatusBadge = ({ status }) => {
+  // Pastikan status selalu memiliki nilai default
+  const safeStatus = status || 'unknown';
+  
   const statusClass = {
     selesai: styles.lunas,
     menunggu_pembayaran: styles.pending,
     dibatalkan: styles.dibatalkan,
     gagal: styles.error,
+    unknown: styles.pending // tambahkan class untuk status unknown
   };
+
+  // Fungsi untuk format teks status
+  const getStatusText = (statusValue) => {
+    switch (statusValue) {
+      case "selesai":
+        return "Lunas";
+      case "menunggu_pembayaran":
+        return "Pending";
+      case "dibatalkan":
+        return "Dibatalkan";
+      case "gagal":
+        return "Gagal";
+      default:
+        return "Unknown";
+    }
+  };
+
   return (
     <span
-      className={`${styles.status} ${statusClass[status] || styles.pending}`}
+      className={`${styles.status} ${statusClass[safeStatus] || styles.pending}`}
     >
-      {status === "selesai"
-        ? "Lunas"
-        : status === "menunggu_pembayaran"
-        ? "Pending"
-        : status.replace("_", " ")}
+      {getStatusText(safeStatus)}
     </span>
   );
 };
-
 // Komponen untuk Summary Cards
 const SummaryCard = ({ title, value, icon: Icon, color, subtitle }) => (
   <div className={`${styles.summaryCard} ${styles[color]}`}>

@@ -17,8 +17,12 @@ const Admin = () => {
         setIsLoading(true);
         setError('');
 
+        console.log('🔐 Memulai proses login...');
+        console.log('Username:', username);
+
         try {
-            const response = await fetch('http://localhost:5000/api/login', {
+            // Menggunakan endpoint yang benar
+            const response = await fetch('http://localhost:5000/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -26,21 +30,28 @@ const Admin = () => {
                 body: JSON.stringify({ username, password }),
             });
 
+            console.log('📡 Response status:', response.status);
+
             const data = await response.json();
+            console.log('📊 Response data:', data);
 
-            if (response.ok) {
-                console.log('Login berhasil dari frontend');
+            if (response.ok && data.success) {
+                console.log('✅ Login berhasil dari frontend');
+                console.log('👤 User data:', data.user);
 
-                // ✅ Simpan status login di localStorage
+                // Simpan status login dan data user di localStorage
                 localStorage.setItem("auth", "true");
+                localStorage.setItem("user", JSON.stringify(data.user));
 
+                // Redirect ke dashboard
                 navigate('/dashboard');
             } else {
-                setError(data.message || 'Terjadi kesalahan.');
+                console.log('❌ Login gagal:', data.message);
+                setError(data.message || 'Login gagal. Silakan coba lagi.');
             }
         } catch (err) {
+            console.error('🚨 Error saat login:', err);
             setError('Tidak dapat terhubung ke server. Pastikan server backend berjalan.');
-            console.error('Error saat login:', err);
         } finally {
             setIsLoading(false);
         }
@@ -66,6 +77,7 @@ const Admin = () => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 required
+                                disabled={isLoading}
                             />
                         </div>
                         <div className="input-group">
@@ -75,6 +87,7 @@ const Admin = () => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
+                                disabled={isLoading}
                             />
                         </div>
                         <button type="submit" className="login-btn" disabled={isLoading}>
@@ -86,7 +99,15 @@ const Admin = () => {
                 </div>
 
                 <div className="social-panel">
-                    {/* ... bagian social panel tetap ... */}
+                    <div className="social-content">
+                        <h2>Hello, Friend!</h2>
+                        <p>Enter your personal details and start journey with us</p>
+                        <div className="social-icons">
+                            <FontAwesomeIcon icon={faFacebookF} className="social-icon" />
+                            <FontAwesomeIcon icon={faGoogle} className="social-icon" />
+                            <FontAwesomeIcon icon={faTwitter} className="social-icon" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

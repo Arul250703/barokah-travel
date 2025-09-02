@@ -65,6 +65,7 @@ const Semarang = () => {
 
     return (
         <div className="semarang-page">
+
             <header className="detail-hero-section" style={heroBgStyle}>
                 <div className="detail-hero-overlay">
                     <h1 className="detail-hero-title">{semarangData.title}</h1>

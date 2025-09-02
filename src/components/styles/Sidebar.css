@@ -460,6 +460,4 @@
 
 .sidebar-menu a:focus {
   outline: 2px solid #3498db;
-  outline-offset: -2px;
 }
-
