@@ -89,12 +89,13 @@ const DetailPembayaran = () => {
       package_id: package_id,
       customer_name: peserta[0].nama,
       customer_email: emailKontak,
+      customer_phone: peserta[0].telepon, // Tambahkan nomor telepon customer
       participants: peserta.map((p) => ({
         name: p.nama,
-        phone: p.telepon,
-        address: p.alamat, // Tambahkan field yang dibutuhkan backend
-        birth_place: p.tempatLahir, // Tambahkan field yang dibutuhkan backend
-        birth_date: p.tanggalLahir, // Tambahkan field yang dibutuhkan backend
+        phone: p.telepon, // Pastikan ini dikirim
+        address: p.alamat,
+        birth_place: p.tempatLahir,
+        birth_date: p.tanggalLahir,
       })),
       total_price: totalHarga,
     };
@@ -111,7 +112,7 @@ const DetailPembayaran = () => {
       const result = await response.json();
       console.log("Response dari server:", result); // Debug log
 
-      if (response.ok) {
+      if (response.ok && result.success) {
         const vaDetails = {
           namaPaket,
           harga,
@@ -119,7 +120,7 @@ const DetailPembayaran = () => {
           emailKontak,
           totalHarga,
           bookingId: result.bookingId,
-          bookingDbId: result.bookingDbId,
+          bookingCode: result.bookingCode,
           methodName: "BCA Virtual Account",
           vaNumber:
             "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
@@ -128,7 +129,7 @@ const DetailPembayaran = () => {
         navigate("/virtual-account", { state: vaDetails });
       } else {
         alert(`Gagal menyimpan pemesanan: ${result.message}`);
-        console.error("Error response:", result); // Debug log
+        console.error("Error response:", result);
       }
     } catch (error) {
       console.error("Error:", error);

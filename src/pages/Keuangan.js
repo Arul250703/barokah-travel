@@ -12,11 +12,9 @@ import {
   FaTimes,
   FaSave,
   FaUser,
-  FaMapMarkerAlt,
-  FaBirthdayCake,
+  FaPhone,
   FaExclamationTriangle,
   FaArrowsAltH,
-  FaWhatsapp, 
 } from "react-icons/fa";
 import styles from "../components/styles/Keuangan.module.css";
 
@@ -32,7 +30,6 @@ const StatusBadge = ({ status }) => {
     unknown: styles.pending
   };
 
-  // Fungsi untuk format teks status berdasarkan status_display dari backend
   const getStatusText = (statusValue) => {
     switch (statusValue) {
       case "selesai":
@@ -126,6 +123,10 @@ const InvoiceDetailModal = ({ booking, isOpen, onClose }) => {
                 <label>Email Kontak:</label>
                 <span>{booking.customer_email || "N/A"}</span>
               </div>
+              <div className={styles.infoItem}>
+                <label>Nomor Telepon:</label>
+                <span>{booking.customer_phone || "N/A"}</span>
+              </div>
             </div>
           </div>
           <div className={styles.tourSection}>
@@ -179,25 +180,18 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
         setFormData({
           customer_name: booking.customer_name || "",
           customer_email: booking.customer_email || "",
+          customer_phone: booking.customer_phone || "", 
           total_price: booking.total_price || 0,
           status: booking.status || "menunggu_pembayaran",
         });
       } else {
-        // Reset form untuk 'Tambah Baru'
         setFormData({
           package_id: "",
           customer_name: "",
           customer_email: "",
+          customer_phone: "",
           total_price: 0,
-          participants: [
-            {
-              name: "",
-              phone: "",
-              address: "",
-              birth_place: "",
-              birth_date: "",
-            },
-          ],
+          status: "menunggu_pembayaran",
         });
       }
     }
@@ -277,6 +271,18 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
           </div>
 
           <div className={styles.formGroup}>
+            <label>Nomor Telepon</label>
+            <input
+              type="tel"
+              name="customer_phone"
+              value={formData.customer_phone}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              placeholder="Contoh: 081234567890"
+            />
+          </div>
+
+          <div className={styles.formGroup}>
             <label>Total Harga *</label>
             <input
               type="number"
@@ -345,7 +351,6 @@ function Keuangan() {
       setIsLoading(true);
       setError(null);
 
-      console.log("Fetching data from API...");
       const response = await fetch("http://localhost:5000/api/bookings");
 
       if (!response.ok) {
@@ -353,11 +358,9 @@ function Keuangan() {
       }
 
       const result = await response.json();
-      console.log("API Response:", result);
 
       if (result.success && Array.isArray(result.data)) {
         setBookings(result.data);
-        console.log(`Loaded ${result.data.length} records`);
       } else {
         console.error("Format data dari API tidak sesuai:", result);
         setBookings([]);
@@ -386,6 +389,9 @@ function Keuangan() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         (item.customer_email || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
+        (item.customer_phone || "")
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         (item.booking_id || "")
@@ -435,34 +441,12 @@ function Keuangan() {
     setIsFormModalOpen(true);
   };
 
-  // PERBAIKAN: handleOpenEditModal yang sudah diperbaiki
   const handleOpenEditModal = (booking) => {
-    console.log("Opening edit modal for booking:", booking); // Debug log
-    
-    // Validasi lebih komprehensif
-    if (!booking) {
-      console.error("Booking object is null or undefined");
-      alert("Data booking tidak tersedia");
+    if (!booking.id || booking.id === 0) {
+      alert("ID booking tidak valid");
       return;
     }
     
-    // Perbaikan validasi ID - lebih fleksibel untuk string dan number
-    if (booking.id === undefined || booking.id === null || booking.id === "") {
-      console.error("Booking ID is missing:", booking);
-      alert("ID booking tidak ditemukan dalam data");
-      return;
-    }
-    
-    // Convert to number jika berupa string
-    const numericId = typeof booking.id === 'string' ? parseInt(booking.id) : booking.id;
-    
-    if (isNaN(numericId) || numericId <= 0) {
-      console.error("Invalid booking ID:", booking.id, "Type:", typeof booking.id);
-      alert(`ID booking tidak valid: ${booking.id}`);
-      return;
-    }
-    
-    console.log("Valid booking ID:", booking.id, "Type:", typeof booking.id);
     setIsEditing(true);
     setCurrentBooking(booking);
     setIsFormModalOpen(true);
@@ -486,9 +470,6 @@ function Keuangan() {
     const method = isEditing ? "PUT" : "POST";
 
     try {
-      console.log("Saving data:", formData);
-      console.log("URL:", url, "Method:", method);
-
       // Validasi data sebelum dikirim
       if (!formData.customer_name || !formData.customer_email || 
           formData.total_price === undefined || !formData.status) {
@@ -514,11 +495,9 @@ function Keuangan() {
         throw new Error(`Server mengembalikan non-JSON: ${text.substring(0, 100)}`);
       }
 
-      console.log("Save response:", result);
-
       if (response.ok && result.success) {
         alert(result.message || "Data berhasil disimpan");
-        await fetchData(); // Refresh data
+        await fetchData();
         handleCloseModal();
       } else {
         throw new Error(result.message || "Gagal menyimpan data");
@@ -529,55 +508,31 @@ function Keuangan() {
     }
   };
 
-  // PERBAIKAN: handleDelete yang sudah diperbaiki
   const handleDelete = async (booking) => {
-    console.log("Attempting to delete booking:", booking); // Debug log
-    
-    // Validasi booking object
-    if (!booking) {
-      console.error("Booking object is null or undefined");
-      alert("Data booking tidak tersedia untuk penghapusan");
-      return;
-    }
-    
     const bookingId = booking.id;
     
-    // Validasi ID
-    if (bookingId === undefined || bookingId === null || bookingId === "") {
-      console.error("Booking ID is missing for delete:", booking);
-      alert("ID booking tidak ditemukan untuk penghapusan");
-      return;
-    }
-    
-    // Convert to number jika berupa string
-    const numericId = typeof bookingId === 'string' ? parseInt(bookingId) : bookingId;
-    
-    if (isNaN(numericId) || numericId <= 0) {
-      console.error("Invalid booking ID for delete:", bookingId, "Type:", typeof bookingId);
-      alert(`ID booking tidak valid untuk penghapusan: ${bookingId}`);
+    if (!bookingId || bookingId === 0) {
+      alert("ID booking tidak valid");
       return;
     }
 
-    const bookingCode = booking.booking_id || `ID-${numericId}`;
+    const bookingCode = booking.booking_id || `ID-${bookingId}`;
     
     if (!window.confirm(`Yakin ingin menghapus booking ${bookingCode}?`)) return;
 
     try {
-      console.log("Deleting booking with ID:", numericId);
-
       const response = await fetch(
-        `http://localhost:5000/api/bookings/${numericId}`,
+        `http://localhost:5000/api/bookings/${bookingId}`,
         {
           method: "DELETE",
         }
       );
 
       const result = await response.json();
-      console.log("Delete response:", result);
 
       if (response.ok && result.success) {
         alert(result.message || "Data berhasil dihapus");
-        await fetchData(); // Refresh data
+        await fetchData();
       } else {
         throw new Error(result.message || "Gagal menghapus data");
       }
@@ -599,6 +554,7 @@ function Keuangan() {
         "ID Booking",
         "Nama Customer",
         "Email",
+        "Telepon",
         "Paket Tour",
         "Total Harga",
         "Status Pembayaran",
@@ -612,6 +568,7 @@ function Keuangan() {
             `"${item.booking_id || "N/A"}"`,
             `"${item.customer_name || "N/A"}"`,
             `"${item.customer_email || "N/A"}"`,
+            `"${item.customer_phone || "N/A"}"`,
             `"${item.package_name || "N/A"}"`,
             item.total_price || 0,
             item.status || "menunggu_pembayaran",
@@ -727,7 +684,7 @@ function Keuangan() {
           <FaSearch className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Cari nama, paket, email, atau ID booking..."
+            placeholder="Cari nama, paket, email, telepon, atau ID booking..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             disabled={isLoading}
@@ -762,6 +719,7 @@ function Keuangan() {
                   <tr>
                     <th>ID Booking</th>
                     <th>Pelanggan</th>
+                    <th>Telepon</th>
                     <th>Paket Tour</th>
                     <th>Total Tagihan</th>
                     <th>Status Pembayaran</th>
@@ -780,6 +738,12 @@ function Keuangan() {
                           <strong>{item.customer_name || "N/A"}</strong>
                           <br />
                           <small>{item.customer_email || "N/A"}</small>
+                        </td>
+                        <td>
+                          <div className={styles.phoneCell}>
+                            <FaPhone className={styles.phoneIcon} />
+                            {item.customer_phone || "N/A"}
+                          </div>
                         </td>
                         <td>{item.package_name || "N/A"}</td>
                         <td className={styles.amount}>
@@ -804,14 +768,14 @@ function Keuangan() {
                             <button
                               className={styles.editButton}
                               title="Edit"
-                              onClick={() => handleOpenEditModal(item)} // Pass object lengkap
+                              onClick={() => handleOpenEditModal(item)}
                             >
                               <FaEdit />
                             </button>
                             <button
                               className={styles.deleteButton}
                               title="Hapus"
-                              onClick={() => handleDelete(item)} // Pass object lengkap
+                              onClick={() => handleDelete(item)}
                             >
                               <FaTrash />
                             </button>
@@ -821,7 +785,7 @@ function Keuangan() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className={styles.emptyMessage}>
+                      <td colSpan="8" className={styles.emptyMessage}>
                         {searchTerm || filterStatus !== "Semua"
                           ? "Tidak ada data yang sesuai dengan filter."
                           : "Belum ada data booking."}

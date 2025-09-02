@@ -34,7 +34,8 @@ import QrPage from './pages/QrPage';
 import BukuTamu from './pages/BukuTamu';
 import HalamanBukuTamu from './pages/HalamanBukuTamu';
 import SettingsPage from './pages/SettingsPage';
-import UsersPage from './pages/UsersPage';
+import UsersPage from './pages/UsersPage';  
+import PendingPaymentsDashboard from './pages/PendingPyment';
 
 // Layout untuk user (Header + Footer)
 const SiteLayout = () => {
@@ -123,6 +124,7 @@ function App() {
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/bukutamu" element={<BukuTamu />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/pending-payments" element={<PendingPaymentsDashboard />} />
               {/* Tambahan halaman admin */}
               <Route path="/event" element={<div>Event Page (Coming Soon)</div>} />
               <Route path="/bookings" element={<div>Bookings Page (Coming Soon)</div>} />

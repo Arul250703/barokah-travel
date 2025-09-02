@@ -22,6 +22,7 @@
     "html2canvas": "^1.4.1",
     "html5-qrcode": "^2.3.8",
     "jspdf": "^3.0.1",
+    "lucide-react": "^0.542.0",
     "multer": "^2.0.2",
     "mysql2": "^3.14.3",
     "qrcode.react": "^4.2.0",
