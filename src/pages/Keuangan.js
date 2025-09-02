@@ -20,34 +20,31 @@ import {
 } from "react-icons/fa";
 import styles from "../components/styles/Keuangan.module.css";
 
-
-// Komponen untuk Badge Status
 // Komponen untuk Badge Status
 const StatusBadge = ({ status }) => {
-  // Pastikan status selalu memiliki nilai default
   const safeStatus = status || 'unknown';
   
   const statusClass = {
     selesai: styles.lunas,
     menunggu_pembayaran: styles.pending,
+    dp_lunas: styles.partial,
     dibatalkan: styles.dibatalkan,
-    gagal: styles.error,
-    unknown: styles.pending // tambahkan class untuk status unknown
+    unknown: styles.pending
   };
 
-  // Fungsi untuk format teks status
+  // Fungsi untuk format teks status berdasarkan status_display dari backend
   const getStatusText = (statusValue) => {
     switch (statusValue) {
       case "selesai":
-        return "Lunas";
+        return "LUNAS";
       case "menunggu_pembayaran":
-        return "Pending";
+        return "MENUNGGU PEMBAYARAN";
+      case "dp_lunas":
+        return "DP LUNAS";
       case "dibatalkan":
-        return "Dibatalkan";
-      case "gagal":
-        return "Gagal";
+        return "DIBATALKAN";
       default:
-        return "Unknown";
+        return "UNKNOWN";
     }
   };
 
@@ -59,6 +56,7 @@ const StatusBadge = ({ status }) => {
     </span>
   );
 };
+
 // Komponen untuk Summary Cards
 const SummaryCard = ({ title, value, icon: Icon, color, subtitle }) => (
   <div className={`${styles.summaryCard} ${styles[color]}`}>
@@ -145,49 +143,25 @@ const InvoiceDetailModal = ({ booking, isOpen, onClose }) => {
               </div>
               <div className={styles.infoItem}>
                 <label>Status Pembayaran:</label>
-                <StatusBadge status={booking.payment_status} />
+                <StatusBadge status={booking.status} />
               </div>
               <div className={styles.infoItem}>
                 <label>Tanggal Booking:</label>
                 <span>
-                  {booking.booking_date
-                    ? new Date(booking.booking_date).toLocaleDateString("id-ID")
+                  {booking.created_at
+                    ? new Date(booking.created_at).toLocaleDateString("id-ID", {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })
                     : "N/A"}
                 </span>
               </div>
-              <div className={styles.infoItem}>
-                <label>Jumlah Peserta:</label>
-                <span>{booking.participants?.length || 0} orang</span>
-              </div>
             </div>
           </div>
-          {booking.participants && booking.participants.length > 0 && (
-            <div className={styles.participantsSection}>
-              <h3>Daftar Peserta ({booking.participants.length})</h3>
-              <div className={styles.participantsList}>
-                {booking.participants.map((p, index) => (
-                  <div
-                    key={p.participant_id || index}
-                    className={styles.participantCard}
-                  >
-                    <h4>Peserta {index + 1}</h4>
-                    <div className={styles.participantInfo}>
-                      <div>
-                        <strong>Nama:</strong> {p.name || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Telepon:</strong> {p.phone || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Status Tiket:</strong>{" "}
-                        <StatusBadge status={p.ticket_status} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -203,10 +177,10 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
     if (isOpen) {
       if (isEditing && booking) {
         setFormData({
-          package_name: booking.package_name || "",
+          customer_name: booking.customer_name || "",
           customer_email: booking.customer_email || "",
           total_price: booking.total_price || 0,
-          payment_status: booking.payment_status || "menunggu_pembayaran",
+          status: booking.status || "menunggu_pembayaran",
         });
       } else {
         // Reset form untuk 'Tambah Baru'
@@ -239,40 +213,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
     }));
   };
 
-  const handleParticipantChange = (index, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      participants: prev.participants.map((p, i) =>
-        i === index ? { ...p, [field]: value } : p
-      ),
-    }));
-  };
-
-  const addParticipant = () => {
-    setFormData((prev) => ({
-      ...prev,
-      participants: [
-        ...prev.participants,
-        {
-          name: "",
-          phone: "",
-          address: "",
-          birth_place: "",
-          birth_date: "",
-        },
-      ],
-    }));
-  };
-
-  const removeParticipant = (index) => {
-    if (formData.participants.length > 1) {
-      setFormData((prev) => ({
-        ...prev,
-        participants: prev.participants.filter((_, i) => i !== index),
-      }));
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -284,7 +224,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
   };
 
   return (
-
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.formModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
@@ -314,11 +253,11 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
           )}
 
           <div className={styles.formGroup}>
-            <label>{isEditing ? "Paket Tour" : "Nama Customer"} *</label>
+            <label>Nama Customer *</label>
             <input
               type="text"
-              name={isEditing ? "package_name" : "customer_name"}
-              value={isEditing ? formData.package_name : formData.customer_name}
+              name="customer_name"
+              value={formData.customer_name}
               onChange={handleChange}
               required
               disabled={isSubmitting}
@@ -354,127 +293,17 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
           <div className={styles.formGroup}>
             <label>Status</label>
             <select
-              name={isEditing ? "payment_status" : "status"}
-              value={
-                isEditing ? formData.payment_status : "menunggu_pembayaran"
-              }
+              name="status"
+              value={formData.status}
               onChange={handleChange}
               disabled={isSubmitting}
             >
-              <option value="menunggu_pembayaran">Pending</option>
-              <option value="selesai">Lunas</option>
-              <option value="dibatalkan">Dibatalkan</option>
-              <option value="gagal">Gagal</option>
+              <option value="menunggu_pembayaran">MENUNGGU PEMBAYARAN</option>
+              <option value="dp_lunas">DP LUNAS</option>
+              <option value="selesai">LUNAS</option>
+              <option value="dibatalkan">DIBATALKAN</option>
             </select>
           </div>
-
-          {/* Form peserta hanya untuk tambah baru */}
-          {!isEditing && (
-            <div className={styles.participantsSection}>
-              <div className={styles.sectionHeader}>
-                <h3>Daftar Peserta</h3>
-                <button
-                  type="button"
-                  onClick={addParticipant}
-                  className={styles.addParticipantButton}
-                  disabled={isSubmitting}
-                >
-                  <FaPlus /> Tambah Peserta
-                </button>
-              </div>
-              {formData.participants.map((peserta, index) => (
-                <div key={index} className={styles.participantForm}>
-                  <div className={styles.participantHeader}>
-                    <h4>Peserta {index + 1}</h4>
-                    {formData.participants.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeParticipant(index)}
-                        className={styles.removeParticipantButton}
-                        disabled={isSubmitting}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
-                  </div>
-                  <div className={styles.participantFields}>
-                    <div className={styles.formGroup}>
-                      <label>Nama Lengkap *</label>
-                      <input
-                        type="text"
-                        value={peserta.name}
-                        onChange={(e) =>
-                          handleParticipantChange(index, "name", e.target.value)
-                        }
-                        required
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Telepon</label>
-                      <input
-                        type="tel"
-                        value={peserta.phone}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "phone",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Alamat</label>
-                      <textarea
-                        value={peserta.address}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "address",
-                            e.target.value
-                          )
-                        }
-                        rows="2"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Tempat Lahir</label>
-                      <input
-                        type="text"
-                        value={peserta.birth_place}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "birth_place",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Tanggal Lahir</label>
-                      <input
-                        type="date"
-                        value={peserta.birth_date}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "birth_date",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
 
           <div className={styles.formActions}>
             <button
@@ -500,8 +329,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
   );
 };
 
-
-
 function Keuangan() {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -513,7 +340,6 @@ function Keuangan() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentBooking, setCurrentBooking] = useState(null);
 
-  // --- FUNGSI PENGAMBILAN DATA YANG DIPERBAIKI ---
   const fetchData = async () => {
     try {
       setIsLoading(true);
@@ -566,21 +392,21 @@ function Keuangan() {
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
       const matchesStatus =
-        filterStatus === "Semua" || item.payment_status === filterStatus;
+        filterStatus === "Semua" || item.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
   }, [bookings, searchTerm, filterStatus]);
 
   const summaryStats = useMemo(() => {
     if (!Array.isArray(bookings)) {
-      return { total: 0, lunas: 0, pending: 0, totalLunas: 0 };
+      return { total: 0, lunas: 0, pending: 0, totalLunas: 0, dpLunas: 0, totalDpLunas: 0 };
     }
     const total = bookings.reduce(
       (sum, item) => sum + (parseFloat(item.total_price) || 0),
       0
     );
     const lunasItems = bookings.filter(
-      (item) => item.payment_status === "selesai"
+      (item) => item.status === "selesai"
     );
     const lunas = lunasItems.length;
     const totalLunas = lunasItems.reduce(
@@ -588,10 +414,19 @@ function Keuangan() {
       0
     );
     const pending = bookings.filter(
-      (item) => item.payment_status === "menunggu_pembayaran"
+      (item) => item.status === "menunggu_pembayaran"
     ).length;
+    
+    const dpLunasItems = bookings.filter(
+      (item) => item.status === "dp_lunas"
+    );
+    const dpLunas = dpLunasItems.length;
+    const totalDpLunas = dpLunasItems.reduce(
+      (sum, item) => sum + (parseFloat(item.total_price) || 0),
+      0
+    );
 
-    return { total, lunas, pending, totalLunas };
+    return { total, lunas, pending, totalLunas, dpLunas, totalDpLunas };
   }, [bookings]);
 
   const handleOpenAddModal = () => {
@@ -600,7 +435,34 @@ function Keuangan() {
     setIsFormModalOpen(true);
   };
 
+  // PERBAIKAN: handleOpenEditModal yang sudah diperbaiki
   const handleOpenEditModal = (booking) => {
+    console.log("Opening edit modal for booking:", booking); // Debug log
+    
+    // Validasi lebih komprehensif
+    if (!booking) {
+      console.error("Booking object is null or undefined");
+      alert("Data booking tidak tersedia");
+      return;
+    }
+    
+    // Perbaikan validasi ID - lebih fleksibel untuk string dan number
+    if (booking.id === undefined || booking.id === null || booking.id === "") {
+      console.error("Booking ID is missing:", booking);
+      alert("ID booking tidak ditemukan dalam data");
+      return;
+    }
+    
+    // Convert to number jika berupa string
+    const numericId = typeof booking.id === 'string' ? parseInt(booking.id) : booking.id;
+    
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error("Invalid booking ID:", booking.id, "Type:", typeof booking.id);
+      alert(`ID booking tidak valid: ${booking.id}`);
+      return;
+    }
+    
+    console.log("Valid booking ID:", booking.id, "Type:", typeof booking.id);
     setIsEditing(true);
     setCurrentBooking(booking);
     setIsFormModalOpen(true);
@@ -625,6 +487,13 @@ function Keuangan() {
 
     try {
       console.log("Saving data:", formData);
+      console.log("URL:", url, "Method:", method);
+
+      // Validasi data sebelum dikirim
+      if (!formData.customer_name || !formData.customer_email || 
+          formData.total_price === undefined || !formData.status) {
+        throw new Error("Data tidak lengkap. Harap isi semua field yang wajib.");
+      }
 
       const response = await fetch(url, {
         method,
@@ -634,7 +503,17 @@ function Keuangan() {
         body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
+      // Periksa content type sebelum parsing
+      const contentType = response.headers.get("content-type");
+      let result;
+      
+      if (contentType && contentType.includes("application/json")) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Server mengembalikan non-JSON: ${text.substring(0, 100)}`);
+      }
+
       console.log("Save response:", result);
 
       if (response.ok && result.success) {
@@ -650,14 +529,44 @@ function Keuangan() {
     }
   };
 
-  const handleDelete = async (bookingId) => {
-    if (!window.confirm(`Yakin ingin menghapus booking #${bookingId}?`)) return;
+  // PERBAIKAN: handleDelete yang sudah diperbaiki
+  const handleDelete = async (booking) => {
+    console.log("Attempting to delete booking:", booking); // Debug log
+    
+    // Validasi booking object
+    if (!booking) {
+      console.error("Booking object is null or undefined");
+      alert("Data booking tidak tersedia untuk penghapusan");
+      return;
+    }
+    
+    const bookingId = booking.id;
+    
+    // Validasi ID
+    if (bookingId === undefined || bookingId === null || bookingId === "") {
+      console.error("Booking ID is missing for delete:", booking);
+      alert("ID booking tidak ditemukan untuk penghapusan");
+      return;
+    }
+    
+    // Convert to number jika berupa string
+    const numericId = typeof bookingId === 'string' ? parseInt(bookingId) : bookingId;
+    
+    if (isNaN(numericId) || numericId <= 0) {
+      console.error("Invalid booking ID for delete:", bookingId, "Type:", typeof bookingId);
+      alert(`ID booking tidak valid untuk penghapusan: ${bookingId}`);
+      return;
+    }
+
+    const bookingCode = booking.booking_id || `ID-${numericId}`;
+    
+    if (!window.confirm(`Yakin ingin menghapus booking ${bookingCode}?`)) return;
 
     try {
-      console.log("Deleting booking:", bookingId);
+      console.log("Deleting booking with ID:", numericId);
 
       const response = await fetch(
-        `http://localhost:5000/api/bookings/${bookingId}`,
+        `http://localhost:5000/api/bookings/${numericId}`,
         {
           method: "DELETE",
         }
@@ -694,7 +603,6 @@ function Keuangan() {
         "Total Harga",
         "Status Pembayaran",
         "Tanggal Booking",
-        "Jumlah Peserta",
       ];
 
       const csvContent = [
@@ -706,11 +614,10 @@ function Keuangan() {
             `"${item.customer_email || "N/A"}"`,
             `"${item.package_name || "N/A"}"`,
             item.total_price || 0,
-            item.payment_status || "menunggu_pembayaran",
-            item.booking_date
-              ? new Date(item.booking_date).toLocaleDateString("id-ID")
+            item.status || "menunggu_pembayaran",
+            item.created_at
+              ? new Date(item.created_at).toLocaleDateString("id-ID")
               : "N/A",
-            item.participants?.length || 0,
           ].join(",")
         ),
       ].join("\n");
@@ -740,7 +647,14 @@ function Keuangan() {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
-      return new Date(dateString).toLocaleDateString("id-ID");
+      return new Date(dateString).toLocaleDateString("id-ID", {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
       return "N/A";
     }
@@ -788,16 +702,23 @@ function Keuangan() {
           subtitle={`Rp ${summaryStats.totalLunas.toLocaleString("id-ID")}`}
         />
         <SummaryCard
+          title="DP Lunas"
+          value={summaryStats.dpLunas}
+          icon={FaFileInvoiceDollar}
+          color="orange"
+          subtitle={`Rp ${summaryStats.totalDpLunas.toLocaleString("id-ID")}`}
+        />
+        <SummaryCard
           title="Menunggu Pembayaran"
           value={summaryStats.pending}
           icon={FaFileInvoiceDollar}
-          color="orange"
+          color="purple"
         />
         <SummaryCard
           title="Total Booking"
           value={bookings.length}
           icon={FaFileInvoiceDollar}
-          color="purple"
+          color="gray"
         />
       </div>
 
@@ -820,9 +741,9 @@ function Keuangan() {
           >
             <option value="Semua">Semua Status</option>
             <option value="selesai">Lunas</option>
+            <option value="dp_lunas">DP Lunas</option>
             <option value="menunggu_pembayaran">Pending</option>
             <option value="dibatalkan">Dibatalkan</option>
-            <option value="gagal">Gagal</option>
           </select>
         </div>
       </div>
@@ -850,68 +771,54 @@ function Keuangan() {
                 </thead>
                 <tbody>
                   {filteredData.length > 0 ? (
-                    filteredData.map((item) => {
-                      const mainParticipant =
-                        item.participants && item.participants.length > 0
-                          ? item.participants[0]
-                          : {};
-                      return (
-                        <tr key={item.id}>
-                          <td>
-                            <strong>{item.booking_id || "N/A"}</strong>
-                          </td>
-                          <td>
-                            <strong>{item.customer_name || "N/A"}</strong>
-                            <br />
-                            <small>{item.customer_email || "N/A"}</small>
-                            {mainParticipant.name && (
-                              <div className={styles.personalInfo}>
-                                <div className={styles.birthInfo}>
-                                  <FaBirthdayCake className={styles.infoIcon} />
-                                  <span>Peserta utama: {mainParticipant.name}</span>
-                                </div>
-                              </div>
-                            )}
-                          </td>
-                          <td>{item.package_name || "N/A"}</td>
-                          <td className={styles.amount}>
-                            Rp{" "}
-                            {(parseFloat(item.total_price) || 0).toLocaleString(
-                              "id-ID"
-                            )}
-                          </td>
-                          <td>
-                            <StatusBadge status={item.payment_status} />
-                          </td>
-                          <td>{formatDate(item.booking_date)}</td>
-                          <td>
-                            <div className={styles.actionButtons}>
-                              <button
-                                className={styles.viewButton}
-                                title="Lihat Detail"
-                                onClick={() => handleViewDetail(item)}
-                              >
-                                <FaEye />
-                              </button>
-                              <button
-                                className={styles.editButton}
-                                title="Edit"
-                                onClick={() => handleOpenEditModal(item)}
-                              >
-                                <FaEdit />
-                              </button>
-                              <button
-                                className={styles.deleteButton}
-                                title="Hapus"
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
+                    filteredData.map((item) => (
+                      <tr key={item.id}>
+                        <td>
+                          <strong>{item.booking_id || "N/A"}</strong>
+                        </td>
+                        <td>
+                          <strong>{item.customer_name || "N/A"}</strong>
+                          <br />
+                          <small>{item.customer_email || "N/A"}</small>
+                        </td>
+                        <td>{item.package_name || "N/A"}</td>
+                        <td className={styles.amount}>
+                          Rp{" "}
+                          {(parseFloat(item.total_price) || 0).toLocaleString(
+                            "id-ID"
+                          )}
+                        </td>
+                        <td>
+                          <StatusBadge status={item.status} />
+                        </td>
+                        <td>{formatDate(item.created_at)}</td>
+                        <td>
+                          <div className={styles.actionButtons}>
+                            <button
+                              className={styles.viewButton}
+                              title="Lihat Detail"
+                              onClick={() => handleViewDetail(item)}
+                            >
+                              <FaEye />
+                            </button>
+                            <button
+                              className={styles.editButton}
+                              title="Edit"
+                              onClick={() => handleOpenEditModal(item)} // Pass object lengkap
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              className={styles.deleteButton}
+                              title="Hapus"
+                              onClick={() => handleDelete(item)} // Pass object lengkap
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan="7" className={styles.emptyMessage}>
