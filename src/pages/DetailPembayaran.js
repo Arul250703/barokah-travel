@@ -92,9 +92,14 @@ const DetailPembayaran = () => {
       package_id: package_id,
       customer_name: peserta[0].nama,
       customer_email: emailKontak,
+      customer_phone: peserta[0].telepon, // Tambahkan nomor telepon customer
       participants: peserta.map((p) => ({
         name: p.nama,
+<<<<<<< HEAD
         phone: p.telepon,
+=======
+        phone: p.telepon, // Pastikan ini dikirim
+>>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85
         address: p.alamat,
         birth_place: p.tempatLahir,
         birth_date: p.tanggalLahir,
@@ -114,16 +119,25 @@ const DetailPembayaran = () => {
       const result = await response.json();
       console.log("Response dari server:", result);
 
+<<<<<<< HEAD
       if (response.ok) {
         // Simulasi Virtual Account (sementara generate random number)
+=======
+      if (response.ok && result.success) {
+>>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85
         const vaDetails = {
           namaPaket,
           harga,
           peserta,
           emailKontak,
           totalHarga,
+<<<<<<< HEAD
           bookingId: result.bookingId, // dari backend
           bookingDbId: result.bookingDbId, // id database booking
+=======
+          bookingId: result.bookingId,
+          bookingCode: result.bookingCode,
+>>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85
           methodName: "BCA Virtual Account",
           vaNumber:
             "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),

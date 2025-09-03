@@ -12,32 +12,44 @@ import {
   FaTimes,
   FaSave,
   FaUser,
-  FaMapMarkerAlt,
-  FaBirthdayCake,
+  FaPhone,
   FaExclamationTriangle,
   FaArrowsAltH,
-  FaWhatsapp, 
 } from "react-icons/fa";
 import styles from "../components/styles/Keuangan.module.css";
 
-
 // Komponen untuk Badge Status
 const StatusBadge = ({ status }) => {
+  const safeStatus = status || 'unknown';
+  
   const statusClass = {
     selesai: styles.lunas,
     menunggu_pembayaran: styles.pending,
+    dp_lunas: styles.partial,
     dibatalkan: styles.dibatalkan,
-    gagal: styles.error,
+    unknown: styles.pending
   };
+
+  const getStatusText = (statusValue) => {
+    switch (statusValue) {
+      case "selesai":
+        return "LUNAS";
+      case "menunggu_pembayaran":
+        return "MENUNGGU PEMBAYARAN";
+      case "dp_lunas":
+        return "DP LUNAS";
+      case "dibatalkan":
+        return "DIBATALKAN";
+      default:
+        return "UNKNOWN";
+    }
+  };
+
   return (
     <span
-      className={`${styles.status} ${statusClass[status] || styles.pending}`}
+      className={`${styles.status} ${statusClass[safeStatus] || styles.pending}`}
     >
-      {status === "selesai"
-        ? "Lunas"
-        : status === "menunggu_pembayaran"
-        ? "Pending"
-        : status.replace("_", " ")}
+      {getStatusText(safeStatus)}
     </span>
   );
 };
@@ -111,6 +123,10 @@ const InvoiceDetailModal = ({ booking, isOpen, onClose }) => {
                 <label>Email Kontak:</label>
                 <span>{booking.customer_email || "N/A"}</span>
               </div>
+              <div className={styles.infoItem}>
+                <label>Nomor Telepon:</label>
+                <span>{booking.customer_phone || "N/A"}</span>
+              </div>
             </div>
           </div>
           <div className={styles.tourSection}>
@@ -128,49 +144,25 @@ const InvoiceDetailModal = ({ booking, isOpen, onClose }) => {
               </div>
               <div className={styles.infoItem}>
                 <label>Status Pembayaran:</label>
-                <StatusBadge status={booking.payment_status} />
+                <StatusBadge status={booking.status} />
               </div>
               <div className={styles.infoItem}>
                 <label>Tanggal Booking:</label>
                 <span>
-                  {booking.booking_date
-                    ? new Date(booking.booking_date).toLocaleDateString("id-ID")
+                  {booking.created_at
+                    ? new Date(booking.created_at).toLocaleDateString("id-ID", {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })
                     : "N/A"}
                 </span>
               </div>
-              <div className={styles.infoItem}>
-                <label>Jumlah Peserta:</label>
-                <span>{booking.participants?.length || 0} orang</span>
-              </div>
             </div>
           </div>
-          {booking.participants && booking.participants.length > 0 && (
-            <div className={styles.participantsSection}>
-              <h3>Daftar Peserta ({booking.participants.length})</h3>
-              <div className={styles.participantsList}>
-                {booking.participants.map((p, index) => (
-                  <div
-                    key={p.participant_id || index}
-                    className={styles.participantCard}
-                  >
-                    <h4>Peserta {index + 1}</h4>
-                    <div className={styles.participantInfo}>
-                      <div>
-                        <strong>Nama:</strong> {p.name || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Telepon:</strong> {p.phone || "N/A"}
-                      </div>
-                      <div>
-                        <strong>Status Tiket:</strong>{" "}
-                        <StatusBadge status={p.ticket_status} />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -186,27 +178,20 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
     if (isOpen) {
       if (isEditing && booking) {
         setFormData({
-          package_name: booking.package_name || "",
+          customer_name: booking.customer_name || "",
           customer_email: booking.customer_email || "",
+          customer_phone: booking.customer_phone || "", 
           total_price: booking.total_price || 0,
-          payment_status: booking.payment_status || "menunggu_pembayaran",
+          status: booking.status || "menunggu_pembayaran",
         });
       } else {
-        // Reset form untuk 'Tambah Baru'
         setFormData({
           package_id: "",
           customer_name: "",
           customer_email: "",
+          customer_phone: "",
           total_price: 0,
-          participants: [
-            {
-              name: "",
-              phone: "",
-              address: "",
-              birth_place: "",
-              birth_date: "",
-            },
-          ],
+          status: "menunggu_pembayaran",
         });
       }
     }
@@ -222,40 +207,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
     }));
   };
 
-  const handleParticipantChange = (index, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      participants: prev.participants.map((p, i) =>
-        i === index ? { ...p, [field]: value } : p
-      ),
-    }));
-  };
-
-  const addParticipant = () => {
-    setFormData((prev) => ({
-      ...prev,
-      participants: [
-        ...prev.participants,
-        {
-          name: "",
-          phone: "",
-          address: "",
-          birth_place: "",
-          birth_date: "",
-        },
-      ],
-    }));
-  };
-
-  const removeParticipant = (index) => {
-    if (formData.participants.length > 1) {
-      setFormData((prev) => ({
-        ...prev,
-        participants: prev.participants.filter((_, i) => i !== index),
-      }));
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -267,7 +218,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
   };
 
   return (
-
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.formModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.modalHeader}>
@@ -297,11 +247,11 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
           )}
 
           <div className={styles.formGroup}>
-            <label>{isEditing ? "Paket Tour" : "Nama Customer"} *</label>
+            <label>Nama Customer *</label>
             <input
               type="text"
-              name={isEditing ? "package_name" : "customer_name"}
-              value={isEditing ? formData.package_name : formData.customer_name}
+              name="customer_name"
+              value={formData.customer_name}
               onChange={handleChange}
               required
               disabled={isSubmitting}
@@ -317,6 +267,18 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
               onChange={handleChange}
               required
               disabled={isSubmitting}
+            />
+          </div>
+
+          <div className={styles.formGroup}>
+            <label>Nomor Telepon</label>
+            <input
+              type="tel"
+              name="customer_phone"
+              value={formData.customer_phone}
+              onChange={handleChange}
+              disabled={isSubmitting}
+              placeholder="Contoh: 081234567890"
             />
           </div>
 
@@ -337,127 +299,17 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
           <div className={styles.formGroup}>
             <label>Status</label>
             <select
-              name={isEditing ? "payment_status" : "status"}
-              value={
-                isEditing ? formData.payment_status : "menunggu_pembayaran"
-              }
+              name="status"
+              value={formData.status}
               onChange={handleChange}
               disabled={isSubmitting}
             >
-              <option value="menunggu_pembayaran">Pending</option>
-              <option value="selesai">Lunas</option>
-              <option value="dibatalkan">Dibatalkan</option>
-              <option value="gagal">Gagal</option>
+              <option value="menunggu_pembayaran">MENUNGGU PEMBAYARAN</option>
+              <option value="dp_lunas">DP LUNAS</option>
+              <option value="selesai">LUNAS</option>
+              <option value="dibatalkan">DIBATALKAN</option>
             </select>
           </div>
-
-          {/* Form peserta hanya untuk tambah baru */}
-          {!isEditing && (
-            <div className={styles.participantsSection}>
-              <div className={styles.sectionHeader}>
-                <h3>Daftar Peserta</h3>
-                <button
-                  type="button"
-                  onClick={addParticipant}
-                  className={styles.addParticipantButton}
-                  disabled={isSubmitting}
-                >
-                  <FaPlus /> Tambah Peserta
-                </button>
-              </div>
-              {formData.participants.map((peserta, index) => (
-                <div key={index} className={styles.participantForm}>
-                  <div className={styles.participantHeader}>
-                    <h4>Peserta {index + 1}</h4>
-                    {formData.participants.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeParticipant(index)}
-                        className={styles.removeParticipantButton}
-                        disabled={isSubmitting}
-                      >
-                        <FaTrash />
-                      </button>
-                    )}
-                  </div>
-                  <div className={styles.participantFields}>
-                    <div className={styles.formGroup}>
-                      <label>Nama Lengkap *</label>
-                      <input
-                        type="text"
-                        value={peserta.name}
-                        onChange={(e) =>
-                          handleParticipantChange(index, "name", e.target.value)
-                        }
-                        required
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Telepon</label>
-                      <input
-                        type="tel"
-                        value={peserta.phone}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "phone",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Alamat</label>
-                      <textarea
-                        value={peserta.address}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "address",
-                            e.target.value
-                          )
-                        }
-                        rows="2"
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Tempat Lahir</label>
-                      <input
-                        type="text"
-                        value={peserta.birth_place}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "birth_place",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                    <div className={styles.formGroup}>
-                      <label>Tanggal Lahir</label>
-                      <input
-                        type="date"
-                        value={peserta.birth_date}
-                        onChange={(e) =>
-                          handleParticipantChange(
-                            index,
-                            "birth_date",
-                            e.target.value
-                          )
-                        }
-                        disabled={isSubmitting}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
 
           <div className={styles.formActions}>
             <button
@@ -483,8 +335,6 @@ const FormModal = ({ booking, isOpen, onClose, onSave, isEditing }) => {
   );
 };
 
-
-
 function Keuangan() {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -496,13 +346,11 @@ function Keuangan() {
   const [isEditing, setIsEditing] = useState(false);
   const [currentBooking, setCurrentBooking] = useState(null);
 
-  // --- FUNGSI PENGAMBILAN DATA YANG DIPERBAIKI ---
   const fetchData = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      console.log("Fetching data from API...");
       const response = await fetch("http://localhost:5000/api/bookings");
 
       if (!response.ok) {
@@ -510,11 +358,9 @@ function Keuangan() {
       }
 
       const result = await response.json();
-      console.log("API Response:", result);
 
       if (result.success && Array.isArray(result.data)) {
         setBookings(result.data);
-        console.log(`Loaded ${result.data.length} records`);
       } else {
         console.error("Format data dari API tidak sesuai:", result);
         setBookings([]);
@@ -545,25 +391,28 @@ function Keuangan() {
         (item.customer_email || "")
           .toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
+        (item.customer_phone || "")
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase()) ||
         (item.booking_id || "")
           .toLowerCase()
           .includes(searchTerm.toLowerCase());
       const matchesStatus =
-        filterStatus === "Semua" || item.payment_status === filterStatus;
+        filterStatus === "Semua" || item.status === filterStatus;
       return matchesSearch && matchesStatus;
     });
   }, [bookings, searchTerm, filterStatus]);
 
   const summaryStats = useMemo(() => {
     if (!Array.isArray(bookings)) {
-      return { total: 0, lunas: 0, pending: 0, totalLunas: 0 };
+      return { total: 0, lunas: 0, pending: 0, totalLunas: 0, dpLunas: 0, totalDpLunas: 0 };
     }
     const total = bookings.reduce(
       (sum, item) => sum + (parseFloat(item.total_price) || 0),
       0
     );
     const lunasItems = bookings.filter(
-      (item) => item.payment_status === "selesai"
+      (item) => item.status === "selesai"
     );
     const lunas = lunasItems.length;
     const totalLunas = lunasItems.reduce(
@@ -571,10 +420,19 @@ function Keuangan() {
       0
     );
     const pending = bookings.filter(
-      (item) => item.payment_status === "menunggu_pembayaran"
+      (item) => item.status === "menunggu_pembayaran"
     ).length;
+    
+    const dpLunasItems = bookings.filter(
+      (item) => item.status === "dp_lunas"
+    );
+    const dpLunas = dpLunasItems.length;
+    const totalDpLunas = dpLunasItems.reduce(
+      (sum, item) => sum + (parseFloat(item.total_price) || 0),
+      0
+    );
 
-    return { total, lunas, pending, totalLunas };
+    return { total, lunas, pending, totalLunas, dpLunas, totalDpLunas };
   }, [bookings]);
 
   const handleOpenAddModal = () => {
@@ -584,6 +442,11 @@ function Keuangan() {
   };
 
   const handleOpenEditModal = (booking) => {
+    if (!booking.id || booking.id === 0) {
+      alert("ID booking tidak valid");
+      return;
+    }
+    
     setIsEditing(true);
     setCurrentBooking(booking);
     setIsFormModalOpen(true);
@@ -607,7 +470,11 @@ function Keuangan() {
     const method = isEditing ? "PUT" : "POST";
 
     try {
-      console.log("Saving data:", formData);
+      // Validasi data sebelum dikirim
+      if (!formData.customer_name || !formData.customer_email || 
+          formData.total_price === undefined || !formData.status) {
+        throw new Error("Data tidak lengkap. Harap isi semua field yang wajib.");
+      }
 
       const response = await fetch(url, {
         method,
@@ -617,12 +484,20 @@ function Keuangan() {
         body: JSON.stringify(formData),
       });
 
-      const result = await response.json();
-      console.log("Save response:", result);
+      // Periksa content type sebelum parsing
+      const contentType = response.headers.get("content-type");
+      let result;
+      
+      if (contentType && contentType.includes("application/json")) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(`Server mengembalikan non-JSON: ${text.substring(0, 100)}`);
+      }
 
       if (response.ok && result.success) {
         alert(result.message || "Data berhasil disimpan");
-        await fetchData(); // Refresh data
+        await fetchData();
         handleCloseModal();
       } else {
         throw new Error(result.message || "Gagal menyimpan data");
@@ -633,12 +508,19 @@ function Keuangan() {
     }
   };
 
-  const handleDelete = async (bookingId) => {
-    if (!window.confirm(`Yakin ingin menghapus booking #${bookingId}?`)) return;
+  const handleDelete = async (booking) => {
+    const bookingId = booking.id;
+    
+    if (!bookingId || bookingId === 0) {
+      alert("ID booking tidak valid");
+      return;
+    }
+
+    const bookingCode = booking.booking_id || `ID-${bookingId}`;
+    
+    if (!window.confirm(`Yakin ingin menghapus booking ${bookingCode}?`)) return;
 
     try {
-      console.log("Deleting booking:", bookingId);
-
       const response = await fetch(
         `http://localhost:5000/api/bookings/${bookingId}`,
         {
@@ -647,11 +529,10 @@ function Keuangan() {
       );
 
       const result = await response.json();
-      console.log("Delete response:", result);
 
       if (response.ok && result.success) {
         alert(result.message || "Data berhasil dihapus");
-        await fetchData(); // Refresh data
+        await fetchData();
       } else {
         throw new Error(result.message || "Gagal menghapus data");
       }
@@ -673,11 +554,11 @@ function Keuangan() {
         "ID Booking",
         "Nama Customer",
         "Email",
+        "Telepon",
         "Paket Tour",
         "Total Harga",
         "Status Pembayaran",
         "Tanggal Booking",
-        "Jumlah Peserta",
       ];
 
       const csvContent = [
@@ -687,13 +568,13 @@ function Keuangan() {
             `"${item.booking_id || "N/A"}"`,
             `"${item.customer_name || "N/A"}"`,
             `"${item.customer_email || "N/A"}"`,
+            `"${item.customer_phone || "N/A"}"`,
             `"${item.package_name || "N/A"}"`,
             item.total_price || 0,
-            item.payment_status || "menunggu_pembayaran",
-            item.booking_date
-              ? new Date(item.booking_date).toLocaleDateString("id-ID")
+            item.status || "menunggu_pembayaran",
+            item.created_at
+              ? new Date(item.created_at).toLocaleDateString("id-ID")
               : "N/A",
-            item.participants?.length || 0,
           ].join(",")
         ),
       ].join("\n");
@@ -723,7 +604,14 @@ function Keuangan() {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     try {
-      return new Date(dateString).toLocaleDateString("id-ID");
+      return new Date(dateString).toLocaleDateString("id-ID", {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
     } catch (error) {
       return "N/A";
     }
@@ -771,16 +659,23 @@ function Keuangan() {
           subtitle={`Rp ${summaryStats.totalLunas.toLocaleString("id-ID")}`}
         />
         <SummaryCard
+          title="DP Lunas"
+          value={summaryStats.dpLunas}
+          icon={FaFileInvoiceDollar}
+          color="orange"
+          subtitle={`Rp ${summaryStats.totalDpLunas.toLocaleString("id-ID")}`}
+        />
+        <SummaryCard
           title="Menunggu Pembayaran"
           value={summaryStats.pending}
           icon={FaFileInvoiceDollar}
-          color="orange"
+          color="purple"
         />
         <SummaryCard
           title="Total Booking"
           value={bookings.length}
           icon={FaFileInvoiceDollar}
-          color="purple"
+          color="gray"
         />
       </div>
 
@@ -789,7 +684,7 @@ function Keuangan() {
           <FaSearch className={styles.searchIcon} />
           <input
             type="text"
-            placeholder="Cari nama, paket, email, atau ID booking..."
+            placeholder="Cari nama, paket, email, telepon, atau ID booking..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             disabled={isLoading}
@@ -803,9 +698,9 @@ function Keuangan() {
           >
             <option value="Semua">Semua Status</option>
             <option value="selesai">Lunas</option>
+            <option value="dp_lunas">DP Lunas</option>
             <option value="menunggu_pembayaran">Pending</option>
             <option value="dibatalkan">Dibatalkan</option>
-            <option value="gagal">Gagal</option>
           </select>
         </div>
       </div>
@@ -824,6 +719,7 @@ function Keuangan() {
                   <tr>
                     <th>ID Booking</th>
                     <th>Pelanggan</th>
+                    <th>Telepon</th>
                     <th>Paket Tour</th>
                     <th>Total Tagihan</th>
                     <th>Status Pembayaran</th>
@@ -833,71 +729,63 @@ function Keuangan() {
                 </thead>
                 <tbody>
                   {filteredData.length > 0 ? (
-                    filteredData.map((item) => {
-                      const mainParticipant =
-                        item.participants && item.participants.length > 0
-                          ? item.participants[0]
-                          : {};
-                      return (
-                        <tr key={item.id}>
-                          <td>
-                            <strong>{item.booking_id || "N/A"}</strong>
-                          </td>
-                          <td>
-                            <strong>{item.customer_name || "N/A"}</strong>
-                            <br />
-                            <small>{item.customer_email || "N/A"}</small>
-                            {mainParticipant.name && (
-                              <div className={styles.personalInfo}>
-                                <div className={styles.birthInfo}>
-                                  <FaBirthdayCake className={styles.infoIcon} />
-                                  <span>Peserta utama: {mainParticipant.name}</span>
-                                </div>
-                              </div>
-                            )}
-                          </td>
-                          <td>{item.package_name || "N/A"}</td>
-                          <td className={styles.amount}>
-                            Rp{" "}
-                            {(parseFloat(item.total_price) || 0).toLocaleString(
-                              "id-ID"
-                            )}
-                          </td>
-                          <td>
-                            <StatusBadge status={item.payment_status} />
-                          </td>
-                          <td>{formatDate(item.booking_date)}</td>
-                          <td>
-                            <div className={styles.actionButtons}>
-                              <button
-                                className={styles.viewButton}
-                                title="Lihat Detail"
-                                onClick={() => handleViewDetail(item)}
-                              >
-                                <FaEye />
-                              </button>
-                              <button
-                                className={styles.editButton}
-                                title="Edit"
-                                onClick={() => handleOpenEditModal(item)}
-                              >
-                                <FaEdit />
-                              </button>
-                              <button
-                                className={styles.deleteButton}
-                                title="Hapus"
-                                onClick={() => handleDelete(item.id)}
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
+                    filteredData.map((item) => (
+                      <tr key={item.id}>
+                        <td>
+                          <strong>{item.booking_id || "N/A"}</strong>
+                        </td>
+                        <td>
+                          <strong>{item.customer_name || "N/A"}</strong>
+                          <br />
+                          <small>{item.customer_email || "N/A"}</small>
+                        </td>
+                        <td>
+                          <div className={styles.phoneCell}>
+                            <FaPhone className={styles.phoneIcon} />
+                            {item.customer_phone || "N/A"}
+                          </div>
+                        </td>
+                        <td>{item.package_name || "N/A"}</td>
+                        <td className={styles.amount}>
+                          Rp{" "}
+                          {(parseFloat(item.total_price) || 0).toLocaleString(
+                            "id-ID"
+                          )}
+                        </td>
+                        <td>
+                          <StatusBadge status={item.status} />
+                        </td>
+                        <td>{formatDate(item.created_at)}</td>
+                        <td>
+                          <div className={styles.actionButtons}>
+                            <button
+                              className={styles.viewButton}
+                              title="Lihat Detail"
+                              onClick={() => handleViewDetail(item)}
+                            >
+                              <FaEye />
+                            </button>
+                            <button
+                              className={styles.editButton}
+                              title="Edit"
+                              onClick={() => handleOpenEditModal(item)}
+                            >
+                              <FaEdit />
+                            </button>
+                            <button
+                              className={styles.deleteButton}
+                              title="Hapus"
+                              onClick={() => handleDelete(item)}
+                            >
+                              <FaTrash />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className={styles.emptyMessage}>
+                      <td colSpan="8" className={styles.emptyMessage}>
                         {searchTerm || filterStatus !== "Semua"
                           ? "Tidak ada data yang sesuai dengan filter."
                           : "Belum ada data booking."}

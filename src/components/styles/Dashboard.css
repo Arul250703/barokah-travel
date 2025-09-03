@@ -163,7 +163,7 @@ body {
     align-items: center;
     padding: 1rem 0;
     border-bottom: 1px solid var(--color-gray-200);
-
+}
 .dashboard-container {
   animation: fadeIn 0.5s ease-in-out;
 }
@@ -173,6 +173,7 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Header Halaman */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -209,6 +210,7 @@ body {
   box-shadow: 0 8px 20px rgba(26, 26, 46, 0.2);
 }
 
+/* Kartu Statistik */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -224,6 +226,12 @@ body {
   align-items: center;
   gap: 1rem;
   box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
 }
 
 .stat-icon {
@@ -237,19 +245,19 @@ body {
   justify-content: center;
   flex-shrink: 0;
 }
-.stat-icon.primary { background-color: #4A90E2; }
-.stat-icon.success { background-color: #50E3C2; }
-.stat-icon.warning { background-color: #F5A623; }
+.stat-card-primary .stat-icon { background-color: #4A90E2; }
+.stat-card-success .stat-icon { background-color: #50E3C2; }
+.stat-card-purple .stat-icon { background-color: #9013FE; }
 
 .stat-info {
   display: flex;
   flex-direction: column;
 }
 
-.stat-title {
-  color: #64748b;
-  font-size: 0.9rem;
-  font-weight: 500;
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0 0 0.25rem 0;
 }
 
 .stat-value {
@@ -258,6 +266,13 @@ body {
   color: #1e293b;
 }
 
+.stat-trend {
+    font-size: 0.8rem;
+    color: #10b981;
+    margin-top: 0.25rem;
+}
+
+/* Konten Utama Dasbor */
 .dashboard-main-content {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -284,6 +299,7 @@ body {
   margin-bottom: 1.5rem;
 }
 
+/* Daftar Booking Terbaru */
 .booking-list {
   list-style: none;
   padding: 0;
@@ -301,6 +317,10 @@ body {
   border-bottom: none;
 }
 
+.booking-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 .booking-details {
 
     display: flex;
@@ -348,13 +368,34 @@ body {
   flex-direction: column;
 }
 
-.booking-client {
-  font-weight: 600;
+.booking-number {
+    background-color: #f1f5f9;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #475569;
 }
 
-.booking-package {
-  color: #64748b;
-  font-size: 0.9rem;
+.booking-info h4 {
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+}
+
+.booking-meta {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.booking-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
 }
 
 .booking-status {
@@ -362,11 +403,16 @@ body {
   border-radius: 20px;
   font-size: 0.8rem;
   font-weight: 600;
-
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
-.status-confirmed { background: #d1fae5; color: #065f46; }
-.status-pending { background: #fef3c7; color: #92400e; }
-.status-processing { background: #dbeafe; color: #1e40af; }
+.booking-status.confirmed { background: #d1fae5; color: #065f46; }
+.booking-status.pending { background: #fef3c7; color: #92400e; }
+.booking-status.processing { background: #dbeafe; color: #1e40af; }
+
+
+/* Aksi Cepat */
 
 
 .booking-status span {
@@ -503,15 +549,27 @@ body {
   color: #334155;
   font-weight: 500;
   transition: all 0.3s ease;
+  border: 1px solid #e2e8f0;
 }
 
 .action-card:hover {
   transform: translateY(-5px);
   background-color: #1a1a2e;
   color: white;
+  border-color: #1a1a2e;
 }
 
 .action-card svg {
   font-size: 1.5rem;
 }
+
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
+    font-size: 1.2rem;
+    color: #64748b;
 }
+}
+

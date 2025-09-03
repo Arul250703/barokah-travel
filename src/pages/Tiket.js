@@ -58,4 +58,4 @@ const Tiket = ({ participantId, bookingId, nama, namaPaket, telepon }) => {
   );
 };
 
-export default Tiket;
+export default Tiket;

@@ -71,7 +71,7 @@ const Sidebar = () => {
       tooltip: "QR Page",
     },
     {
-      path: "/bookings",
+      path: "/pending-payments",
       icon: FaClipboardList,
       text: "Pemesanan",
       tooltip: "Pemesanan",

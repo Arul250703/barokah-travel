@@ -47,7 +47,6 @@ const Tentang = () => {
                     </div>
                 </div>
             </header>
-
             <section className="about-us-content">
                 <div className="about-container">
                     <p>Barokah tour & travel adalah Perusahaan layanan jasa pariwisata dan Event organizer yang berada dibawah naungan PT. Bina Barokah Sejahtera.</p>
