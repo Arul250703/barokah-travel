@@ -21,11 +21,6 @@ const Admin = () => {
         console.log('Username:', username);
 
         try {
-<<<<<<< HEAD
-            // 1. Kirim data ke backend menggunakan fetch
-=======
-            // Menggunakan endpoint yang benar
->>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85
             const response = await fetch('http://localhost:5000/api/users/login', {
                 method: 'POST',
                 headers: {

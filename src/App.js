@@ -141,7 +141,3 @@ function App() {
 }
 
 export default App;
-<<<<<<< HEAD
-=======
-    
->>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85

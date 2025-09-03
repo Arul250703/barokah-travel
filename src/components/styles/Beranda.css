@@ -2763,8 +2763,6 @@
     outline: 3px solid var(--color-primary-500);
     outline-offset: 2px;
 }
-<<<<<<< HEAD
-
 .loading-screen {
     display: flex;
     flex-direction: column;
@@ -2794,5 +2792,3 @@
     color: #666;
     font-style: italic;
 }
-=======
->>>>>>> 135d61e4a803ed72ded8f27c2a9670999496fe85
