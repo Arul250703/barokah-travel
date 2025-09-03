@@ -6,6 +6,7 @@ const DetailPembayaran = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Data paket dikirim dari page sebelumnya (contoh: Sukabumi.jsx)
   const { package_id, namaPaket, harga } = location.state || {
     package_id: null,
     namaPaket: "Paket tidak ditemukan",
@@ -25,6 +26,7 @@ const DetailPembayaran = () => {
   const [emailKontak, setEmailKontak] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Handle perubahan form peserta
   const handlePesertaChange = (index, event) => {
     const values = [...peserta];
     values[index][event.target.name] = event.target.value;
@@ -62,10 +64,11 @@ const DetailPembayaran = () => {
       minimumFractionDigits: 0,
     }).format(angka);
 
+  // Submit data pemesanan ke backend
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validasi yang lebih lengkap sesuai dengan data yang dikirim
+    // Validasi input
     const isDataLengkap = peserta.every(
       (p) => p.nama && p.telepon && p.alamat && p.tempatLahir && p.tanggalLahir
     );
@@ -84,7 +87,7 @@ const DetailPembayaran = () => {
 
     setIsSubmitting(true);
 
-    // Perbaiki struktur data yang dikirim ke backend
+    // Struktur data yang dikirim ke backend
     const dataToSubmit = {
       package_id: package_id,
       customer_name: peserta[0].nama,
@@ -92,14 +95,14 @@ const DetailPembayaran = () => {
       participants: peserta.map((p) => ({
         name: p.nama,
         phone: p.telepon,
-        address: p.alamat, // Tambahkan field yang dibutuhkan backend
-        birth_place: p.tempatLahir, // Tambahkan field yang dibutuhkan backend
-        birth_date: p.tanggalLahir, // Tambahkan field yang dibutuhkan backend
+        address: p.alamat,
+        birth_place: p.tempatLahir,
+        birth_date: p.tanggalLahir,
       })),
       total_price: totalHarga,
     };
 
-    console.log("Data yang dikirim:", dataToSubmit); // Debug log
+    console.log("Data yang dikirim:", dataToSubmit);
 
     try {
       const response = await fetch("http://localhost:5000/api/bookings", {
@@ -109,26 +112,29 @@ const DetailPembayaran = () => {
       });
 
       const result = await response.json();
-      console.log("Response dari server:", result); // Debug log
+      console.log("Response dari server:", result);
 
       if (response.ok) {
+        // Simulasi Virtual Account (sementara generate random number)
         const vaDetails = {
           namaPaket,
           harga,
           peserta,
           emailKontak,
           totalHarga,
-          bookingId: result.bookingId,
-          bookingDbId: result.bookingDbId,
+          bookingId: result.bookingId, // dari backend
+          bookingDbId: result.bookingDbId, // id database booking
           methodName: "BCA Virtual Account",
           vaNumber:
             "8808 " + Math.floor(1000000000 + Math.random() * 9000000000),
-          expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          expiry: new Date(Date.now() + 24 * 60 * 60 * 1000), // +24 jam
         };
+
+        // Redirect ke halaman Virtual Account dengan detail pemesanan
         navigate("/virtual-account", { state: vaDetails });
       } else {
         alert(`Gagal menyimpan pemesanan: ${result.message}`);
-        console.error("Error response:", result); // Debug log
+        console.error("Error response:", result);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -152,6 +158,7 @@ const DetailPembayaran = () => {
         </div>
 
         <form className="payment-form" onSubmit={handleSubmit}>
+          {/* Informasi kontak */}
           <div className="contact-section">
             <h3 className="section-title">
               <span className="section-icon">📧</span>
@@ -167,6 +174,8 @@ const DetailPembayaran = () => {
               />
             </div>
           </div>
+
+          {/* Data Peserta */}
           <div className="participants-section">
             <h3 className="section-title">
               <span className="section-icon">👥</span>
@@ -244,6 +253,8 @@ const DetailPembayaran = () => {
               <span className="add-icon">+</span> Tambah Peserta
             </button>
           </div>
+
+          {/* Ringkasan Pembayaran */}
           <div className="summary-section">
             <h3 className="section-title">
               <span className="section-icon">💰</span>
@@ -265,6 +276,8 @@ const DetailPembayaran = () => {
               </div>
             </div>
           </div>
+
+          {/* Action Buttons */}
           <div className="action-buttons">
             <button
               type="submit"

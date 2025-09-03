@@ -19,7 +19,7 @@ const Admin = () => {
 
         try {
             // 1. Kirim data ke backend menggunakan fetch
-            const response = await fetch('http://localhost:5000/api/login', {
+            const response = await fetch('http://localhost:5000/api/users/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -65,10 +65,6 @@ const Semarang = () => {
 
     return (
         <div className="semarang-page">
-<<<<<<< HEAD
-
-=======
->>>>>>> e3a21e2a52f6589559c6e471574147bcd12c5836
             <header className="detail-hero-section" style={heroBgStyle}>
                 <div className="detail-hero-overlay">
                     <h1 className="detail-hero-title">{semarangData.title}</h1>
@@ -210,10 +206,6 @@ const Semarang = () => {
                     </div>
                 </div>
             </section>
-<<<<<<< HEAD
-            
-=======
->>>>>>> e3a21e2a52f6589559c6e471574147bcd12c5836
         </div>
     );
 };

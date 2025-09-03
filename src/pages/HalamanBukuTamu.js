@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const HalamanBukuTamu = () => {
-  const [currentView, setCurrentView] = useState('peserta');
+  const [currentView, setCurrentView] = useState("peserta");
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({});
   const [stats, setStats] = useState({
@@ -10,14 +10,14 @@ const HalamanBukuTamu = () => {
     yesterday: 0,
     week: 0,
     month: 0,
-    total: 0
+    total: 0,
   });
   const [marketingStats, setMarketingStats] = useState({
     today: 0,
     yesterday: 0,
     week: 0,
     month: 0,
-    total: 0
+    total: 0,
   });
   const [pesertaData, setPesertaData] = useState([]);
   const [marketingData, setMarketingData] = useState([]);
@@ -25,7 +25,7 @@ const HalamanBukuTamu = () => {
   const [totalMarketingPages, setTotalMarketingPages] = useState(1);
 
   // API base URL
-  const API_BASE = 'http://localhost:5000';
+  const API_BASE = "http://localhost:5000";
 
   // Fetch data dari API
   useEffect(() => {
@@ -36,21 +36,25 @@ const HalamanBukuTamu = () => {
 
   const fetchPesertaData = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/peserta?page=${currentPage}`);
+      const response = await axios.get(
+        `${API_BASE}/api/peserta?page=${currentPage}`
+      );
       setPesertaData(response.data.data);
       setTotalPesertaPages(response.data.totalPages);
     } catch (error) {
-      console.error('Error fetching peserta data:', error);
+      console.error("Error fetching peserta data:", error);
     }
   };
 
   const fetchMarketingData = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/api/marketing?page=${currentPage}`);
+      const response = await axios.get(
+        `${API_BASE}/api/marketing?page=${currentPage}`
+      );
       setMarketingData(response.data.data);
       setTotalMarketingPages(response.data.totalPages);
     } catch (error) {
-      console.error('Error fetching marketing data:', error);
+      console.error("Error fetching marketing data:", error);
     }
   };
 
@@ -58,60 +62,64 @@ const HalamanBukuTamu = () => {
     try {
       const pesertaResponse = await axios.get(`${API_BASE}/api/stats/peserta`);
       setStats(pesertaResponse.data);
-      
-      const marketingResponse = await axios.get(`${API_BASE}/api/stats/marketing`);
+
+      const marketingResponse = await axios.get(
+        `${API_BASE}/api/stats/marketing`
+      );
       setMarketingStats(marketingResponse.data);
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error("Error fetching stats:", error);
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'file' ? files[0] : value
+      [name]: type === "file" ? files[0] : value,
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formType = currentView;
-    
+
     try {
-      if (formType === 'peserta') {
+      if (formType === "peserta") {
         await axios.post(`${API_BASE}/api/peserta`, formData);
-        alert('Data peserta berhasil disimpan!');
+        alert("Data peserta berhasil disimpan!");
       } else {
         const marketingFormData = new FormData();
         for (const key in formData) {
           marketingFormData.append(key, formData[key]);
         }
-        
+
         await axios.post(`${API_BASE}/api/marketing`, marketingFormData, {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            "Content-Type": "multipart/form-data",
+          },
         });
-        alert('Data marketing berhasil disimpan!');
+        alert("Data marketing berhasil disimpan!");
       }
-      
+
       setFormData({});
       e.target.reset();
-      
+
       // Refresh data
       fetchPesertaData();
       fetchMarketingData();
       fetchStats();
     } catch (error) {
-      console.error('Error saving data:', error);
-      alert('Terjadi kesalahan saat menyimpan data');
+      console.error("Error saving data:", error);
+      alert("Terjadi kesalahan saat menyimpan data");
     }
   };
 
   const getCurrentDate = () => {
     const today = new Date();
-    return `${String(today.getDate()).padStart(2, '0')}-${String(today.getMonth() + 1).padStart(2, '0')}-${today.getFullYear()}`;
+    return `${String(today.getDate()).padStart(2, "0")}-${String(
+      today.getMonth() + 1
+    ).padStart(2, "0")}-${today.getFullYear()}`;
   };
 
   const getCurrentYear = () => {
@@ -125,9 +133,12 @@ const HalamanBukuTamu = () => {
       <nav>
         <ul className="pagination justify-content-center">
           {[...Array(totalPages)].map((_, i) => (
-            <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
-              <button 
-                className="page-link" 
+            <li
+              key={i}
+              className={`page-item ${currentPage === i + 1 ? "active" : ""}`}
+            >
+              <button
+                className="page-link"
                 onClick={(e) => {
                   e.preventDefault();
                   setCurrentPage(i + 1);
@@ -144,30 +155,37 @@ const HalamanBukuTamu = () => {
   };
 
   const renderTable = () => {
-    if (currentView === 'peserta') {
+    if (currentView === "peserta") {
       return (
         <div className="data-table-container">
           <div className="table-responsive">
             <table className="table table-modern">
               <thead>
                 <tr>
-                  <th style={{width: '60px'}}>No</th>
-                  <th style={{width: '120px'}}>Tanggal</th>
+                  <th style={{ width: "60px" }}>No</th>
+                  <th style={{ width: "120px" }}>Tanggal</th>
                   <th>Nama Pengunjung</th>
                   <th>Alamat</th>
                   <th>Tempat Tanggal Lahir</th>
                   <th>Tujuan</th>
-                  <th style={{width: '140px'}}>No. HP</th>
+                  <th style={{ width: "140px" }}>No. HP</th>
                 </tr>
               </thead>
               <tbody>
                 {pesertaData.map((item, index) => (
                   <tr key={item.id}>
-                    <td><strong>{(currentPage - 1) * 10 + index + 1}</strong></td>
+                    <td>
+                      <strong>{(currentPage - 1) * 10 + index + 1}</strong>
+                    </td>
                     <td>{item.tanggal}</td>
-                    <td><strong>{item.nama}</strong></td>
+                    <td>
+                      <strong>{item.nama}</strong>
+                    </td>
                     <td>{item.alamat}</td>
-                    <td>{item.tempat_lahir}, {new Date(item.tanggal_lahir).toLocaleDateString('id-ID')}</td>
+                    <td>
+                      {item.tempat_lahir},{" "}
+                      {new Date(item.tanggal_lahir).toLocaleDateString("id-ID")}
+                    </td>
                     <td>{item.tujuan}</td>
                     <td>{item.telepon}</td>
                   </tr>
@@ -204,22 +222,38 @@ const HalamanBukuTamu = () => {
               <tbody>
                 {marketingData.map((item, index) => (
                   <tr key={item.id}>
-                    <td><strong>{(currentPage - 1) * 10 + index + 1}</strong></td>
+                    <td>
+                      <strong>{(currentPage - 1) * 10 + index + 1}</strong>
+                    </td>
                     <td>{item.tanggal}</td>
-                    <td><strong>{item.nama}</strong></td>
+                    <td>
+                      <strong>{item.nama}</strong>
+                    </td>
                     <td>{item.perusahaan}</td>
                     <td>{item.alamat}</td>
                     <td>{item.nama_kordinator}</td>
                     <td>{item.kota_kordinator}</td>
                     <td>{item.rencana_wisata}</td>
-                    <td>{new Date(item.rencana_pemberangkatan).toLocaleDateString('id-ID')}</td>
+                    <td>
+                      {new Date(item.rencana_pemberangkatan).toLocaleDateString(
+                        "id-ID"
+                      )}
+                    </td>
                     <td>{item.destinasi_tujuan}</td>
                     <td>{item.jenis_trip}</td>
                     <td>{item.telepon}</td>
-                    <td>{item.foto_kunjungan ? (
-                      <img src={`${API_BASE}/uploads/${item.foto_kunjungan}`} style={{width:'80px'}} alt="Foto" />
-                    ) : '-'}</td>
-                    <td>{item.catatan || '-'}</td>
+                    <td>
+                      {item.foto_kunjungan ? (
+                        <img
+                          src={`${API_BASE}/uploads/${item.foto_kunjungan}`}
+                          style={{ width: "80px" }}
+                          alt="Foto"
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td>{item.catatan || "-"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -238,11 +272,13 @@ const HalamanBukuTamu = () => {
   };
 
   return (
-    <div style={{
-      background: '#ffffff',
-      minHeight: '100vh',
-      fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
-    }}>
+    <div
+      style={{
+        background: "#ffffff",
+        minHeight: "100vh",
+        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      }}
+    >
       <style jsx>{`
         .main-container {
           padding: 30px;
@@ -523,29 +559,37 @@ const HalamanBukuTamu = () => {
             max-width: 100%;
           }
         }
-      `}</style>
+      `}</style>
 
       <div className="main-container">
         {/* Header Section */}
         <div className="header-section">
-          <h1 className="header-title">Buku Tamu<br />Barokah Tour and Travel</h1>
+          <h1 className="header-title">
+            Buku Tamu
+            <br />
+            Barokah Tour and Travel
+          </h1>
         </div>
 
         <div className="row">
           <div className="col-lg-6 mb-4">
-            <button 
-              type="button" 
-              className={`btn-modern w-100 ${currentView === 'peserta' ? 'btn-primary-modern' : ''}`}
-              onClick={() => switchView('peserta')}
+            <button
+              type="button"
+              className={`btn-modern w-100 ${
+                currentView === "peserta" ? "btn-primary-modern" : ""
+              }`}
+              onClick={() => switchView("peserta")}
             >
               Pengunjung
             </button>
           </div>
           <div className="col-lg-6 mb-4">
-            <button 
-              type="button" 
-              className={`btn-modern w-100 ${currentView === 'marketing' ? 'btn-primary-modern' : ''}`}
-              onClick={() => switchView('marketing')}
+            <button
+              type="button"
+              className={`btn-modern w-100 ${
+                currentView === "marketing" ? "btn-primary-modern" : ""
+              }`}
+              onClick={() => switchView("marketing")}
             >
               Marketing
             </button>
@@ -557,72 +601,74 @@ const HalamanBukuTamu = () => {
           <div className="col-lg-7 mb-4">
             <div className="modern-card">
               <div className="card-header-modern">
-                {currentView === 'peserta' ? 'Identitas Pengunjung' : 'Identitas Marketing'}
+                {currentView === "peserta"
+                  ? "Identitas Pengunjung"
+                  : "Identitas Marketing"}
               </div>
               <div className="card-body-modern">
                 <form onSubmit={handleSubmit}>
-                  {currentView === 'peserta' ? (
+                  {currentView === "peserta" ? (
                     // Form Peserta
                     <>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Nama Lengkap" 
-                          name="nama" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Nama Lengkap"
+                          name="nama"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Alamat Lengkap" 
-                          name="alamat" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Alamat Lengkap"
+                          name="alamat"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                          <div className="col-md-6">
-                            <input 
-                              type="text" 
-                              className="form-control-modern"
-                              placeholder="Tempat Lahir" 
-                              name="tempat_lahir" 
-                              onChange={handleInputChange}
-                              required 
-                            />
-                          </div>
-                          <div className="col-md-6">
-                            <input 
-                              type="date" 
-                              className="form-control-modern"
-                              name="tanggal_lahir" 
-                              onChange={handleInputChange}
-                              required 
-                            />
-                          </div>
+                        <div className="col-md-6">
+                          <input
+                            type="text"
+                            className="form-control-modern"
+                            placeholder="Tempat Lahir"
+                            name="tempat_lahir"
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
+                        <div className="col-md-6">
+                          <input
+                            type="date"
+                            className="form-control-modern"
+                            name="tanggal_lahir"
+                            onChange={handleInputChange}
+                            required
+                          />
+                        </div>
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Nomor Telepon" 
-                          name="telepon" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Nomor Telepon"
+                          name="telepon"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Tujuan Kunjungan" 
-                          name="tujuan" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Tujuan Kunjungan"
+                          name="tujuan"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <button type="submit" className="btn-modern w-100">
@@ -633,87 +679,87 @@ const HalamanBukuTamu = () => {
                     // Form Marketing
                     <>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Nama Marketing" 
-                          name="nama" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Nama Marketing"
+                          name="nama"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Perusahaan" 
-                          name="perusahaan" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Perusahaan"
+                          name="perusahaan"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <textarea 
-                          className="form-control-modern" 
-                          placeholder="Alamat Instansi" 
-                          name="alamat" 
+                        <textarea
+                          className="form-control-modern"
+                          placeholder="Alamat Instansi"
+                          name="alamat"
                           onChange={handleInputChange}
                           required
                         ></textarea>
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Nama Koordinator" 
-                          name="nama_kordinator" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Nama Koordinator"
+                          name="nama_kordinator"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Kota Koordinator" 
-                          name="kota_kordinator" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Kota Koordinator"
+                          name="kota_kordinator"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Rencana Wisata" 
-                          name="rencana_wisata" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Rencana Wisata"
+                          name="rencana_wisata"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="date" 
-                          className="form-control-modern" 
-                          name="rencana_pemberangkatan" 
+                        <input
+                          type="date"
+                          className="form-control-modern"
+                          name="rencana_pemberangkatan"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Destinasi Tujuan" 
-                          name="destinasi_tujuan" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Destinasi Tujuan"
+                          name="destinasi_tujuan"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <select 
-                          className="form-control-modern" 
-                          name="jenis_trip" 
+                        <select
+                          className="form-control-modern"
+                          name="jenis_trip"
                           onChange={handleInputChange}
                           required
                         >
@@ -723,28 +769,28 @@ const HalamanBukuTamu = () => {
                         </select>
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="text" 
-                          className="form-control-modern" 
-                          placeholder="Nomor Telepon" 
-                          name="telepon" 
+                        <input
+                          type="text"
+                          className="form-control-modern"
+                          placeholder="Nomor Telepon"
+                          name="telepon"
                           onChange={handleInputChange}
-                          required 
+                          required
                         />
                       </div>
                       <div className="mb-3">
-                        <input 
-                          type="file" 
-                          className="form-control-modern" 
-                          name="foto_kunjungan" 
+                        <input
+                          type="file"
+                          className="form-control-modern"
+                          name="foto_kunjungan"
                           accept="image/*"
                           onChange={handleInputChange}
                         />
                       </div>
                       <div className="mb-3">
-                        <textarea 
-                          className="form-control-modern" 
-                          placeholder="Catatan" 
+                        <textarea
+                          className="form-control-modern"
+                          placeholder="Catatan"
                           name="catatan"
                           onChange={handleInputChange}
                         ></textarea>
@@ -766,29 +812,61 @@ const HalamanBukuTamu = () => {
           <div className="col-lg-5 mb-4">
             <div className="stats-card">
               <h4 className="text-center mb-4">
-                {currentView === 'peserta' ? 'Statistik Pengunjung' : 'Statistik Marketing'}
+                {currentView === "peserta"
+                  ? "Statistik Pengunjung"
+                  : "Statistik Marketing"}
               </h4>
               <table className="stats-table">
                 <tbody>
                   <tr>
                     <td>Hari ini</td>
-                    <td><strong>{currentView === 'peserta' ? stats.today : marketingStats.today}</strong></td>
+                    <td>
+                      <strong>
+                        {currentView === "peserta"
+                          ? stats.today
+                          : marketingStats.today}
+                      </strong>
+                    </td>
                   </tr>
                   <tr>
                     <td>Kemarin</td>
-                    <td><strong>{currentView === 'peserta' ? stats.yesterday : marketingStats.yesterday}</strong></td>
+                    <td>
+                      <strong>
+                        {currentView === "peserta"
+                          ? stats.yesterday
+                          : marketingStats.yesterday}
+                      </strong>
+                    </td>
                   </tr>
                   <tr>
                     <td>Minggu ini</td>
-                    <td><strong>{currentView === 'peserta' ? stats.week : marketingStats.week}</strong></td>
+                    <td>
+                      <strong>
+                        {currentView === "peserta"
+                          ? stats.week
+                          : marketingStats.week}
+                      </strong>
+                    </td>
                   </tr>
                   <tr>
                     <td>Bulan ini</td>
-                    <td><strong>{currentView === 'peserta' ? stats.month : marketingStats.month}</strong></td>
+                    <td>
+                      <strong>
+                        {currentView === "peserta"
+                          ? stats.month
+                          : marketingStats.month}
+                      </strong>
+                    </td>
                   </tr>
                   <tr>
                     <td>Keseluruhan</td>
-                    <td><strong>{currentView === 'peserta' ? stats.total : marketingStats.total}</strong></td>
+                    <td>
+                      <strong>
+                        {currentView === "peserta"
+                          ? stats.total
+                          : marketingStats.total}
+                      </strong>
+                    </td>
                   </tr>
                 </tbody>
               </table>

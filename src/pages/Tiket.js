@@ -1,12 +1,9 @@
-// src/pages/Tiket.js
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
 import "../components/styles/Tiket.css";
 
 const Tiket = ({ participantId, bookingId, nama, namaPaket, telepon }) => {
-  // --- PERUBAHAN UTAMA ---
-  // Hapus fungsi generateTripId(). ID sekarang didapat dari props.
-  // Isi QR code HANYA ID unik peserta, sesuai desain backend kita.
+  // ID peserta dari database
   const qrValue = JSON.stringify({ participant_id: participantId });
 
   return (
@@ -15,7 +12,7 @@ const Tiket = ({ participantId, bookingId, nama, namaPaket, telepon }) => {
         <div className="tiket-kiri">
           <div className="info-atas">
             <span className="kategori-tiket">WISATA</span>
-            {/* Tampilkan ID Booking sebagai referensi */}
+            {/* Booking Code dari backend */}
             <span className="trip-id">Booking: {bookingId}</span>
           </div>
           <div className="info-tengah">
@@ -48,7 +45,6 @@ const Tiket = ({ participantId, bookingId, nama, namaPaket, telepon }) => {
 
       <div className="trip-id-display">
         <span className="trip-id-label">ID Tiket Peserta:</span>
-        {/* Tampilkan ID Peserta yang unik */}
         <span className="trip-id-code">{participantId}</span>
         <button
           className="copy-id-btn"

@@ -10,9 +10,9 @@ const VirtualAccount = () => {
   const [paymentType, setPaymentType] = useState("full");
   const [activeTab, setActiveTab] = useState("atm");
 
-  // Mengambil data dari halaman sebelumnya
+  // Data dari halaman sebelumnya
   const paymentData = location.state || {
-    bookingId: null, // <-- Perubahan #1: Menambahkan default value untuk bookingId
+    bookingId: null,
     methodName: "BCA Virtual Account",
     vaNumber: "8808123456789",
     expiry: new Date(Date.now() + 24 * 60 * 60 * 1000),
@@ -44,6 +44,7 @@ const VirtualAccount = () => {
       minimumFractionDigits: 0,
     }).format(angka);
 
+  // Hitung waktu kadaluarsa
   useEffect(() => {
     const expiryDate =
       paymentData.expiry instanceof Date
@@ -73,12 +74,14 @@ const VirtualAccount = () => {
     return () => clearInterval(timer);
   }, [paymentData.expiry]);
 
+  // Salin nomor VA
   const copyVANumber = () => {
     navigator.clipboard.writeText(paymentData.vaNumber);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // Instruksi bank
   const getBankInstructions = () => {
     const bankId = (paymentData.methodName || "").toLowerCase();
 
@@ -136,7 +139,6 @@ const VirtualAccount = () => {
           "Pilih menu 'Transfer'",
           "Pilih 'Virtual Account'",
           "Masukkan nomor Virtual Account",
-          "Masukkan nominal transfer",
           "Konfirmasi pembayaran",
         ],
       };
@@ -145,12 +147,27 @@ const VirtualAccount = () => {
 
   const instructions = getBankInstructions();
 
-  // --- Perubahan #2: Fungsi ini ditambahkan untuk navigasi ke halaman tiket ---
+  // Logic lihat tiket
   const handleViewTicket = () => {
-    if (paymentData.bookingId) {
-      navigate(`/tiket/${paymentData.bookingId}`);
-    } else {
+    if (!paymentData.bookingId) {
       alert("Booking ID tidak ditemukan, tidak bisa menampilkan tiket.");
+      return;
+    }
+
+    if (paymentType === "full") {
+      // Jika full payment → tiket bisa diakses
+      navigate(`/tiket/${paymentData.bookingId}`, {
+        state: { statusPembayaran: "lunas" },
+      });
+    } else {
+      // Jika hanya DP → butuh konfirmasi admin
+      alert(
+        `Anda baru membayar DP sebesar ${formatRupiah(
+          dpAmount
+        )}. Sisa pembayaran ${formatRupiah(
+          sisaAmount
+        )} harus dilunasi. Silakan hubungi admin untuk konfirmasi.`
+      );
     }
   };
 
@@ -161,6 +178,7 @@ const VirtualAccount = () => {
   return (
     <div className="virtual-account-page">
       <div className="va-container">
+        {/* HEADER */}
         <div className="va-header">
           <div className="bank-logo">🏦</div>
           <div className="header-content">
@@ -177,6 +195,7 @@ const VirtualAccount = () => {
           </div>
         </div>
 
+        {/* DETAIL PESANAN */}
         <div className="details-card">
           <h3 className="card-title">
             <span className="card-icon">📋</span> Detail Pemesanan
@@ -209,6 +228,7 @@ const VirtualAccount = () => {
           </div>
         </div>
 
+        {/* DATA PESERTA */}
         {peserta && peserta.length > 0 && (
           <div className="participants-card">
             <h3 className="card-title">
@@ -247,6 +267,7 @@ const VirtualAccount = () => {
           </div>
         )}
 
+        {/* PILIHAN PEMBAYARAN */}
         <div className="payment-options-card">
           <h3 className="card-title">
             <span className="card-icon">💰</span> Pilihan Pembayaran
@@ -295,6 +316,7 @@ const VirtualAccount = () => {
           </div>
         </div>
 
+        {/* NOMOR VA */}
         <div className="va-card">
           <h3 className="card-title">
             <span className="card-icon">💳</span> Nomor Virtual Account
@@ -322,6 +344,7 @@ const VirtualAccount = () => {
           </div>
         </div>
 
+        {/* INSTRUKSI */}
         <div className="instructions-card">
           <h3 className="card-title">
             <span className="card-icon">📋</span> Cara Pembayaran
@@ -356,6 +379,7 @@ const VirtualAccount = () => {
           </div>
         </div>
 
+        {/* CATATAN */}
         <div className="notes-card">
           <h3 className="card-title">
             <span className="card-icon">⚠️</span> Penting untuk Diperhatikan
@@ -380,6 +404,7 @@ const VirtualAccount = () => {
           </ul>
         </div>
 
+        {/* BUTTON */}
         <div className="action-buttons">
           <button className="back-button" onClick={() => navigate(-1)}>
             <span>←</span> Kembali

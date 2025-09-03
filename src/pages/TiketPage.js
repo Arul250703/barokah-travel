@@ -1,13 +1,11 @@
-// src/pages/TiketPage.js
 import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import Tiket from "./Tiket"; // Pastikan path ini benar
+import Tiket from "./Tiket";
 import "../components/styles/TiketPage.css";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
 const TiketPage = () => {
-  // --- PERUBAHAN UTAMA: Mengambil data dari URL, bukan state ---
   const { bookingId } = useParams();
   const [bookingData, setBookingData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -15,7 +13,6 @@ const TiketPage = () => {
   const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
-    // Fungsi untuk mengambil detail booking dari backend
     const fetchBookingDetails = async () => {
       try {
         setLoading(true);
@@ -26,8 +23,8 @@ const TiketPage = () => {
           const errData = await response.json();
           throw new Error(errData.message || "Booking tidak ditemukan.");
         }
-        const data = await response.json();
-        setBookingData(data);
+        const res = await response.json();
+        setBookingData(res.data); // ✅ ambil langsung dari field "data"
       } catch (err) {
         setError(err.message);
       } finally {
@@ -40,10 +37,9 @@ const TiketPage = () => {
     }
   }, [bookingId]);
 
-  // Fungsi untuk download PDF semua tiket
+  // Download semua tiket
   const downloadAllTicketsPDF = async () => {
     if (!bookingData) return;
-
     setIsDownloading(true);
 
     try {
@@ -72,8 +68,6 @@ const TiketPage = () => {
         const imgData = canvas.toDataURL("image/png");
         const imgWidth = 180;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        // Center the ticket on the page
         const x = (210 - imgWidth) / 2;
         const y = 20;
 
@@ -83,7 +77,7 @@ const TiketPage = () => {
       }
 
       pdf.save(
-        `Tiket_${bookingData.booking_id}_${bookingData.package_name}.pdf`
+        `Tiket_${bookingData.bookingCode}_${bookingData.package_name}.pdf`
       );
     } catch (error) {
       console.error("Error generating PDF:", error);
@@ -93,10 +87,9 @@ const TiketPage = () => {
     }
   };
 
-  // Fungsi untuk download PDF tiket individual
+  // Download tiket individual
   const downloadSingleTicketPDF = async (participantId) => {
     if (!bookingData) return;
-
     setIsDownloading(true);
 
     try {
@@ -125,15 +118,13 @@ const TiketPage = () => {
       const imgData = canvas.toDataURL("image/png");
       const imgWidth = 180;
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-      // Center the ticket on the page
       const x = (210 - imgWidth) / 2;
       const y = 20;
 
       pdf.addImage(imgData, "PNG", x, y, imgWidth, imgHeight);
 
       const participant = bookingData.participants.find(
-        (p) => p.participant_id === participantId
+        (p) => p.id === participantId
       );
       const fileName = `Tiket_${participant?.name || participantId}_${
         bookingData.package_name
@@ -148,7 +139,6 @@ const TiketPage = () => {
     }
   };
 
-  // Tampilan saat data sedang dimuat
   if (loading) {
     return (
       <div className="tiket-page-container">
@@ -159,7 +149,6 @@ const TiketPage = () => {
     );
   }
 
-  // Tampilan jika terjadi error
   if (error) {
     return (
       <div className="tiket-page-container">
@@ -174,7 +163,6 @@ const TiketPage = () => {
     );
   }
 
-  // Tampilan jika data tidak ditemukan
   if (!bookingData) {
     return (
       <div className="tiket-page-container">
@@ -196,7 +184,7 @@ const TiketPage = () => {
 
         <div className="booking-info">
           <span>
-            ID Booking: <strong>{bookingData.booking_id}</strong>
+            ID Booking: <strong>{bookingData.bookingCode}</strong>
           </span>
           <span>
             Paket: <strong>{bookingData.package_name}</strong>
@@ -219,26 +207,22 @@ const TiketPage = () => {
         <div className="tiket-list">
           {bookingData.participants.map((participant) => (
             <div
-              key={participant.participant_id}
-              data-participant-id={participant.participant_id}
-              style={{ "--ticket-index": participant.participant_id }}
+              key={participant.id}
+              data-participant-id={participant.id}
               className="tiket-item-wrapper"
             >
               <Tiket
-                participantId={participant.participant_id}
-                bookingId={bookingData.booking_id}
+                participantId={participant.id}
+                bookingId={bookingData.bookingCode}
                 nama={participant.name}
-                telepon={participant.phone}
+                telepon={participant.phone || ""}
                 namaPaket={bookingData.package_name}
               />
 
-              {/* Tombol Download PDF Individual */}
               <div className="individual-pdf-controls">
                 <button
                   className="download-individual-pdf-btn"
-                  onClick={() =>
-                    downloadSingleTicketPDF(participant.participant_id)
-                  }
+                  onClick={() => downloadSingleTicketPDF(participant.id)}
                   disabled={isDownloading}
                 >
                   📄 Download PDF
