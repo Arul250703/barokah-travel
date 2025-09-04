@@ -533,7 +533,6 @@ const TicketDetailModal = ({ booking, isOpen, onClose }) => {
     </div>
   );
 };
-
 // Komponen Utama Halaman Admin
 function QrPage() {
   const [bookings, setBookings] = useState([]);
@@ -999,18 +998,18 @@ function QrPage() {
     setIsDetailModalOpen(true);
   };
 
-  // IMPROVED: Fixed ticket view navigation
+  // FIXED: Menggunakan ID database untuk melihat tiket, bukan booking_id
   const handleViewTicket = (booking) => {
-    console.log("Navigating to ticket:", booking.booking_id);
+    console.log("Navigating to ticket for booking:", booking);
 
-    if (!booking.booking_id) {
+    if (!booking.id) {
       alert("ID Booking tidak tersedia");
       return;
     }
 
     try {
-      // Navigate to ticket detail page
-      navigate(`/tiket/${booking.booking_id}`);
+      // Navigate to ticket detail page menggunakan ID database
+      navigate(`/tiket/${booking.id}`);
     } catch (navigationError) {
       console.error("Navigation error:", navigationError);
       // Show error message instead of trying fallback routes
@@ -1144,203 +1143,203 @@ function QrPage() {
         <div className="search-container">
           <FaSearch className="search-icon" />
           <input
-            type="text"
-            placeholder="Cari nama, ID booking, atau paket..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
-        <div className="filter-container">
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="filter-select"
-          >
-            <option value="Semua">Semua Status Pembayaran</option>
-            <option value="selesai">Lunas</option>
-            <option value="Lunas">Lunas</option>
-            <option value="menunggu_pembayaran">Pending</option>
-            <option value="pending">Pending</option>
-            <option value="PENDING">Pending</option>
-            <option value="DP">DP</option>
-            <option value="dibatalkan">Batal</option>
-            <option value="gagal">Gagal</option>
-          </select>
-          <FaChevronDown className="filter-icon" />
-        </div>
+          type="text"
+          placeholder="Cari nama, ID booking, atau paket..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
       </div>
-
-      <div className="table-container">
-        <div className="table-header">
-          <div className="table-title">
-            <h3>
-              Daftar Booking ({filteredBookings.length} dari {bookings.length})
-            </h3>
-          </div>
-          <button
-            className="btn btn-refresh"
-            onClick={handleRefresh}
-            disabled={isLoading}
-            title="Refresh Data"
-          >
-            <FaSpinner className={isLoading ? "spinning" : ""} />
-            {isLoading ? "Loading..." : "Refresh"}
-          </button>
-        </div>
-
-        <div className="table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>ID Booking</th>
-                <th>Nama Pelanggan</th>
-                <th>Paket Wisata</th>
-                <th>Status Pembayaran</th>
-                <th>Peserta (Check-in/Total)</th>
-                <th>Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td colSpan="6" className="empty-state">
-                    <FaSpinner className="spinning" />
-                    <p>Memuat data...</p>
-                  </td>
-                </tr>
-              ) : filteredBookings.length > 0 ? (
-                filteredBookings.map((booking, index) => {
-                  const { checkedIn, total } = getParticipantCounts(booking);
-
-                  return (
-                    <tr key={booking.id || booking.booking_id || index}>
-                      <td>
-                        <strong className="ticket-id">
-                          {booking.booking_id}
-                        </strong>
-                        <small className="booking-index">#{index + 1}</small>
-                      </td>
-                      <td className="customer-name">
-                        <div className="customer-info">
-                          <strong>{booking.customer_name}</strong>
-                          {booking.customer_phone &&
-                            booking.customer_phone !== "-" && (
-                              <small className="customer-phone">
-                                {booking.customer_phone}
-                              </small>
-                            )}
-                        </div>
-                      </td>
-                      <td className="package-name">{booking.package_name}</td>
-                      <td>
-                        <StatusBadge status={booking.payment_status} />
-                      </td>
-                      <td className="participant-count">
-                        {formatParticipantStatus(checkedIn, total)}
-                      </td>
-                      <td>
-                        <div className="action-buttons">
-                          <button
-                            className="action-btn action-view"
-                            onClick={() => handleViewDetail(booking)}
-                            title="Lihat Detail"
-                          >
-                            <FaEye />
-                          </button>
-                          <button
-                            className="action-btn action-ticket"
-                            onClick={() => handleViewTicket(booking)}
-                            title="Lihat Tiket"
-                          >
-                            <FaTicketAlt />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <tr>
-                  <td colSpan="6" className="empty-state">
-                    <FaTicketAlt />
-                    <p>Tidak ada data booking ditemukan</p>
-                    <p className="empty-subtitle">
-                      {searchTerm || filterStatus !== "Semua"
-                        ? "Coba ubah filter pencarian"
-                        : "Belum ada booking yang tersedia"}
-                    </p>
-                    {error && (
-                      <button
-                        className="btn btn-primary mt-2"
-                        onClick={handleRefresh}
-                      >
-                        Coba Lagi
-                      </button>
-                    )}
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      <div className="filter-container">
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value)}
+          className="filter-select"
+        >
+          <option value="Semua">Semua Status Pembayaran</option>
+          <option value="selesai">Lunas</option>
+          <option value="Lunas">Lunas</option>
+          <option value="menunggu_pembayaran">Pending</option>
+          <option value="pending">Pending</option>
+          <option value="PENDING">Pending</option>
+          <option value="DP">DP</option>
+          <option value="dibatalkan">Batal</option>
+          <option value="gagal">Gagal</option>
+        </select>
+        <FaChevronDown className="filter-icon" />
       </div>
-
-      {/* Debug Info Panel (only in development) */}
-      {process.env.NODE_ENV === "development" && (
-        <div className="debug-panel">
-          <details>
-            <summary>Debug Info</summary>
-            <div className="debug-content">
-              <p>
-                <strong>Total bookings loaded:</strong> {bookings.length}
-              </p>
-              <p>
-                <strong>Filtered bookings:</strong> {filteredBookings.length}
-              </p>
-              <p>
-                <strong>Search term:</strong> "{searchTerm}"
-              </p>
-              <p>
-                <strong>Filter status:</strong> {filterStatus}
-              </p>
-              <p>
-                <strong>Summary stats:</strong>
-              </p>
-              <ul>
-                <li>Total Bookings: {summaryStats.totalBookings}</li>
-                <li>Total Participants: {summaryStats.totalParticipants}</li>
-                <li>Checked In: {summaryStats.checkedIn}</li>
-                <li>Valid: {summaryStats.valid}</li>
-              </ul>
-              {bookings.length > 0 && (
-                <details>
-                  <summary>Sample booking data</summary>
-                  <pre>{JSON.stringify(bookings[0], null, 2)}</pre>
-                </details>
-              )}
-            </div>
-          </details>
-        </div>
-      )}
-
-      {/* Scanner Modal */}
-      <ScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onScanValidate={handleScanValidation}
-      />
-
-      {/* Detail Modal */}
-      <TicketDetailModal
-        booking={selectedBooking}
-        isOpen={isDetailModalOpen}
-        onClose={() => {
-          setIsDetailModalOpen(false);
-          setSelectedBooking(null);
-        }}
-      />
     </div>
+
+    <div className="table-container">
+      <div className="table-header">
+        <div className="table-title">
+          <h3>
+            Daftar Booking ({filteredBookings.length} dari {bookings.length})
+          </h3>
+        </div>
+        <button
+          className="btn btn-refresh"
+          onClick={handleRefresh}
+          disabled={isLoading}
+          title="Refresh Data"
+        >
+          <FaSpinner className={isLoading ? "spinning" : ""} />
+          {isLoading ? "Loading..." : "Refresh"}
+        </button>
+      </div>
+
+      <div className="table-wrapper">
+        <table className="data-table">
+          <thead>
+            <tr>
+              <th>ID Booking</th>
+              <th>Nama Pelanggan</th>
+              <th>Paket Wisata</th>
+              <th>Status Pembayaran</th>
+              <th>Peserta (Check-in/Total)</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="6" className="empty-state">
+                  <FaSpinner className="spinning" />
+                  <p>Memuat data...</p>
+                </td>
+              </tr>
+            ) : filteredBookings.length > 0 ? (
+              filteredBookings.map((booking, index) => {
+                const { checkedIn, total } = getParticipantCounts(booking);
+
+                return (
+                  <tr key={booking.id || booking.booking_id || index}>
+                    <td>
+                      <strong className="ticket-id">
+                        {booking.booking_id}
+                      </strong>
+                      <small className="booking-index">#{index + 1}</small>
+                    </td>
+                    <td className="customer-name">
+                      <div className="customer-info">
+                        <strong>{booking.customer_name}</strong>
+                        {booking.customer_phone &&
+                          booking.customer_phone !== "-" && (
+                            <small className="customer-phone">
+                              {booking.customer_phone}
+                            </small>
+                          )}
+                      </div>
+                    </td>
+                    <td className="package-name">{booking.package_name}</td>
+                    <td>
+                      <StatusBadge status={booking.payment_status} />
+                    </td>
+                    <td className="participant-count">
+                      {formatParticipantStatus(checkedIn, total)}
+                    </td>
+                    <td>
+                      <div className="action-buttons">
+                        <button
+                          className="action-btn action-view"
+                          onClick={() => handleViewDetail(booking)}
+                          title="Lihat Detail"
+                        >
+                          <FaEye />
+                        </button>
+                        <button
+                          className="action-btn action-ticket"
+                          onClick={() => handleViewTicket(booking)}
+                          title="Lihat Tiket"
+                        >
+                          <FaTicketAlt />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="6" className="empty-state">
+                  <FaTicketAlt />
+                  <p>Tidak ada data booking ditemukan</p>
+                  <p className="empty-subtitle">
+                    {searchTerm || filterStatus !== "Semua"
+                      ? "Coba ubah filter pencarian"
+                      : "Belum ada booking yang tersedia"}
+                  </p>
+                  {error && (
+                    <button
+                      className="btn btn-primary mt-2"
+                      onClick={handleRefresh}
+                    >
+                      Coba Lagi
+                    </button>
+                  )}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {/* Debug Info Panel (only in development) */}
+    {process.env.NODE_ENV === "development" && (
+      <div className="debug-panel">
+        <details>
+          <summary>Debug Info</summary>
+          <div className="debug-content">
+            <p>
+              <strong>Total bookings loaded:</strong> {bookings.length}
+            </p>
+            <p>
+              <strong>Filtered bookings:</strong> {filteredBookings.length}
+            </p>
+            <p>
+              <strong>Search term:</strong> "{searchTerm}"
+            </p>
+            <p>
+              <strong>Filter status:</strong> {filterStatus}
+            </p>
+            <p>
+              <strong>Summary stats:</strong>
+            </p>
+            <ul>
+              <li>Total Bookings: {summaryStats.totalBookings}</li>
+              <li>Total Participants: {summaryStats.totalParticipants}</li>
+              <li>Checked In: {summaryStats.checkedIn}</li>
+              <li>Valid: {summaryStats.valid}</li>
+            </ul>
+            {bookings.length > 0 && (
+              <details>
+                <summary>Sample booking data</summary>
+                <pre>{JSON.stringify(bookings[0], null, 2)}</pre>
+              </details>
+            )}
+          </div>
+        </details>
+      </div>
+    )}
+
+    {/* Scanner Modal */}
+    <ScannerModal
+      isOpen={isScannerOpen}
+      onClose={() => setIsScannerOpen(false)}
+      onScanValidate={handleScanValidation}
+    />
+
+    {/* Detail Modal */}
+    <TicketDetailModal
+      booking={selectedBooking}
+      isOpen={isDetailModalOpen}
+      onClose={() => {
+        setIsDetailModalOpen(false);
+        setSelectedBooking(null);
+      }}
+    />
+  </div>
   );
 }
 

@@ -232,6 +232,42 @@ app.get("/api/bookings/:id", (req, res) => {
   });
 });
 
+// POST /api/packages
+app.post("/api/packages", (req, res) => {
+  const { 
+    name, 
+    city_id, 
+    trip_code, 
+    description, 
+    price, 
+    imageUrl, 
+    duration, 
+    max_participants, 
+    is_active 
+  } = req.body;
+
+  const sql = `
+    INSERT INTO packages 
+    (name, city_id, trip_code, description, price, imageUrl, duration, max_participants, is_active, created_at, updated_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+  `;
+
+  db.query(
+    sql, 
+    [name, city_id, trip_code, description, price, imageUrl, duration, max_participants, is_active || 1],
+    (err, result) => {
+      if (err) {
+        console.error("Error creating package:", err);
+        return res.status(500).json({ error: err.message });
+      }
+      res.status(201).json({ 
+        message: "Package created successfully",
+        id: result.insertId 
+      });
+    }
+  );
+});
+
 // GET /api/bookings/:id/ticket - tiket peserta
 app.get("/api/bookings/:id/ticket", (req, res) => {
   const { id } = req.params;
@@ -369,8 +405,11 @@ app.get("/api/packages", (req, res) => {
     SELECT 
       p.id, 
       p.name AS package_name, 
+      p.name AS name, 
+      p.description,
       p.price, 
       p.imageUrl, 
+      p.duration,
       c.city_name, 
       c.city_code
     FROM packages p
@@ -405,6 +444,61 @@ app.get("/api/cities", (req, res) => {
       return res.status(500).json({ error: err.message });
     }
     res.json(results);
+  });
+});
+
+// PUT /api/packages/:id
+app.put("/api/packages/:id", (req, res) => {
+  const { id } = req.params;
+  const { 
+    name, 
+    city_id, 
+    trip_code, 
+    description, 
+    price, 
+    imageUrl, 
+    duration, 
+    max_participants, 
+    is_active 
+  } = req.body;
+
+  const sql = `
+    UPDATE packages 
+    SET name = ?, city_id = ?, trip_code = ?, description = ?, price = ?, 
+        imageUrl = ?, duration = ?, max_participants = ?, is_active = ?, updated_at = NOW()
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql, 
+    [name, city_id, trip_code, description, price, imageUrl, duration, max_participants, is_active, id],
+    (err, result) => {
+      if (err) {
+        console.error("Error updating package:", err);
+        return res.status(500).json({ error: err.message });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Package not found" });
+      }
+      res.json({ message: "Package updated successfully" });
+    }
+  );
+});
+
+// DELETE /api/packages/:id
+app.delete("/api/packages/:id", (req, res) => {
+  const { id } = req.params;
+  const sql = "DELETE FROM packages WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error("Error deleting package:", err);
+      return res.status(500).json({ error: err.message });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+    res.json({ message: "Package deleted successfully" });
   });
 });
 

@@ -2,23 +2,27 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import "../components/styles/Sukabumi.css";
-import videoSection from "../assets/videos/video-section.mp4";
 
-// event package (masih statis, karena tidak ada di database)
-const eventData = {
+// Aset
+import servicesBg from "../assets/images/services-bg.jpg";
+import videoSection from "../assets/videos/video-section.mp4";
+import dreamland from "../assets/images/dreamland.jpeg";
+
+// Data statis untuk paket event/acara di Sukabumi
+const sukabumiEventData = {
   capacityBuilding: [
     {
       id: "cb1",
       name: "Paket Standar",
       duration: "60-90 Menit",
-      price: "IDR 50.000",
+      price: "IDR. 50.000/pax",
       details: ["3x Ice Breaking", "3x Fun Game", "Air Mineral 600ml", "Snack"],
     },
     {
       id: "cb2",
       name: "Paket Premium",
       duration: "60-120 Menit",
-      price: "IDR 100.000",
+      price: "IDR. 100.000/pax",
       details: [
         "3x Ice Breaking",
         "5x Fun Game",
@@ -30,7 +34,7 @@ const eventData = {
       id: "cb3",
       name: "Paket Standar Plus",
       duration: "60-90 Menit",
-      price: "IDR 150.000",
+      price: "IDR. 150.000/pax",
       details: ["3x Ice Breaking", "3x Fun Game", "1x Makan", "Snack"],
     },
   ],
@@ -38,7 +42,7 @@ const eventData = {
     {
       id: "eo1",
       name: "SILVER PACKAGE",
-      price: "IDR 25.000.000",
+      price: "IDR. 25.000.000/hari",
       details: [
         "Backsound (mp3, audio)",
         "MC + Tim EO (2 orang)",
@@ -48,7 +52,7 @@ const eventData = {
     {
       id: "eo2",
       name: "GOLD PACKAGE",
-      price: "IDR 35.000.000",
+      price: "IDR. 35.000.000/hari",
       details: [
         "MC + Tim EO (4 orang)",
         "Dekorasi panggung medium",
@@ -59,7 +63,7 @@ const eventData = {
     {
       id: "eo3",
       name: "PLATINUM PACKAGE",
-      price: "IDR 65.000.000",
+      price: "IDR. 65.000.000/hari",
       details: [
         "MC + Tim EO (6 orang)",
         "Dekorasi panggung full",
@@ -70,10 +74,11 @@ const eventData = {
   ],
 };
 
+// Parsing harga
 function parsePrice(priceStr) {
-  if (!priceStr || typeof priceStr !== "string") return 0;
-  const numberString = priceStr.replace(/[^0-9]/g, "");
-  return parseInt(numberString, 10) || 0;
+  if (!priceStr) return 0;
+  const cleaned = priceStr.replace(/[^\d,]/g, "").replace(",", "");
+  return parseInt(cleaned, 10) || 0;
 }
 
 const Sukabumi = () => {
@@ -81,7 +86,7 @@ const Sukabumi = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch data dari API
+  // ✅ Fetch data paket dari API
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -99,27 +104,30 @@ const Sukabumi = () => {
     fetchPackages();
   }, []);
 
+  // Logika filter
   let filteredPackages = [];
   if (currentFilter === "paket") {
-    filteredPackages = [...eventData.capacityBuilding, ...eventData.eoWo];
+    filteredPackages = [
+      ...sukabumiEventData.capacityBuilding,
+      ...sukabumiEventData.eoWo,
+    ];
   } else {
     filteredPackages = packages.filter(
       (pkg) => currentFilter === "all" || pkg.group === currentFilter
     );
   }
 
+  const heroBgStyle = {
+    backgroundImage: `url(${servicesBg})`,
+  };
+
   return (
     <div className="sukabumi-page">
       {/* Hero Section */}
-      <header
-        className="detail-hero-section"
-        style={{ backgroundImage: `url(${packages[0]?.image || ""})` }}
-      >
+      <header className="detail-hero-section" style={heroBgStyle}>
         <div className="detail-hero-overlay">
-          <h1 className="detail-hero-title">Paket Wisata Pilihan</h1>
-          <p className="detail-hero-subtitle">
-            Jawa Barat & Destinasi Populer Lainnya
-          </p>
+          <h1 className="detail-hero-title">PAKET WISATA SUKABUMI</h1>
+          <p className="detail-hero-subtitle">Jawa Barat</p>
         </div>
       </header>
 
@@ -170,12 +178,13 @@ const Sukabumi = () => {
         <div className="destination-groups">
           {currentFilter === "paket" ? (
             <>
+              {/* Capacity Building */}
               <section className="section">
                 <div className="section-title yellow-bg">
                   CAPACITY BUILDING PACKAGE
                 </div>
                 <div className="package-grid">
-                  {eventData.capacityBuilding.map((pkg) => (
+                  {sukabumiEventData.capacityBuilding.map((pkg) => (
                     <div className="package-box" key={pkg.id}>
                       <h4 className="gold">
                         {pkg.name}
@@ -203,12 +212,14 @@ const Sukabumi = () => {
                   ))}
                 </div>
               </section>
+
+              {/* EO/WO */}
               <section className="section">
                 <div className="section-title yellow-bg">
                   EVENT PACKAGE : EO/WO/DLL
                 </div>
                 <div className="package-grid">
-                  {eventData.eoWo.map((pkg) => (
+                  {sukabumiEventData.eoWo.map((pkg) => (
                     <div className="package-box" key={pkg.id}>
                       <h4 className="silver">{pkg.name}</h4>
                       <div className="price">{pkg.price}</div>
@@ -243,19 +254,23 @@ const Sukabumi = () => {
               ) : (
                 filteredPackages.map((pkg) => (
                   <div className="paket-card" key={pkg.id}>
-                    <img src={pkg.image} alt={pkg.name} />
+                    <img src={pkg.imageUrl || dreamland} alt={pkg.name} />
                     <div className="paket-info">
                       <h3>{pkg.name}</h3>
-                      <p className="subjudul">{pkg.subtitle}</p>
+                      <p className="deskripsi">{pkg.description}</p>
                       <p className="harga">
-                        {pkg.price} <span className="min">{pkg.minPax}</span>
+                        Rp {parseInt(pkg.price).toLocaleString("id-ID")}
                       </p>
                       <Link
                         to="/pembayaran"
                         state={{
                           package_id: pkg.id,
                           namaPaket: pkg.name,
-                          harga: parsePrice(pkg.price),
+                          deskripsi: pkg.description,
+                          harga: pkg.price,
+                          image: pkg.imageUrl,
+                          group: pkg.group,
+                          city: pkg.city,
                         }}
                         className="detail-btn"
                       >

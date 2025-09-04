@@ -1,220 +1,343 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import '../components/styles/yogyakarta.css';
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
+import "../components/styles/yogyakarta.css";
 
-// Import Aset Gambar (pastikan path ini benar)
-import pinus from '../assets/images/pinus.jpeg';
-import yogya from '../assets/images/yogya.jpeg';
-import bro from '../assets/images/bro.jpeg';
-import pram from '../assets/images/pram.jpeg';
-import jeram from '../assets/images/jeram.jpeg';
-import rj from '../assets/images/rj.jpeg';
-import dreamland from '../assets/images/dreamland.jpeg';
-import lot from '../assets/images/lot.jpeg';
-import videoSection from '../assets/videos/video-section.mp4';
+// Aset
+import yogya from "../assets/images/yogya.jpeg";
+import videoSection from "../assets/videos/video-section.mp4";
+import dreamland from "../assets/images/dreamland.jpeg"; // fallback
+import lot from "../assets/images/lot.jpeg"; // fallback
 
-// Data statis untuk semua paket wisata Yogyakarta
-const yogyakartaData = {
-    title: "Paket Wisata Yogyakarta",
-    description: "Daerah Istimewa Yogyakarta",
-    bgImage: yogya,
-    packages: [
-        { id: "1", name: "PAKET A : YOGYAKARTA 2H1M", subtitle: "Hutan Pinus Mangunan - Explore Gumuk Pasir & Pantai Parangtritis by Jeep - Obelix Sea View - Candi Prambanan - Tamansari Water castle", price: "IDR 992.000", minPax: "min. 2-15pax", image: pinus, group: "paket-wisata" },
-        { id: "2", name: "PAKET B : YOGYAKARTA 2H1M", subtitle: "Pantai Drini - Cave Tubing Goa Pindul - Heha Sky View - Kraton Kasultanan Ngayogyokarto - Gamplong Studio", price: "IDR 874.000", minPax: "min. 2-15pax", image: yogya, group: "paket-wisata" },
-        { id: "3", name: "PAKET C : YOGYAKARTA 2H1M", subtitle: "VW Safari Borobudur - Museum Ulen Sentalu - Heha Sky View - Candi Prambanan - Museum Art Jogja", price: "IDR 1.027.000", minPax: "min. 2-15pax", image: bro, group: "paket-wisata" },
-        { id: "4", name: "PAKET D : YOGYAKARTA 2H1M", subtitle: "Lava Tour Merapi by Jeep Adventure - Candi Prambanan - Obelix Hill - Museum Art Jogja - Tamansari Water Castle", price: "IDR 1.016.000", minPax: "min. 2-15pax", image: pram, group: "paket-wisata" },
-        { id: "5", name: "PAKET A : YOGYAKARTA 3H2M", subtitle: "Pantai Drini - Cave Tubing Goa Pindul - Heha Sky View - Hutan Pinus Mangunan - Explore Gumuk Pasir by Jeep Adventure - Obelix Sea View - Candi Prambanan Wisata Belanja Oleh-Oleh", price: "IDR 1.444.000", minPax: "min. 2-15pax", image: jeram, group: "paket-wisata" },
-        { id: "6", name: "PAKET WISATA YOGYAKARTA 4H3M", subtitle: "Candi Borobudur - Umbul Banyu Roso - VW Safari Borobudur - Puncak Sosok Jogja - Seribu Batu Songgo Langit - Hutan Pinus Becici - Heha Sky View - Pantai Indrayanti - Bukit Bintang - Bhumi Merapi - Lava Tour Jeep Merapi - Candi Prambanan - Kraton Yogyakarta - Tamansari - Tebing Breksi - Malioboro", price: "IDR 1.928.000", minPax: "min. 2-30pax", image: rj, group: "paket-wisata" },
-        { id: "7", name: "PAKET A : YOGYAKARTA ONE DAY", subtitle: "Kraton Kasultanan Ngayogyokarto - Tamansari Water Castle - Museum Sonobudoyo - Museum Art Jogja", price: "IDR 396.000", minPax: "min. 2-15pax", image: yogya, group: "one-day-trip" },
-        { id: "8", name: "PAKET B : YOGYAKARTA ONE DAY", subtitle: "Candi Borobudur - Candi Prambanan - Candi Ratu Boko - Tebing Breksi", price: "IDR 478.000", minPax: "min. 2-15pax", image: bro, group: "one-day-trip" },
-        { id: "9", name: "PAKET C : YOGYAKARTA ONE DAY", subtitle: "Hutan Pinus Mangunan - Seribu Batu Songgo Langit - Explore Gumuk Pasir by Jeep Adventure - Obelix Sea View", price: "IDR 497.000", minPax: "min. 2-15pax", image: pinus, group: "one-day-trip" },
-        { id: "10", name: "PAKET D : YOGYAKARTA ONE DAY", subtitle: "Lava Tour Merapi by Jeep Adventure - Tebing Breksi - Obelix Hill - Candi Prambanan", price: "IDR 525.000", minPax: "min. 2-15pax", image: pram, group: "one-day-trip" },
-        { id: "11", name: "PAKET E : YOGYAKARTA ONE DAY", subtitle: "Pantai Timang Shuttle by Jeep - Cave Tubing Goa Pindul - Heha Sky View", price: "IDR 538.000", minPax: "min. 2-15pax", image: rj, group: "one-day-trip" },
-        { id: "12", name: "Paket Tour Bali 2H1M", subtitle: "Tanah Lot - Pantai Dreamland - Pantai Jimbaran - Tanjung Benoa - Krisna Shoping Center", price: "IDR 837.000", minPax: "min. 2–55pax", image: dreamland, group: "overland" },
-        { id: "13", name: "Paket Tour Bali 3H2M", subtitle: "Pure Ulun Danu Bedugul -  Blossom Garden -  Tanah Lot - Tanjung Benoa - Pura Luhur Uluwatu - Pantai Melasti - Pantai Jimbaran - Pantai Kuta - Krisna Shoping Center", price: "IDR 1.260.000", minPax: "min. 2–50pax", image: lot, group: "overland" },
-        { id: "14", name: "Paket Tour Bali 4H3M", subtitle: "Kintamani - Tirta Empul - Gusto Gelato -  Blossom Garden -  Pura Ulun Danu Bedugul -  Tanah Lot - Tanjung Benoa - GWK - Pantai Melasti -  Pantai Jimbaran - Pantai Kute - Krisna Shoping Center", price: "IDR 1.891.000", minPax: "min. 2–55pax", image: dreamland, group: "overland" },
-    ],
+// Data statis untuk paket event/acara di Yogyakarta
+const yogyakartaEventData = {
+  capacityBuilding: [
+    {
+      id: "cb1",
+      name: "Paket Standar",
+      duration: "60-90 Menit",
+      price: "IDR. 50.000/pax",
+      details: [
+        "3x Ice Breaking",
+        "3x Fun Game",
+        "Air Mineral 600ml",
+        "Snack",
+        "Sound Standard",
+      ],
+    },
+    {
+      id: "cb2",
+      name: "Paket Premium",
+      duration: "60-120 Menit",
+      price: "IDR. 100.000/pax",
+      details: [
+        "3x Ice Breaking",
+        "5x Fun Game",
+        "Game Kelompok",
+        "Snack + Refreshment",
+        "Air Mineral 600ml",
+        "Sound Standard",
+      ],
+    },
+    {
+      id: "cb3",
+      name: "Paket Standar",
+      duration: "60-90 Menit",
+      price: "IDR. 150.000/pax",
+      details: [
+        "3x Ice Breaking",
+        "3x Fun Game",
+        "Game Kelompok",
+        "1x Makan",
+        "Snack",
+        "Sound Standard",
+      ],
+    },
+  ],
+  eoWo: [
+    {
+      id: "eo1",
+      name: "SILVER PACKAGE",
+      price: "IDR. 25.000.000/hari",
+      details: [
+        "Backsound (mp3, audio)",
+        "MC + Tim EO (2 orang)",
+        "Dekorasi panggung standar",
+        "Lampu & Spotlight",
+        "Lighting & Sound",
+        "Dokumentasi Video & Foto",
+      ],
+    },
+    {
+      id: "eo2",
+      name: "GOLD PACKAGE",
+      price: "IDR. 35.000.000/hari",
+      details: [
+        "Backsound (mp3, audio)",
+        "MC + Tim EO (4 orang)",
+        "Dekorasi panggung medium",
+        "Lampu & Spotlight",
+        "Lighting & Sound",
+        "Dokumentasi Video & Foto",
+        "Drone",
+      ],
+    },
+    {
+      id: "eo3",
+      name: "PLATINUM PACKAGE",
+      price: "IDR. 65.000.000/hari",
+      details: [
+        "Backsound (mp3, audio)",
+        "MC + Tim EO (6 orang)",
+        "Dekorasi panggung full",
+        "Lampu & Spotlight",
+        "Lighting & Sound",
+        "Dokumentasi Video & Foto",
+        "Drone",
+        "Live Streaming",
+        "Undangan digital & hall full AC",
+      ],
+    },
+  ],
 };
 
-const eventData = {
-    capacityBuilding: [
-        { id: "cb1", name: "Paket Standar", duration: "60-90 Menit", price: "IDR. 50.000/pax", details: ["3x Ice Breaking", "3x Fun Game", "Air Mineral 600ml", "Snack", "Sound Standard"], group: "paket" },
-        { id: "cb2", name: "Paket Premium", duration: "60-120 Menit", price: "IDR. 100.000/pax", details: ["3x Ice Breaking", "5x Fun Game", "Game Kelompok", "Snack + Refreshment", "Air Mineral 600ml", "Sound Standard"], group: "paket" },
-        { id: "cb3", name: "Paket Standar", duration: "60-90 Menit", price: "IDR. 150.000/pax", details: ["3x Ice Breaking", "3x Fun Game", "Game Kelompok", "1x Makan", "Snack", "Sound Standard"], group: "paket" }
-    ],
-    eoWo: [
-        { id: "eo1", name: "SILVER PACKAGE", price: "IDR. 25.000.000/hari", details: ["Backsound (mp3, audio)", "MC + Tim EO (2 orang)", "Dekorasi panggung standar", "Lampu & Spotlight", "Lighting & Sound", "Dokumentasi Video & Foto"], group: "paket" },
-        { id: "eo2", name: "GOLD PACKAGE", price: "IDR. 35.000.000/hari", details: ["Backsound (mp3, audio)", "MC + Tim EO (4 orang)", "Dekorasi panggung medium", "Lampu & Spotlight", "Lighting & Sound", "Dokumentasi Video & Foto", "Drone"], group: "paket" },
-        { id: "eo3", name: "PLATINUM PACKAGE", price: "IDR. 65.000.000/hari", details: ["Backsound (mp3, audio)", "MC + Tim EO (6 orang)", "Dekorasi panggung full", "Lampu & Spotlight", "Lighting & Sound", "Dokumentasi Video & Foto", "Drone", "Live Streaming", "Undangan digital & hall full AC"], group: "paket" }
-    ]
-};
-
-// Fungsi untuk mengubah harga dari string ke angka
+// Fungsi parsing harga
 function parsePrice(priceStr) {
-    if (!priceStr || typeof priceStr !== "string") return 0;
-    const numberString = priceStr.replace(/[^0-9]/g, "");
-    return parseInt(numberString, 10) || 0;
+  if (!priceStr) return 0;
+  const cleaned = priceStr.replace(/[^\d,]/g, "").replace(",", "");
+  return parseInt(cleaned, 10) || 0;
 }
 
 const Yogyakarta = () => {
-    const [currentFilter, setCurrentFilter] = useState('all');
-    
-    // Logika filter tidak berubah
-    const allWisataPackages = yogyakartaData.packages;
-    let filteredPackages = [];
-    let isEventPackage = false;
-    
-    if (currentFilter === 'paket') {
-        filteredPackages = [...eventData.capacityBuilding, ...eventData.eoWo];
-        isEventPackage = true;
-    } else {
-        filteredPackages = allWisataPackages.filter(pkg => currentFilter === 'all' || pkg.group === currentFilter);
-    }
-        
-    const heroBgStyle = {
-        backgroundImage: `url(${yogyakartaData.bgImage})`
+  const [currentFilter, setCurrentFilter] = useState("all");
+  const [packages, setPackages] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ Fetch data paket dari API
+  useEffect(() => {
+    const fetchPackages = async () => {
+      try {
+        const res = await axios.get(
+          "http://localhost:5000/api/packages?city=Yogyakarta"
+        );
+        setPackages(res.data || []);
+      } catch (error) {
+        console.error("Error fetching packages:", error);
+        setPackages([]);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchPackages();
+  }, []);
 
-    return (
-        <div className="yogyakarta-page">
-            <header className="detail-hero-section" style={heroBgStyle}>
-                <div className="detail-hero-overlay">
-                    <h1 className="detail-hero-title">{yogyakartaData.title}</h1>
-                    <p className="detail-hero-subtitle">{yogyakartaData.description}</p>
-                </div>
-            </header>
-
-            <section id="destination-menu" className="destination-menu-section">
-                <div className="filter-buttons">
-                    <button 
-                        className={`filter-btn ${currentFilter === 'all' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('all')}
-                    >
-                        Semua
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'paket-wisata' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('paket-wisata')}
-                    >
-                        Paket Wisata
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'overland' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('overland')}
-                    >
-                        Overland | UMUM
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'one-day-trip' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('one-day-trip')}
-                    >
-                        One Day Trip
-                    </button>
-                    <button 
-                        className={`filter-btn ${currentFilter === 'paket' ? 'active' : ''}`}
-                        onClick={() => setCurrentFilter('paket')}
-                    >
-                        Paket Event
-                    </button>
-                </div>
-                
-                <div className="destination-groups">
-                    {isEventPackage ? (
-                        <>
-                            <section className="section">
-                                <div className="section-title yellow-bg">CAPACITY BUILDING PACKAGE</div>
-                                <div className="package-grid">
-                                    {eventData.capacityBuilding.map(pkg => (
-                                        <div className="package-box" key={pkg.id}>
-                                            <h4>{pkg.name}<br/>{pkg.duration}</h4>
-                                            <div className="price">{pkg.price}</div>
-                                            <ul>
-                                                {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
-                                            </ul>
-                                            {/* --- PERBAIKAN DI SINI --- */}
-                                            <Link 
-                                                to="/pembayaran"
-                                                state={{
-                                                    package_id: pkg.id,
-                                                    namaPaket: pkg.name,
-                                                    harga: parsePrice(pkg.price),
-                                                }}
-                                                className="detail-btn"
-                                            >
-                                                Pesan Sekarang
-                                            </Link>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                            <section className="section">
-                                <div className="section-title yellow-bg">EVENT PACKAGE : EO/WO/DLL</div>
-                                <div className="package-grid">
-                                    {eventData.eoWo.map(pkg => (
-                                        <div className="package-box" key={pkg.id}>
-                                            <h4>{pkg.name}</h4>
-                                            <div className="price">{pkg.price}</div>
-                                            <ul>
-                                                {pkg.details.map((detail, index) => <li key={index}>{detail}</li>)}
-                                            </ul>
-                                            {/* --- PERBAIKAN DI SINI --- */}
-                                            <Link 
-                                                to="/pembayaran"
-                                                state={{
-                                                    package_id: pkg.id,
-                                                    namaPaket: pkg.name,
-                                                    harga: parsePrice(pkg.price),
-                                                }}
-                                                className="detail-btn"
-                                            >
-                                                Pesan Sekarang
-                                            </Link>
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        </>
-                    ) : (
-                        <div className="tour-cards-grid">
-                            {filteredPackages.map(pkg => (
-                                <div className="paket-card" key={pkg.id}>
-                                    <img src={pkg.image} alt={pkg.name} />
-                                    <div className="paket-info">
-                                        <h3>{pkg.name}</h3>
-                                        <p className="subjudul">{pkg.subtitle}</p>
-                                        <p className="harga">{pkg.price} <span className="min">{pkg.minPax}</span></p>
-                                        {/* --- PERBAIKAN DI SINI --- */}
-                                        <Link 
-                                            to="/pembayaran"
-                                            state={{
-                                                package_id: pkg.id,
-                                                namaPaket: pkg.name,
-                                                harga: parsePrice(pkg.price),
-                                            }}
-                                            className="detail-btn"
-                                        >
-                                            Pesan Sekarang
-                                        </Link>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </section>
-            
-            <section className="custom-cta">
-                <video autoPlay muted loop playsInline className="cta-video" src={videoSection} />
-                <div className="cta-overlay">
-                    <div className="cta-text">
-                        <h2>Belum menemukan paket yang sesuai?</h2>
-                        <p>Kami siap bantu merancang perjalanan khusus sesuai kebutuhan dan anggaran Anda!</p>
-                        <a href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket di Yogyakarta.`} className="cta-button" target="_blank" rel="noopener noreferrer">Chat Kami Sekarang</a>
-                    </div>
-                </div>
-            </section>
-        </div>
+  // Logika filter
+  let filteredPackages = [];
+  if (currentFilter === "paket") {
+    filteredPackages = [
+      ...yogyakartaEventData.capacityBuilding,
+      ...yogyakartaEventData.eoWo,
+    ];
+  } else {
+    filteredPackages = packages.filter(
+      (pkg) => currentFilter === "all" || pkg.group === currentFilter
     );
+  }
+
+  const heroBgStyle = {
+    backgroundImage: `url(${yogya})`,
+  };
+
+  return (
+    <div className="yogyakarta-page">
+      <header className="detail-hero-section" style={heroBgStyle}>
+        <div className="detail-hero-overlay">
+          <h1 className="detail-hero-title">PAKET WISATA YOGYAKARTA</h1>
+          <p className="detail-hero-subtitle">Daerah Istimewa Yogyakarta</p>
+        </div>
+      </header>
+
+      <section id="destination-menu" className="destination-menu-section">
+        <div className="filter-buttons">
+          <button
+            className={`filter-btn ${currentFilter === "all" ? "active" : ""}`}
+            onClick={() => setCurrentFilter("all")}
+          >
+            Semua
+          </button>
+          <button
+            className={`filter-btn ${
+              currentFilter === "paket-wisata" ? "active" : ""
+            }`}
+            onClick={() => setCurrentFilter("paket-wisata")}
+          >
+            Paket Wisata
+          </button>
+          <button
+            className={`filter-btn ${
+              currentFilter === "overland" ? "active" : ""
+            }`}
+            onClick={() => setCurrentFilter("overland")}
+          >
+            Overland | UMUM
+          </button>
+          <button
+            className={`filter-btn ${
+              currentFilter === "one-day-trip" ? "active" : ""
+            }`}
+            onClick={() => setCurrentFilter("one-day-trip")}
+          >
+            One Day Trip
+          </button>
+          <button
+            className={`filter-btn ${
+              currentFilter === "paket" ? "active" : ""
+            }`}
+            onClick={() => setCurrentFilter("paket")}
+          >
+            Paket Event
+          </button>
+        </div>
+
+        <div className="destination-groups">
+          {currentFilter === "paket" ? (
+            <div>
+              {/* Capacity Building */}
+              <section className="section">
+                <div className="section-title yellow-bg">
+                  CAPACITY BUILDING PACKAGE
+                </div>
+                <div className="package-grid">
+                  {yogyakartaEventData.capacityBuilding.map((pkg) => (
+                    <div className="package-box" key={pkg.id}>
+                      <h4>
+                        {pkg.name}
+                        <br />
+                        {pkg.duration}
+                      </h4>
+                      <div className="price">{pkg.price}</div>
+                      <ul>
+                        {pkg.details.map((detail, index) => (
+                          <li key={index}>{detail}</li>
+                        ))}
+                      </ul>
+                      <Link
+                        to="/pembayaran"
+                        state={{
+                          package_id: pkg.id,
+                          namaPaket: pkg.name,
+                          harga: parsePrice(pkg.price),
+                        }}
+                        className="detail-btn"
+                      >
+                        Pesan Sekarang
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </section>
+
+              {/* EO/WO */}
+              <section className="section">
+                <div className="section-title yellow-bg">
+                  EVENT PACKAGE : EO/WO/DLL
+                </div>
+                <div className="package-grid">
+                  {yogyakartaEventData.eoWo.map((pkg) => (
+                    <div className="package-box" key={pkg.id}>
+                      <h4>{pkg.name}</h4>
+                      <div className="price">{pkg.price}</div>
+                      <ul>
+                        {pkg.details.map((detail, index) => (
+                          <li key={index}>{detail}</li>
+                        ))}
+                      </ul>
+                      <Link
+                        to="/pembayaran"
+                        state={{
+                          package_id: pkg.id,
+                          namaPaket: pkg.name,
+                          harga: parsePrice(pkg.price),
+                        }}
+                        className="detail-btn"
+                      >
+                        Pesan Sekarang
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            </div>
+          ) : (
+            <div className="tour-cards-grid">
+              {loading ? (
+                <p>Loading data...</p>
+              ) : filteredPackages.length === 0 ? (
+                <p>Belum ada paket untuk kota ini</p>
+              ) : (
+                filteredPackages.map((pkg) => (
+                  <div className="paket-card" key={pkg.id}>
+                    <img src={pkg.image || dreamland} alt={pkg.name} />
+                    <div className="paket-info">
+                      <h3>{pkg.name}</h3>
+                      <p className="subjudul">{pkg.subtitle}</p>
+                      <p className="harga">
+                        {pkg.price} <span className="min">{pkg.minPax}</span>
+                      </p>
+                      <Link
+                        to="/pembayaran"
+                        state={{
+                          package_id: pkg.id,
+                          namaPaket: pkg.name,
+                          harga: parsePrice(pkg.price),
+                          minPax: pkg.minPax,
+                          image: pkg.image,
+                          subtitle: pkg.subtitle,
+                          group: pkg.group,
+                          city: pkg.city,
+                        }}
+                        className="detail-btn"
+                      >
+                        Pesan Sekarang
+                      </Link>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="custom-cta">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="cta-video"
+          src={videoSection}
+        />
+        <div className="cta-overlay">
+          <div className="cta-text">
+            <h2>Belum menemukan paket yang sesuai?</h2>
+            <p>
+              Kami siap bantu merancang perjalanan khusus sesuai kebutuhan dan
+              anggaran Anda!
+            </p>
+            <a
+              href={`https://wa.me/6285930005544?text=Halo, saya tertarik dengan paket di Yogyakarta.`}
+              className="cta-button"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Chat Kami Sekarang
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
+  );
 };
 
 export default Yogyakarta;
